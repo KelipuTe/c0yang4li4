@@ -1,23 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct JieDian
+/**
+ * 栈节点
+ */
+struct ZhanJieDian
 {
     int num;
-    struct JieDian *pNext;
+    struct ZhanJieDian *pNext;
 };
 
 // 栈顶指针
-struct JieDian *pDing;
+struct ZhanJieDian *pZhanDing;
 
-extern void chuShiHua();
+extern void chuShiHuaZhan();
 extern void shuChuZhan();
 extern void ruZhan();
 extern int chuZhan();
 
+/**
+ * 链表栈
+ */
 int main()
 {
-    chuShiHua();
+    chuShiHuaZhan();
     ruZhan(1);
     ruZhan(2);
     ruZhan(3);
@@ -30,28 +36,27 @@ int main()
 
 /**
  * 初始化
- */ 
-void chuShiHua()
+ */
+void chuShiHuaZhan()
 {
-    pDing = NULL;
+    pZhanDing = NULL;
 }
 
 /**
  * 输出栈中元素
- */ 
+ */
 void shuChuZhan()
 {
-    if (pDing == NULL)
+    if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
         return;
     }
-    struct JieDian *pTemp;
-    pTemp = pDing;
+    struct ZhanJieDian *pTemp = pZhanDing;
     printf("zhan4:");
     while (pTemp != NULL)
     {
-        printf("%d ", pTemp->num);
+        printf("%d,", pTemp->num);
         pTemp = pTemp->pNext;
     }
     printf("\n");
@@ -59,42 +64,42 @@ void shuChuZhan()
 
 /**
  * 入栈
- */ 
+ */
 void ruZhan(int num)
 {
-    struct JieDian *pTemp = (struct JieDian *)malloc(sizeof(struct JieDian));
+    struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
     pTemp->num = num;
-    if (pDing == NULL)
+    printf("ru4zhan4:%d\n", num);
+    if (pZhanDing == NULL)
     {
         pTemp->pNext = NULL;
-        pDing = pTemp;
+        pZhanDing = pTemp;
     }
     else
     {
         // 移动栈顶指针
-        pTemp->pNext = pDing;
-        pDing = pTemp;
+        pTemp->pNext = pZhanDing;
+        pZhanDing = pTemp;
     }
     shuChuZhan();
 }
 
 /**
  * 出栈
- */ 
+ */
 int chuZhan()
 {
-    if (pDing == NULL)
+    if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
         return -1;
     }
-    struct JieDian *pNow;
-    int num = pDing->num;
-    pNow = pDing;
-    // 移动栈顶指针
-    pDing = pDing->pNext;
-    free(pNow);
+    struct ZhanJieDian *pNow = pZhanDing;
+    int num = pZhanDing->num;
     printf("chu1zhan4:%d\n", num);
+    // 移动栈顶指针
+    pZhanDing = pZhanDing->pNext;
+    free(pNow);
     shuChuZhan();
     return num;
 }

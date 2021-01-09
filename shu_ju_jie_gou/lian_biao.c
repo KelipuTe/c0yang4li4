@@ -1,24 +1,30 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct JieDian
+/**
+ * 链表节点
+ */
+struct LianBiaoJieDian
 {
     // 数据域
     int num;
     // 指针域
-    struct JieDian *pNext;
+    struct LianBiaoJieDian *pNext;
 };
 
-// 头指针
-struct JieDian *pHead;
-// 尾指针
-struct JieDian *pTail;
+// 链表头指针
+struct LianBiaoJieDian *pLianBiaoHead;
+// 链表尾指针
+struct LianBiaoJieDian *pLianBiaoTail;
 
 extern void chuShiHua();
 extern void shuChuLianBiao();
 extern void tianJiaXiang();
 extern void yiChuXiang();
 
+/**
+ * 链表
+ */
 int main()
 {
     chuShiHua();
@@ -37,8 +43,8 @@ int main()
  */
 void chuShiHua()
 {
-    pHead = NULL;
-    pTail = NULL;
+    pLianBiaoHead = NULL;
+    pLianBiaoTail = NULL;
 }
 
 /**
@@ -46,16 +52,16 @@ void chuShiHua()
  */
 void shuChuLianBiao()
 {
-    if (pHead == NULL)
+    if (pLianBiaoHead == NULL)
     {
         printf("kong1lian4biao3!\n");
         return;
     }
-    struct JieDian *pTemp;
-    pTemp = pHead;
+    struct LianBiaoJieDian *pTemp = pLianBiaoHead;
+    printf("lian4biao3:");
     while (pTemp != NULL)
     {
-        printf("%d ", pTemp->num);
+        printf("%d,", pTemp->num);
         pTemp = pTemp->pNext;
     }
     printf("\n");
@@ -67,18 +73,18 @@ void shuChuLianBiao()
 void tianJiaXiang(int num)
 {
     // 申请内存
-    struct JieDian *pTemp = (struct JieDian *)malloc(sizeof(struct JieDian));
+    struct LianBiaoJieDian *pTemp = (struct LianBiaoJieDian *)malloc(sizeof(struct LianBiaoJieDian));
     pTemp->num = num;
     pTemp->pNext = NULL;
-    if (pHead == NULL)
+    if (pLianBiaoHead == NULL)
     {
-        pHead = pTemp;
-        pTail = pTemp;
+        pLianBiaoHead = pTemp;
+        pLianBiaoTail = pTemp;
     }
     else
     {
-        pTail->pNext = pTemp;
-        pTail = pTemp;
+        pLianBiaoTail->pNext = pTemp;
+        pLianBiaoTail = pTemp;
     }
     shuChuLianBiao();
 }
@@ -88,29 +94,29 @@ void tianJiaXiang(int num)
  */
 void yiChuXiang(int num)
 {
-    if (pHead == NULL)
+    if (pLianBiaoHead == NULL)
     {
         return;
     }
-    struct JieDian *pNow;
-    struct JieDian *pLast;
-    pLast = pNow = pHead;
+    struct LianBiaoJieDian *pNow;
+    struct LianBiaoJieDian *pLast;
+    pLast = pNow = pLianBiaoHead;
     while (pNow != NULL)
     {
         if (pNow->num == num)
         {
-            if (pNow == pHead)
+            if (pNow == pLianBiaoHead)
             {
                 // 刚好是头
-                pHead = pNow->pNext;
+                pLianBiaoHead = pNow->pNext;
                 free(pNow);
-                pNow = pHead;
+                pNow = pLianBiaoHead;
             }
-            else if (pNow == pTail)
+            else if (pNow == pLianBiaoTail)
             {
                 // 刚好是尾
                 pLast->pNext = NULL;
-                pTail = pLast;
+                pLianBiaoTail = pLast;
                 free(pNow);
                 pNow = NULL;
             }

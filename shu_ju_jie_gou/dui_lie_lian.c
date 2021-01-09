@@ -1,29 +1,35 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-struct JieDian
+/**
+ * 队列节点
+ */
+struct DuiLieJieDian
 {
     int num;
-    struct JieDian *pNext;
+    struct DuiLieJieDian *pNext;
 };
 
 // 队列头指针
-struct JieDian *pHead;
+struct DuiLieJieDian *pDuiLieHead;
 // 队列尾指针
-struct JieDian *pTail;
+struct DuiLieJieDian *pDuiLieTail;
 
-extern void chuShiHua();
+extern void chuShiHuaDuiLie();
 extern void shuChuDuiLie();
 extern void ruDui();
 extern int chuDui();
 
+/**
+ * 链表队列
+ */
 int main()
 {
-    chuShiHua();
+    chuShiHuaDuiLie();
     ruDui(1);
     ruDui(2);
-    ruDui(3);
     chuDui();
+    ruDui(3);
     chuDui();
     chuDui();
     chuDui();
@@ -33,10 +39,10 @@ int main()
 /**
  * 初始化
  */
-void chuShiHua()
+void chuShiHuaDuiLie()
 {
-    pHead = NULL;
-    pTail = NULL;
+    pDuiLieHead = NULL;
+    pDuiLieTail = NULL;
 }
 
 /**
@@ -44,17 +50,16 @@ void chuShiHua()
  */
 void shuChuDuiLie()
 {
-    if (pHead == NULL)
+    if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
         return;
     }
-    struct JieDian *pTemp;
-    pTemp = pHead;
+    struct DuiLieJieDian *pTemp = pDuiLieHead;
     printf("dui4lie4:");
     while (pTemp != NULL)
     {
-        printf("%d ", pTemp->num);
+        printf("%d,", pTemp->num);
         pTemp = pTemp->pNext;
     }
     printf("\n");
@@ -65,18 +70,19 @@ void shuChuDuiLie()
  */
 void ruDui(int num)
 {
-    struct JieDian *pTemp = (struct JieDian *)malloc(sizeof(struct JieDian));
+    struct DuiLieJieDian *pTemp = (struct DuiLieJieDian *)malloc(sizeof(struct DuiLieJieDian));
     pTemp->num = num;
     pTemp->pNext = NULL;
-    if (pHead == NULL)
+    printf("ru4dui4:%d\n", num);
+    if (pDuiLieHead == NULL)
     {
-        pHead = pTail = pTemp;
+        pDuiLieHead = pDuiLieTail = pTemp;
     }
     else
     {
         // 移动队列尾指针
-        pTail->pNext = pTemp;
-        pTail = pTail->pNext;
+        pDuiLieTail->pNext = pTemp;
+        pDuiLieTail = pDuiLieTail->pNext;
     }
     shuChuDuiLie();
 }
@@ -86,18 +92,17 @@ void ruDui(int num)
  */
 int chuDui()
 {
-    if (pHead == NULL)
+    if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
         return -1;
     }
-    struct JieDian *pNow;
-    int num = pHead->num;
-    pNow = pHead;
+    struct DuiLieJieDian *pNow = pDuiLieHead;
+    int num = pDuiLieHead->num;
+    printf("chu1dui4:%d\n", num);
     // 移动队列头指针
-    pHead = pHead->pNext;
+    pDuiLieHead = pDuiLieHead->pNext;
     free(pNow);
-    printf("chu1dui5:%d\n", num);
     shuChuDuiLie();
     return num;
 }
