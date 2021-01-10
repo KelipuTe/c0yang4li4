@@ -19,11 +19,11 @@ struct ErChaShuJieDian
 struct ErChaShuJieDian *pErChaShuHead;
 
 extern void chuShiHuaErChaShu();
-extern void gouZaoErChaShu();
-extern void qianXuBianLi();
-extern void zhongXuBianLi();
-extern void houXuBianLi();
-extern int jiSuanErChaShuShenDu();
+extern void gouZaoErChaShu(int *, int, struct ErChaShuJieDian **, int);
+extern void qianXuBianLi(struct ErChaShuJieDian *);
+extern void zhongXuBianLi(struct ErChaShuJieDian *);
+extern void houXuBianLi(struct ErChaShuJieDian *);
+extern int jiSuanErChaShuShenDu(struct ErChaShuJieDian *);
 extern void guangDuYouXianBianLi();
 extern void shenDuYouXianBianLi();
 
@@ -39,7 +39,7 @@ struct DuiLieJieDian *pDuiLieHead;
 struct DuiLieJieDian *pDuiLieTail;
 
 extern void chuShiHuaDuiLie();
-extern void ruDui();
+extern void ruDui(struct ErChaShuJieDian *, int);
 extern struct ErChaShuJieDian *chuDui();
 
 /*#####栈#####*/
@@ -53,7 +53,7 @@ struct ZhanJieDian
 struct ZhanJieDian *pZhanDing;
 
 extern void chuShiHuaZhan();
-extern void ruZhan();
+extern void ruZhan(struct ErChaShuJieDian *);
 extern struct ErChaShuJieDian *chuZhan();
 
 int main()
@@ -92,6 +92,7 @@ void chuShiHuaErChaShu()
 
 /**
  * 从数组构造二叉树
+ * 注意参数pNow是二级指针
  */
 void gouZaoErChaShu(int *yuanSuBiao, int yuanSuBiaoLen, struct ErChaShuJieDian **pNow, int index)
 {
@@ -188,6 +189,7 @@ void guangDuYouXianBianLi()
     pErChaShu = chuDui();
     while (pErChaShu != NULL)
     {
+        // 持续遍历，直到队列为空
         printf("%d-%d,", pErChaShu->cengShu, pErChaShu->num);
         if (pErChaShu->pZuo != NULL)
         {
@@ -203,7 +205,11 @@ void guangDuYouXianBianLi()
     }
 }
 
-void shenDuYouXianBianLi(){
+/**
+ * 深度优先遍历
+ */
+void shenDuYouXianBianLi()
+{
     ruZhan(pErChaShuHead);
     struct ErChaShuJieDian *pErChaShu;
     pErChaShu = chuZhan();

@@ -17,7 +17,7 @@ struct DuiLieJieDian *pDuiLieTail;
 
 extern void chuShiHuaDuiLie();
 extern void shuChuDuiLie();
-extern void ruDui();
+extern void ruDui(int);
 extern int chuDui();
 
 /**
@@ -95,7 +95,7 @@ int chuDui()
     if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
-        return -1;
+        return 0;
     }
     struct DuiLieJieDian *pNow = pDuiLieHead;
     int num = pDuiLieHead->num;

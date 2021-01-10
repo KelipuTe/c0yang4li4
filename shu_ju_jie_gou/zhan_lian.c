@@ -15,7 +15,7 @@ struct ZhanJieDian *pZhanDing;
 
 extern void chuShiHuaZhan();
 extern void shuChuZhan();
-extern void ruZhan();
+extern void ruZhan(int);
 extern int chuZhan();
 
 /**
@@ -92,7 +92,7 @@ int chuZhan()
     if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
-        return -1;
+        return 0;
     }
     struct ZhanJieDian *pNow = pZhanDing;
     int num = pZhanDing->num;

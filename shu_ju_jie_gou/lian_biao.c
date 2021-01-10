@@ -19,7 +19,7 @@ struct LianBiaoJieDian *pLianBiaoTail;
 
 extern void chuShiHua();
 extern void shuChuLianBiao();
-extern void tianJiaXiang();
+extern void tianJiaXiang(int);
 extern void yiChuXiang();
 
 /**
