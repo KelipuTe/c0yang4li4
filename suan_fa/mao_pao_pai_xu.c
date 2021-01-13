@@ -2,6 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 
+/**
+ * 冒泡排序
+ */
 int main()
 {
     int daiPaiXuArr[10];

@@ -3,7 +3,7 @@
 #include <time.h>
 
 /**
- * 插入排序
+ * 希尔排序
  */
 int main()
 {
@@ -16,20 +16,24 @@ int main()
     }
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
-    // 认为第一个元素有序，排序从第二个元素开始
-    for (int i = 1; i < daiPaiXuLen; i++)
+    // 按一定的跨度分组
+    int range = (int)(daiPaiXuLen / 2);
+    while (range > 0)
     {
-        int j = i;
-        // 待排序元素
-        int tNum = daiPaiXuArr[j];
-        while (j > 0 && tNum < daiPaiXuArr[j - 1])
+        // 组内进行插入排序
+        for (int i = range; i < daiPaiXuLen; i++)
         {
-            // 如果比前面小，就往前移动，直到移动到第一位
-            daiPaiXuArr[j] = daiPaiXuArr[j - 1];
-            j--;
+            int tNum = daiPaiXuArr[i];
+            int j = i - range;
+            while (j >= 0 && daiPaiXuArr[j] > tNum)
+            {
+                daiPaiXuArr[j + range] = daiPaiXuArr[j];
+                j -= range;
+            }
+            daiPaiXuArr[j + range] = tNum;
         }
-        // 插入有序序列
-        daiPaiXuArr[j] = tNum;
+        // 重新设置一个更小的跨度
+        range = (int)(range / 2);
     }
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);

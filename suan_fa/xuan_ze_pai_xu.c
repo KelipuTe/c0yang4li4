@@ -3,7 +3,7 @@
 #include <time.h>
 
 /**
- * 插入排序
+ * 选择排序
  */
 int main()
 {
@@ -16,20 +16,21 @@ int main()
     }
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
-    // 认为第一个元素有序，排序从第二个元素开始
-    for (int i = 1; i < daiPaiXuLen; i++)
+    for (int i = 0; i < daiPaiXuLen; i++)
     {
-        int j = i;
-        // 待排序元素
-        int tNum = daiPaiXuArr[j];
-        while (j > 0 && tNum < daiPaiXuArr[j - 1])
+        // 第n次循环找到第n小的那个元素
+        int minIndex = i;
+        for (int j = i; j < daiPaiXuLen; j++)
         {
-            // 如果比前面小，就往前移动，直到移动到第一位
-            daiPaiXuArr[j] = daiPaiXuArr[j - 1];
-            j--;
+            if (daiPaiXuArr[j] < daiPaiXuArr[minIndex])
+            {
+                minIndex = j;
+            }
         }
-        // 插入有序序列
-        daiPaiXuArr[j] = tNum;
+        // 把第n小的值和序列第n个位置的元素交换
+        int tNum = daiPaiXuArr[i];
+        daiPaiXuArr[i] = daiPaiXuArr[minIndex];
+        daiPaiXuArr[minIndex] = tNum;
     }
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
