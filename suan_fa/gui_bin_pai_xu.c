@@ -2,6 +2,10 @@
 #include <stdlib.h>
 #include <time.h>
 
+extern void guiBinPaiXu(int *daiPaiXuArr, int startIndex, int endIndex);
+extern void heBinXuLie(int *daiPaiXuArr, int startIndex, int midIndex, int endIndex);
+extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+
 /**
  * 归并排序
  */
@@ -12,7 +16,7 @@ int main()
     srand(time(NULL));
     for (int i = 0; i < daiPaiXuLen; i++)
     {
-        daiPaiXuArr[i] = rand() % 100;
+        daiPaiXuArr[i] = (rand() % 99) + 1;
     }
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);

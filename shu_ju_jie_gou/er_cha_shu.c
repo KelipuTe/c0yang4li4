@@ -56,6 +56,9 @@ extern void chuShiHuaZhan();
 extern void ruZhan(struct ErChaShuJieDian *);
 extern struct ErChaShuJieDian *chuZhan();
 
+/**
+ * 二叉树
+ */
 int main()
 {
     int yuanSuBiao[] = {1, 2, 3, 4, 5, 6, 7, 0, 0, 10, 11};
