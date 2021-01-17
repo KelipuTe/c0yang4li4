@@ -8,13 +8,13 @@ extern float jiSuanHouZhuiBiaoDaShi(char *);
 
 struct ZhanJieDian
 {
+    // 操作符
     char caoZuoFu;
     struct ZhanJieDian *pNext;
 };
 
-struct ZhanJieDian *pZhanDing;
+struct ZhanJieDian *pZhanDing = NULL;
 
-extern void chuShiHuaZhan();
 extern void ruZhan(char);
 extern char chuZhan();
 extern char yuChuZhan();
@@ -23,13 +23,13 @@ extern char yuChuZhan();
 
 struct ZhanJieDian2
 {
+    // 数值
     float num;
     struct ZhanJieDian2 *pNext;
 };
 
-struct ZhanJieDian2 *pZhanDing2;
+struct ZhanJieDian2 *pZhanDing2 = NULL;
 
-extern void chuShiHuaZhan2();
 extern void ruZhan2(float);
 extern float chuZhan2();
 
@@ -38,14 +38,13 @@ extern float chuZhan2();
  */
 int main()
 {
-    char zhongZhuiArr[] = "(1-2)*(4+5)";
+    char zhongZhuiArr[] = "(1-9)*(2+8)";
     char houZhuiArr[32];
-    float num;
-    chuShiHuaZhan();
+    float num = 0;
+
     printf("%s\n", zhongZhuiArr);
     zhongZhuiZhuanHouZhui(&zhongZhuiArr, &houZhuiArr);
     printf("%s\n", houZhuiArr);
-    chuShiHuaZhan2();
     num = jiSuanHouZhuiBiaoDaShi(&houZhuiArr);
     printf("%f\n", num);
 }
@@ -57,6 +56,7 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr)
 {
     char caoZuoXiang;
     char tCaoZuoFu;
+
     int j = 0;
     for (int i = 0; zhongZhuiArr[i] != '\0'; i++)
     {
@@ -126,6 +126,7 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr)
         }
     }
     // 把栈中操作符全部输出
+    // 注意这里用的是字符数组，所以要加\0
     while (1)
     {
         tCaoZuoFu = chuZhan();
@@ -144,13 +145,15 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr)
 float jiSuanHouZhuiBiaoDaShi(char *houZhuiArr)
 {
     char caoZuoXiang;
-    float num1, num2, num3;
+    float num1 = 0, num2 = 0, num3 = 0;
+    // 每次从栈中取两个数字，将计算的结果再入栈
+    // 最后栈中的那个数字就是结果
     for (int i = 0; houZhuiArr[i] != '\0'; i++)
     {
         caoZuoXiang = houZhuiArr[i];
         if (caoZuoXiang >= '0' && caoZuoXiang <= '9')
         {
-            // 处理数字
+            // 处理数字，因为这里只考虑了10以内的四则运算，所以可以直接使用字符相减
             ruZhan2((float)(caoZuoXiang - '0'));
             continue;
         }
@@ -187,14 +190,10 @@ float jiSuanHouZhuiBiaoDaShi(char *houZhuiArr)
 
 /*#####栈-字符#####*/
 
-void chuShiHuaZhan()
-{
-    pZhanDing = NULL;
-}
-
 void ruZhan(char caoZuoFu)
 {
     struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
+
     pTemp->caoZuoFu = caoZuoFu;
     if (pZhanDing == NULL)
     {
@@ -211,14 +210,17 @@ void ruZhan(char caoZuoFu)
 char chuZhan()
 {
     char caoZuoFu = '\0';
+    struct ZhanJieDian *pNow = NULL;
+
     if (pZhanDing == NULL)
     {
         return caoZuoFu;
     }
-    struct ZhanJieDian *pNow = pZhanDing;
+    pNow = pZhanDing;
     caoZuoFu = pZhanDing->caoZuoFu;
     pZhanDing = pZhanDing->pNext;
     free(pNow);
+
     return caoZuoFu;
 }
 
@@ -233,19 +235,16 @@ char yuChuZhan()
         return caoZuoFu;
     }
     caoZuoFu = pZhanDing->caoZuoFu;
+
     return caoZuoFu;
 }
 
 /*#####栈-数值#####*/
 
-void chuShiHuaZhan2()
-{
-    pZhanDing2 = NULL;
-}
-
 void ruZhan2(float num)
 {
     struct ZhanJieDian2 *pTemp = (struct ZhanJieDian2 *)malloc(sizeof(struct ZhanJieDian2));
+
     pTemp->num = num;
     if (pZhanDing2 == NULL)
     {
@@ -270,5 +269,6 @@ float chuZhan2()
     num = pZhanDing2->num;
     pZhanDing2 = pZhanDing2->pNext;
     free(pNow);
+
     return num;
 }

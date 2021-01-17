@@ -5,15 +5,25 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(Windows) 启动",
-            "type": "cppvsdbg",
+            "name": "gcc.exe - 生成和调试活动文件",
+            "type": "cppdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/shu_ju_jie_gou/lian_biao.exe",
+            "program": "${fileDirname}\\${fileBasenameNoExtension}.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
+            "cwd": "E:\\C\\mingw64\\bin",
             "environment": [],
-            "externalConsole": false
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "E:\\C\\mingw64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "为 gdb 启用整齐打印",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ],
+            "preLaunchTask": "C/C++: gcc.exe build active file"
         }
     ]
 }

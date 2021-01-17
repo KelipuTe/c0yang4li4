@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+extern void shuChuXuLie(int *, int );
 
 /**
  * 插入排序
@@ -16,6 +16,7 @@ int main()
     {
         daiPaiXuArr[i] = (rand() % 99) + 1;
     }
+
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
     // 认为第一个元素有序，排序从第二个元素开始
@@ -33,8 +34,10 @@ int main()
         // 插入有序序列
         daiPaiXuArr[j] = tNum;
     }
+    
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     return 0;
 }
 

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+extern void shuChuXuLie(int *, int);
 
 /**
  * 冒泡排序
@@ -16,8 +16,10 @@ int main()
     {
         daiPaiXuArr[i] = (rand() % 99) + 1;
     }
+
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     // 记录最后一个被交换的元素的位置
     int lastExchangeIndex = daiPaiXuLen - 1;
     for (int i = 0; i < daiPaiXuLen - 1; i++)
@@ -43,8 +45,10 @@ int main()
             break;
         }
     }
+
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     return 0;
 }
 

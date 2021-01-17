@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+extern void shuChuXuLie(int *, int);
 
 /**
  * 选择排序
@@ -16,8 +16,10 @@ int main()
     {
         daiPaiXuArr[i] = (rand() % 99) + 1;
     }
+
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     for (int i = 0; i < daiPaiXuLen; i++)
     {
         // 第n次循环找到第n小的那个元素
@@ -34,8 +36,10 @@ int main()
         daiPaiXuArr[i] = daiPaiXuArr[minIndex];
         daiPaiXuArr[minIndex] = tNum;
     }
+
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     return 0;
 }
 

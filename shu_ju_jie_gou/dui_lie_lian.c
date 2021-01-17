@@ -2,20 +2,21 @@
 #include <stdlib.h>
 
 /**
- * 队列节点
+ * 队列结点
  */
 struct DuiLieJieDian
 {
+    // 数据域
     int num;
+    // 下一个结点的指针
     struct DuiLieJieDian *pNext;
 };
 
 // 队列头指针
-struct DuiLieJieDian *pDuiLieHead;
+struct DuiLieJieDian *pDuiLieHead = NULL;
 // 队列尾指针
-struct DuiLieJieDian *pDuiLieTail;
+struct DuiLieJieDian *pDuiLieTail = NULL;
 
-extern void chuShiHuaDuiLie();
 extern void shuChuDuiLie();
 extern void ruDui(int);
 extern int chuDui();
@@ -25,7 +26,6 @@ extern int chuDui();
  */
 int main()
 {
-    chuShiHuaDuiLie();
     ruDui(1);
     ruDui(2);
     chuDui();
@@ -37,25 +37,18 @@ int main()
 }
 
 /**
- * 初始化
- */
-void chuShiHuaDuiLie()
-{
-    pDuiLieHead = NULL;
-    pDuiLieTail = NULL;
-}
-
-/**
  * 输出队列元素
  */
 void shuChuDuiLie()
 {
+    struct DuiLieJieDian *pTemp = NULL;
     if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
+
         return;
     }
-    struct DuiLieJieDian *pTemp = pDuiLieHead;
+    pTemp = pDuiLieHead;
     printf("dui4lie4:");
     while (pTemp != NULL)
     {
@@ -71,6 +64,7 @@ void shuChuDuiLie()
 void ruDui(int num)
 {
     struct DuiLieJieDian *pTemp = (struct DuiLieJieDian *)malloc(sizeof(struct DuiLieJieDian));
+
     pTemp->num = num;
     pTemp->pNext = NULL;
     printf("ru4dui4:%d\n", num);
@@ -92,17 +86,21 @@ void ruDui(int num)
  */
 int chuDui()
 {
+    struct DuiLieJieDian *pNow = NULL;
+    int num = 0;
     if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
+
         return 0;
     }
-    struct DuiLieJieDian *pNow = pDuiLieHead;
-    int num = pDuiLieHead->num;
+    pNow = pDuiLieHead;
+    num = pDuiLieHead->num;
     printf("chu1dui4:%d\n", num);
     // 移动队列头指针
     pDuiLieHead = pDuiLieHead->pNext;
     free(pNow);
     shuChuDuiLie();
+
     return num;
 }

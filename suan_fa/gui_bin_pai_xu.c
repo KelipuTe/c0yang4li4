@@ -2,9 +2,9 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void guiBinPaiXu(int *daiPaiXuArr, int startIndex, int endIndex);
-extern void heBinXuLie(int *daiPaiXuArr, int startIndex, int midIndex, int endIndex);
-extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+extern void guiBinPaiXu(int *, int, int);
+extern void heBinXuLie(int *, int, int, int);
+extern void shuChuXuLie(int *, int);
 
 /**
  * 归并排序
@@ -18,6 +18,7 @@ int main()
     {
         daiPaiXuArr[i] = (rand() % 99) + 1;
     }
+
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
 
@@ -25,6 +26,7 @@ int main()
 
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     return 0;
 }
 
@@ -33,9 +35,10 @@ int main()
  */
 void guiBinPaiXu(int *daiPaiXuArr, int startIndex, int endIndex)
 {
+    int midIndex = 0;
     if (startIndex < endIndex)
     {
-        int midIndex = (int)((startIndex + endIndex) / 2);
+        midIndex = (int)((startIndex + endIndex) / 2);
         guiBinPaiXu(daiPaiXuArr, startIndex, midIndex);
         guiBinPaiXu(daiPaiXuArr, midIndex + 1, endIndex);
         heBinXuLie(daiPaiXuArr, startIndex, midIndex, endIndex);

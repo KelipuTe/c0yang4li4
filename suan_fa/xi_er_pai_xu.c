@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen);
+extern void shuChuXuLie(int *, int);
 
 /**
  * 希尔排序
@@ -16,8 +16,10 @@ int main()
     {
         daiPaiXuArr[i] = (rand() % 99) + 1;
     }
+
     printf("pai2xu4qian2:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     // 按一定的跨度分组
     int range = (int)(daiPaiXuLen / 2);
     while (range > 0)
@@ -37,8 +39,10 @@ int main()
         // 重新设置一个更小的跨度
         range = (int)(range / 2);
     }
+
     printf("pai2xu4hou4:");
     shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+
     return 0;
 }
 

@@ -2,22 +2,21 @@
 #include <stdlib.h>
 
 /**
- * 链表节点
+ * 链表结点
  */
 struct LianBiaoJieDian
 {
     // 数据域
     int num;
-    // 指针域
+    // 下一个结点的指针
     struct LianBiaoJieDian *pNext;
 };
 
 // 链表头指针
-struct LianBiaoJieDian *pLianBiaoHead;
+struct LianBiaoJieDian *pLianBiaoHead = NULL;
 // 链表尾指针
-struct LianBiaoJieDian *pLianBiaoTail;
+struct LianBiaoJieDian *pLianBiaoTail = NULL;
 
-extern void chuShiHua();
 extern void shuChuLianBiao();
 extern void tianJiaXiang(int);
 extern void yiChuXiang();
@@ -27,7 +26,6 @@ extern void yiChuXiang();
  */
 int main()
 {
-    chuShiHua();
     tianJiaXiang(1);
     tianJiaXiang(2);
     tianJiaXiang(3);
@@ -39,25 +37,18 @@ int main()
 }
 
 /**
- * 初始化
- */
-void chuShiHua()
-{
-    pLianBiaoHead = NULL;
-    pLianBiaoTail = NULL;
-}
-
-/**
  * 输出链表
  */
 void shuChuLianBiao()
 {
+    struct LianBiaoJieDian *pTemp = NULL;
     if (pLianBiaoHead == NULL)
     {
         printf("kong1lian4biao3!\n");
+
         return;
     }
-    struct LianBiaoJieDian *pTemp = pLianBiaoHead;
+    pTemp = pLianBiaoHead;
     printf("lian4biao3:");
     while (pTemp != NULL)
     {
@@ -68,21 +59,24 @@ void shuChuLianBiao()
 }
 
 /**
- * 添加节点
+ * 添加结点
  */
 void tianJiaXiang(int num)
 {
     // 申请内存
     struct LianBiaoJieDian *pTemp = (struct LianBiaoJieDian *)malloc(sizeof(struct LianBiaoJieDian));
+
     pTemp->num = num;
     pTemp->pNext = NULL;
     if (pLianBiaoHead == NULL)
     {
+        // 头指针为空
         pLianBiaoHead = pTemp;
         pLianBiaoTail = pTemp;
     }
     else
     {
+        // 把结点连接到链表尾部
         pLianBiaoTail->pNext = pTemp;
         pLianBiaoTail = pTemp;
     }
@@ -90,16 +84,19 @@ void tianJiaXiang(int num)
 }
 
 /**
- * 移除指定节点
+ * 移除指定结点
  */
 void yiChuXiang(int num)
 {
+    // 当前结点
+    struct LianBiaoJieDian *pNow;
+    // 上一个结点
+    struct LianBiaoJieDian *pLast;
+
     if (pLianBiaoHead == NULL)
     {
         return;
     }
-    struct LianBiaoJieDian *pNow;
-    struct LianBiaoJieDian *pLast;
     pLast = pNow = pLianBiaoHead;
     while (pNow != NULL)
     {
@@ -122,6 +119,7 @@ void yiChuXiang(int num)
             }
             else
             {
+                // 连接当前结点的前一个结点和后一个结点
                 pLast->pNext = pNow->pNext;
                 free(pNow);
                 pNow = pLast->pNext;

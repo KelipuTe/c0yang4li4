@@ -2,18 +2,19 @@
 #include <stdlib.h>
 
 /**
- * 栈节点
+ * 栈结点
  */
 struct ZhanJieDian
 {
+    // 数据域
     int num;
+    // 下一个结点的指针
     struct ZhanJieDian *pNext;
 };
 
 // 栈顶指针
-struct ZhanJieDian *pZhanDing;
+struct ZhanJieDian *pZhanDing = NULL;
 
-extern void chuShiHuaZhan();
 extern void shuChuZhan();
 extern void ruZhan(int);
 extern int chuZhan();
@@ -23,7 +24,6 @@ extern int chuZhan();
  */
 int main()
 {
-    chuShiHuaZhan();
     ruZhan(1);
     ruZhan(2);
     ruZhan(3);
@@ -35,24 +35,19 @@ int main()
 }
 
 /**
- * 初始化
- */
-void chuShiHuaZhan()
-{
-    pZhanDing = NULL;
-}
-
-/**
  * 输出栈中元素
  */
 void shuChuZhan()
 {
+    struct ZhanJieDian *pTemp = NULL;
+    
     if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
+
         return;
     }
-    struct ZhanJieDian *pTemp = pZhanDing;
+    pTemp = pZhanDing;
     printf("zhan4:");
     while (pTemp != NULL)
     {
@@ -68,10 +63,12 @@ void shuChuZhan()
 void ruZhan(int num)
 {
     struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
+
     pTemp->num = num;
     printf("ru4zhan4:%d\n", num);
     if (pZhanDing == NULL)
     {
+        // 栈顶指针为空
         pTemp->pNext = NULL;
         pZhanDing = pTemp;
     }
@@ -89,17 +86,22 @@ void ruZhan(int num)
  */
 int chuZhan()
 {
+    struct ZhanJieDian *pNow = NULL;
+    int num = 0;
+
     if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
+
         return 0;
     }
-    struct ZhanJieDian *pNow = pZhanDing;
-    int num = pZhanDing->num;
+    pNow = pZhanDing;
+    num = pZhanDing->num;
     printf("chu1zhan4:%d\n", num);
     // 移动栈顶指针
     pZhanDing = pZhanDing->pNext;
     free(pNow);
     shuChuZhan();
+
     return num;
 }
