@@ -7,7 +7,7 @@
  */
 struct ErChaShuJieDian
 {
-    // 结点值
+    // 结点值，约定结点值都大于0
     int num;
     // 左结点
     struct ErChaShuJieDian *pZuo;

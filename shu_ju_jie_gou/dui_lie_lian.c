@@ -33,6 +33,7 @@ int main()
     chuDui();
     chuDui();
     chuDui();
+
     return 0;
 }
 
@@ -42,6 +43,7 @@ int main()
 void shuChuDuiLie()
 {
     struct DuiLieJieDian *pTemp = NULL;
+    
     if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");
@@ -88,6 +90,7 @@ int chuDui()
 {
     struct DuiLieJieDian *pNow = NULL;
     int num = 0;
+
     if (pDuiLieHead == NULL)
     {
         printf("dui4lie4:kong1!\n");

@@ -9,7 +9,7 @@
  */
 struct ErChaShuJieDian
 {
-    // 结点值
+    // 结点值，约定结点值都大于0
     int num;
     // 左结点
     struct ErChaShuJieDian *pZuo;
@@ -22,8 +22,7 @@ struct ErChaShuJieDian
 // 头指针
 struct ErChaShuJieDian *pErChaShuHead = NULL;
 
-extern void chuShiHuaErChaShu();
-extern void gouZaoErChaShu(int *, int, struct ErChaShuJieDian **, int);
+extern void gouZaoErChaShu(struct ErChaShuJieDian **, int *, int, int);
 extern void qianXuBianLi(struct ErChaShuJieDian *);
 extern void zhongXuBianLi(struct ErChaShuJieDian *);
 extern void houXuBianLi(struct ErChaShuJieDian *);
@@ -65,7 +64,7 @@ int main()
 {
     int yuanSuBiao[] = {1, 2, 3, 4, 5, 6, 7, 0, 0, 10, 11};
     int yuanSuBiaoLen = sizeof(yuanSuBiao) / sizeof(int);
-    gouZaoErChaShu(&yuanSuBiao, yuanSuBiaoLen, &pErChaShuHead, 1);
+    gouZaoErChaShu(&pErChaShuHead, &yuanSuBiao, yuanSuBiaoLen, 1);
 
     printf("qian2xu4bian4li4:");
     qianXuBianLi(pErChaShuHead);
@@ -96,32 +95,33 @@ int main()
  * 从数组构造二叉树
  * 注意参数pNow是二级指针
  */
-void gouZaoErChaShu(int *yuanSuBiao, int yuanSuBiaoLen, struct ErChaShuJieDian **pNow, int index)
+void gouZaoErChaShu(struct ErChaShuJieDian **ppNow, int *yuanSuBiao, int yuanSuBiaoLen, int index)
 {
     if (index <= yuanSuBiaoLen)
     {
         if (yuanSuBiao[index - 1] == 0)
         {
-            *pNow = NULL;
+            // 识别无效值
+            *ppNow = NULL;
 
             return;
         }
         else
         {
-            *pNow = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-            if (*pNow == NULL)
+            *ppNow = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
+            if (*ppNow == NULL)
             {
                 printf("nei4cun2fen1pei4shi1bai4!\n");
                 exit(0);
             }
-            (*pNow)->num = yuanSuBiao[index - 1];
-            (*pNow)->pZuo = NULL;
-            (*pNow)->pYou = NULL;
-            (*pNow)->jieDianCengShu = 0;
+            (*ppNow)->num = yuanSuBiao[index - 1];
+            (*ppNow)->pZuo = NULL;
+            (*ppNow)->pYou = NULL;
+            (*ppNow)->jieDianCengShu = 0;
             // 这里把这次构造的结点的左右结点传递下去，传递的参数其实是指向左右结点的指针
             // 但是不能简单地传递指针，直接把指针传下去就变形参了，所以传递一个二级指针
-            gouZaoErChaShu(yuanSuBiao, yuanSuBiaoLen, &((*pNow)->pZuo), index * 2);
-            gouZaoErChaShu(yuanSuBiao, yuanSuBiaoLen, &((*pNow)->pYou), index * 2 + 1);
+            gouZaoErChaShu(&((*ppNow)->pZuo), yuanSuBiao, yuanSuBiaoLen, index * 2);
+            gouZaoErChaShu(&((*ppNow)->pYou), yuanSuBiao, yuanSuBiaoLen, index * 2 + 1);
         }
     }
 }

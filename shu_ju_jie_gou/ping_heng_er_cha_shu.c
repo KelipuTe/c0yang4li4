@@ -8,7 +8,7 @@
  */
 struct ErChaShuJieDian
 {
-    // 数据域
+    // 数据域，约定结点值都大于0
     int num;
     // 左结点指针
     struct ErChaShuJieDian *pZuo;
