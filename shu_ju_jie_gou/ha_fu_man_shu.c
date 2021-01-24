@@ -1,14 +1,17 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define MAX_CHAR_NUM 128
+// 哈夫曼字符表的最大字符数量
+#define MAX_ZI_FU_NUM 128
+// 哈夫曼编码表的最大编码长度
+#define MAX_BIAN_MA_LEN 64
 
 /**
  * 哈夫曼树结点
  */
-struct HaFuManShuJieDian
+typedef struct HaFuManShuJieDian
 {
-    // 结点类型
+    // 结点类型：0=临时结点；1=字符结点
     int leiXing;
     // 结点权重
     int quanZhong;
@@ -20,163 +23,191 @@ struct HaFuManShuJieDian
     struct HaFuManShuJieDian *pYou;
 } HFMSJD;
 
-// 哈弗曼树头指针
+// 哈夫曼树头指针
 struct HaFuManShuJieDian *pHaFuManShuHead = NULL;
-// 哈弗曼编码表
-char HafuManBianMaBiao[MAX_CHAR_NUM][64] = {'\0'};
-char HafuManBianMaBiao2[MAX_CHAR_NUM] = {'\0'};
-int shuLiang = 0;
-// 字符权重数组和字符数组，两者下标对应
-int ziFuQuanZhongArr[MAX_CHAR_NUM] = {0};
-char ziFuArr[MAX_CHAR_NUM] = {'\0'};
+// 哈夫曼字符表和哈夫曼编码表，两者下标对应
+char arrHafuManZiFu[MAX_ZI_FU_NUM] = {'\0'};
+char arrHafuManBianMa[MAX_ZI_FU_NUM][MAX_BIAN_MA_LEN] = {'\0'};
+// 哈夫曼字符表数量
+int iHafuManZiFuNum = 0;
 
-extern void gouZaoHaFuManShu();
-extern void gouZaoHaFuManBianMaBiao();
+extern void gouZaoHaFuManShu(char *, int *);
+extern void gouZaoHaFuManBianMaBiao(HFMSJD *, char *, int);
 
+/**
+ * 哈夫曼树
+ */
 int main()
 {
     // 待处理字符串
-    char daiChuLiStr[] = "hello world";
+    char sDaiChuLi[] = "hello world";
+    // 字符数组和字符权重数组，两者下标对应
+    char arrZiFu[MAX_ZI_FU_NUM] = {'\0'};
+    int arrZiFuQuanZhong[MAX_ZI_FU_NUM] = {0};
     // 临时字符权重数组，用于统计字符权重
-    int tZiFuQuanZhongArr[MAX_CHAR_NUM] = {0};
-    for (int i = 0; daiChuLiStr[i] != '\0'; i++)
+    int arrTZiFuQuanZhong[MAX_ZI_FU_NUM] = {0};
+    // 统计字符权重
+    int iZiFuZhi;
+    for (int i = 0; sDaiChuLi[i] != '\0'; i++)
     {
-        int ziFuZhi = (int)daiChuLiStr[i];
-        tZiFuQuanZhongArr[ziFuZhi]++;
+        // 将字符转换成ASCII码值
+        iZiFuZhi = (int)sDaiChuLi[i];
+        arrTZiFuQuanZhong[iZiFuZhi]++;
     }
-    for (int i = 0, j = 0; i < MAX_CHAR_NUM; i++)
+    for (int i = 0, j = 0; i < MAX_ZI_FU_NUM; i++)
     {
-        if (tZiFuQuanZhongArr[i] != 0)
+        if (arrTZiFuQuanZhong[i] != 0)
         {
-            ziFuQuanZhongArr[j] = tZiFuQuanZhongArr[i];
-            ziFuArr[j] = (char)i;
+            arrZiFu[j] = (char)i;
+            arrZiFuQuanZhong[j] = arrTZiFuQuanZhong[i];
             j++;
         }
     }
-    gouZaoHaFuManShu();
-    char tempArr[64]="";
-    gouZaoHaFuManBianMaBiao(pHaFuManShuHead, tempArr, 0);
-    for(int i=0;i<shuLiang;i++){
-        printf("%c:",HafuManBianMaBiao2[i]);
-        for(int j=0;HafuManBianMaBiao[i][j]!='\0';j++){
-            printf("%c",HafuManBianMaBiao[i][j]);
+    gouZaoHaFuManShu(arrZiFu, arrZiFuQuanZhong);
+    char arrT[64] = "";
+    gouZaoHaFuManBianMaBiao(pHaFuManShuHead, arrT, 0);
+    for (int i = 0; i < iHafuManZiFuNum; i++)
+    {
+        printf("%c:", arrHafuManZiFu[i]);
+        for (int j = 0; arrHafuManBianMa[i][j] != '\0'; j++)
+        {
+            printf("%c", arrHafuManBianMa[i][j]);
         }
         printf("\n");
     }
     return 0;
 }
 
-void gouZaoHaFuManShu()
+/**
+ * 构造哈夫曼树
+ */
+void gouZaoHaFuManShu(char *arrZiFu, int *arrZiFuQuanZhong)
 {
-    struct HaFuManShuJieDian *tPShuArr[MAX_CHAR_NUM] = {NULL};
-    struct HaFuManShuJieDian *tpI1 = NULL;
-    struct HaFuManShuJieDian *tpI2 = NULL;
-    for (int i = 0, j = 0; i < MAX_CHAR_NUM; i++)
+    // 保存所有的字符结点的指针数组
+    HFMSJD *pTArrShuJieDian[MAX_ZI_FU_NUM] = {NULL};
+    // 临时结点指针
+    HFMSJD *pTJieDian1 = NULL;
+    HFMSJD *pTJieDian2 = NULL;
+    HFMSJD *pTJieDian3 = NULL;
+    // 临时结点指针在指针数组中的下标
+    int pTJieDianXiaBiao1 = -1;
+    int pTJieDianXiaBiao2 = -1;
+    // 创建所有的字符结点
+    for (int i = 0, j = 0; i < MAX_ZI_FU_NUM; i++)
     {
-        if (ziFuArr[i] != '\0')
+        if (arrZiFu[i] != '\0')
         {
-            tPShuArr[j] = (struct HaFuManShuJieDian *)malloc(sizeof(struct HaFuManShuJieDian));
-            tPShuArr[j]->leiXing = 1;
-            tPShuArr[j]->quanZhong = ziFuQuanZhongArr[i];
-            tPShuArr[j]->ziFu = ziFuArr[i];
-            tPShuArr[j]->pZuo = NULL;
-            tPShuArr[j]->pYou = NULL;
+            pTArrShuJieDian[j] = (HFMSJD *)malloc(sizeof(HFMSJD));
+            pTArrShuJieDian[j]->leiXing = 1;
+            pTArrShuJieDian[j]->quanZhong = arrZiFuQuanZhong[i];
+            pTArrShuJieDian[j]->ziFu = arrZiFu[i];
+            pTArrShuJieDian[j]->pZuo = NULL;
+            pTArrShuJieDian[j]->pYou = NULL;
             j++;
         }
     }
     while (1)
     {
-        int weizhi1;
-        int weizhi2;
-        tpI1 = NULL;
-        tpI2 = NULL;
-        for (int i = 0; i < MAX_CHAR_NUM; i++)
+        pTJieDian1 = NULL;
+        pTJieDian2 = NULL;
+        // 查找指针数组中结点权重最小的两个结点
+        for (int i = 0; i < MAX_ZI_FU_NUM; i++)
         {
-            if (tPShuArr[i] == NULL)
+            if (pTArrShuJieDian[i] == NULL)
             {
                 continue;
             }
-            if (tpI1 == NULL)
+            if (pTJieDian1 == NULL)
             {
-                weizhi1 = i;
-                tpI1 = tPShuArr[i];
+                pTJieDianXiaBiao1 = i;
+                pTJieDian1 = pTArrShuJieDian[i];
             }
-            else if (tpI2 == NULL)
+            else if (pTJieDian2 == NULL)
             {
-                weizhi2 = i;
-                tpI2 = tPShuArr[i];
+                pTJieDianXiaBiao2 = i;
+                pTJieDian2 = pTArrShuJieDian[i];
             }
             else
             {
-                if (tPShuArr[i]->quanZhong < tpI1->quanZhong)
+                if (pTArrShuJieDian[i]->quanZhong < pTJieDian1->quanZhong)
                 {
-                    weizhi1 = i;
-                    tpI1 = tPShuArr[i];
+                    pTJieDianXiaBiao1 = i;
+                    pTJieDian1 = pTArrShuJieDian[i];
                 }
-                else if (tPShuArr[i]->quanZhong < tpI2->quanZhong)
+                else if (pTArrShuJieDian[i]->quanZhong < pTJieDian2->quanZhong)
                 {
-                    weizhi2 = i;
-                    tpI2 = tPShuArr[i];
+                    pTJieDianXiaBiao2 = i;
+                    pTJieDian2 = pTArrShuJieDian[i];
                 }
             }
         }
-        if (tpI1 != NULL && tpI2 != NULL)
+        if (pTJieDian1 != NULL && pTJieDian2 != NULL)
         {
-            struct HaFuManShuJieDian *tpI3 = (struct HaFuManShuJieDian *)malloc(sizeof(struct HaFuManShuJieDian));
-            tpI3->leiXing = 0;
-            tpI3->quanZhong = tpI1->quanZhong + tpI2->quanZhong;
-            tpI3->ziFu = '\0';
-            tpI3->pZuo = tpI1;
-            tpI3->pYou = tpI2;
-            tPShuArr[weizhi1] = tpI3;
-            tPShuArr[weizhi2] = NULL;
+            // 如果能找到两个结点，就以这两个结点作为子结点构造一个父结点
+            pTJieDian3 = (HFMSJD *)malloc(sizeof(HFMSJD));
+            pTJieDian3->leiXing = 0;
+            pTJieDian3->quanZhong = pTJieDian1->quanZhong + pTJieDian2->quanZhong;
+            pTJieDian3->ziFu = '\0';
+            pTJieDian3->pZuo = pTJieDian1;
+            pTJieDian3->pYou = pTJieDian2;
+            // 把原来的两个结点指针数组中移除，把新构造的结点放入指针数组
+            pTArrShuJieDian[pTJieDianXiaBiao1] = pTJieDian3;
+            pTArrShuJieDian[pTJieDianXiaBiao2] = NULL;
         }
         else
         {
-            if (tpI1 != NULL)
+            // 指针数组中只剩一个结点，那么哈夫曼树就已经构造完成了
+            if (pTJieDian1 != NULL)
             {
-                pHaFuManShuHead = tpI1;
+                pHaFuManShuHead = pTJieDian1;
                 break;
             }
             else
             {
-                pHaFuManShuHead = tpI2;
+                pHaFuManShuHead = pTJieDian2;
                 break;
             }
         }
     }
 }
 
-void gouZaoHaFuManBianMaBiao(struct HaFuManShuJieDian *pNow, char *bianMa, int len)
+/**
+ * 构造哈夫曼编码表
+ */
+void gouZaoHaFuManBianMaBiao(HFMSJD *pNow, char *arrBianMa, int iBianMalen)
 {
-    char tBianMa[64]={'\0'};
-    for(int i=0;bianMa[i]!='\0';i++){
-        tBianMa[i]=bianMa[i];
+    // 构造临时编码数组，拷贝上次递归传递进来的编码数组
+    char arrTBianMa[64] = {'\0'};
+    for (int i = 0; arrBianMa[i] != '\0'; i++)
+    {
+        arrTBianMa[i] = arrBianMa[i];
     }
     if (pNow->leiXing == 0)
     {
+        // 如果是临时结点就继续递归
         if (pNow->pZuo != NULL)
         {
-            int len1=len;
-            tBianMa[len1] = '0';
+            int len1 = iBianMalen;
+            arrTBianMa[len1] = '0';
             len1++;
-            gouZaoHaFuManBianMaBiao(pNow->pZuo, tBianMa, len1);
+            gouZaoHaFuManBianMaBiao(pNow->pZuo, arrTBianMa, len1);
         }
         if (pNow->pYou != NULL)
         {
-            int len2=len;
-            tBianMa[len2] = '1';
+            int len2 = iBianMalen;
+            arrTBianMa[len2] = '1';
             len2++;
-            gouZaoHaFuManBianMaBiao(pNow->pYou, tBianMa, len2);
+            gouZaoHaFuManBianMaBiao(pNow->pYou, arrTBianMa, len2);
         }
     }
     else
     {
-        for (int i = 0; i < len; i++)
+        // 如果是字符结点，那么该字符就完成了编码
+        arrHafuManZiFu[iHafuManZiFuNum] = pNow->ziFu;
+        for (int i = 0; i < iBianMalen; i++)
         {
-            HafuManBianMaBiao[shuLiang][i] = tBianMa[i];
+            arrHafuManBianMa[iHafuManZiFuNum][i] = arrTBianMa[i];
         }
-        HafuManBianMaBiao2[shuLiang]=pNow->ziFu;
-        shuLiang++;
+        iHafuManZiFuNum++;
     }
 }
