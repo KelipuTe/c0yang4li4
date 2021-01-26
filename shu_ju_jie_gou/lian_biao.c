@@ -4,13 +4,13 @@
 /**
  * 链表结点
  */
-struct LianBiaoJieDian
+typedef struct LianBiaoJieDian
 {
-    // 数据域
-    int num;
+    // 数值
+    int iShuZhi;
     // 下一个结点的指针
     struct LianBiaoJieDian *pNext;
-};
+} LBJD;
 
 // 链表头指针
 struct LianBiaoJieDian *pLianBiaoHead = NULL;
@@ -41,7 +41,8 @@ int main()
  */
 void shuChuLianBiao()
 {
-    struct LianBiaoJieDian *pTemp = NULL;
+    LBJD *pTemp = NULL;
+
     if (pLianBiaoHead == NULL)
     {
         printf("kong1lian4biao3!\n");
@@ -52,7 +53,7 @@ void shuChuLianBiao()
     printf("lian4biao3:");
     while (pTemp != NULL)
     {
-        printf("%d,", pTemp->num);
+        printf("%d,", pTemp->iShuZhi);
         pTemp = pTemp->pNext;
     }
     printf("\n");
@@ -61,16 +62,16 @@ void shuChuLianBiao()
 /**
  * 添加结点
  */
-void tianJiaXiang(int num)
+void tianJiaXiang(int iShuZhi)
 {
     // 申请内存
-    struct LianBiaoJieDian *pTemp = (struct LianBiaoJieDian *)malloc(sizeof(struct LianBiaoJieDian));
+    LBJD *pTemp = (LBJD *)malloc(sizeof(LBJD));
 
-    pTemp->num = num;
+    pTemp->iShuZhi = iShuZhi;
     pTemp->pNext = NULL;
     if (pLianBiaoHead == NULL)
     {
-        // 头指针为空
+        // 链表为空
         pLianBiaoHead = pTemp;
         pLianBiaoTail = pTemp;
     }
@@ -86,12 +87,12 @@ void tianJiaXiang(int num)
 /**
  * 移除指定结点
  */
-void yiChuXiang(int num)
+void yiChuXiang(int iShuZhi)
 {
     // 当前结点
-    struct LianBiaoJieDian *pNow;
+    LBJD *pNow;
     // 上一个结点
-    struct LianBiaoJieDian *pLast;
+    LBJD *pLast;
 
     if (pLianBiaoHead == NULL)
     {
@@ -100,7 +101,7 @@ void yiChuXiang(int num)
     pLast = pNow = pLianBiaoHead;
     while (pNow != NULL)
     {
-        if (pNow->num == num)
+        if (pNow->iShuZhi == iShuZhi)
         {
             if (pNow == pLianBiaoHead)
             {
@@ -127,6 +128,7 @@ void yiChuXiang(int num)
         }
         else
         {
+            // 指针后移继续寻找
             pLast = pNow;
             pNow = pNow->pNext;
         }

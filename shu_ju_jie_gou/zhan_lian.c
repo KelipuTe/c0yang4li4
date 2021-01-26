@@ -4,13 +4,13 @@
 /**
  * 栈结点
  */
-struct ZhanJieDian
+typedef struct ZhanJieDian
 {
-    // 数据域
-    int num;
+    // 数值
+    int iShuZhi;
     // 下一个结点的指针
     struct ZhanJieDian *pNext;
-};
+} ZJD;
 
 // 栈顶指针
 struct ZhanJieDian *pZhanDing = NULL;
@@ -39,8 +39,8 @@ int main()
  */
 void shuChuZhan()
 {
-    struct ZhanJieDian *pTemp = NULL;
-    
+    ZJD *pTemp = NULL;
+
     if (pZhanDing == NULL)
     {
         printf("zhan4:kong1!\n");
@@ -51,7 +51,7 @@ void shuChuZhan()
     printf("zhan4:");
     while (pTemp != NULL)
     {
-        printf("%d,", pTemp->num);
+        printf("%d,", pTemp->iShuZhi);
         pTemp = pTemp->pNext;
     }
     printf("\n");
@@ -60,15 +60,15 @@ void shuChuZhan()
 /**
  * 入栈
  */
-void ruZhan(int num)
+void ruZhan(int iShuZhi)
 {
-    struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
+    ZJD *pTemp = (ZJD *)malloc(sizeof(ZJD));
 
-    pTemp->num = num;
-    printf("ru4zhan4:%d\n", num);
+    pTemp->iShuZhi = iShuZhi;
+    printf("ru4zhan4:%d\n", iShuZhi);
     if (pZhanDing == NULL)
     {
-        // 栈顶指针为空
+        // 栈为空
         pTemp->pNext = NULL;
         pZhanDing = pTemp;
     }
@@ -86,8 +86,8 @@ void ruZhan(int num)
  */
 int chuZhan()
 {
-    struct ZhanJieDian *pNow = NULL;
-    int num = 0;
+    ZJD *pNow = NULL;
+    int iShuZhi = 0;
 
     if (pZhanDing == NULL)
     {
@@ -95,13 +95,15 @@ int chuZhan()
 
         return 0;
     }
+    // 出栈的元素
     pNow = pZhanDing;
-    num = pZhanDing->num;
-    printf("chu1zhan4:%d\n", num);
+    iShuZhi = pZhanDing->iShuZhi;
+    printf("chu1zhan4:%d\n", iShuZhi);
     // 移动栈顶指针
     pZhanDing = pZhanDing->pNext;
+    // 释放资源
     free(pNow);
     shuChuZhan();
 
-    return num;
+    return iShuZhi;
 }
