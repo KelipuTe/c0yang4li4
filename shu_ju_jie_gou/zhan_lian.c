@@ -1,27 +1,29 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
- * 栈结点
- */
+/*#####链表栈#####*/
+
+// 栈结点
 typedef struct ZhanJieDian
 {
-    // 数值
+    // 结点数值
     int iShuZhi;
     // 下一个结点的指针
     struct ZhanJieDian *pNext;
 } ZJD;
 
 // 栈顶指针
-struct ZhanJieDian *pZhanDing = NULL;
+ZJD *pZhanDing = NULL;
 
+// 输出栈中元素
 extern void shuChuZhan();
+// 入栈
 extern void ruZhan(int);
+// 出栈
 extern int chuZhan();
 
-/**
- * 链表栈
- */
+
+
 int main()
 {
     ruZhan(1);
@@ -34,9 +36,6 @@ int main()
     return 0;
 }
 
-/**
- * 输出栈中元素
- */
 void shuChuZhan()
 {
     ZJD *pTemp = NULL;
@@ -57,9 +56,6 @@ void shuChuZhan()
     printf("\n");
 }
 
-/**
- * 入栈
- */
 void ruZhan(int iShuZhi)
 {
     ZJD *pTemp = (ZJD *)malloc(sizeof(ZJD));
@@ -81,9 +77,6 @@ void ruZhan(int iShuZhi)
     shuChuZhan();
 }
 
-/**
- * 出栈
- */
 int chuZhan()
 {
     ZJD *pNow = NULL;

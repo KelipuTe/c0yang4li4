@@ -1,29 +1,31 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
- * 队列结点
- */
+/*#####链表队列#####*/
+
+// 队列结点
 typedef struct DuiLieJieDian
 {
-    // 数值
+    // 结点数值
     int iShuZhi;
     // 下一个结点的指针
     struct DuiLieJieDian *pNext;
 } DLJD;
 
 // 队列头指针
-struct DuiLieJieDian *pDuiLieHead = NULL;
+DLJD *pDuiLieHead = NULL;
 // 队列尾指针
-struct DuiLieJieDian *pDuiLieTail = NULL;
+DLJD *pDuiLieTail = NULL;
 
+// 输出队列元素
 extern void shuChuDuiLie();
+// 入队
 extern void ruDui(int);
+// 出队
 extern int chuDui();
 
-/**
- * 链表队列
- */
+
+
 int main()
 {
     ruDui(1);
@@ -37,9 +39,6 @@ int main()
     return 0;
 }
 
-/**
- * 输出队列元素
- */
 void shuChuDuiLie()
 {
     DLJD *pTemp = NULL;
@@ -60,9 +59,6 @@ void shuChuDuiLie()
     printf("\n");
 }
 
-/**
- * 入队
- */
 void ruDui(int iShuZhi)
 {
     DLJD *pTemp = (DLJD *)malloc(sizeof(DLJD));
@@ -84,9 +80,6 @@ void ruDui(int iShuZhi)
     shuChuDuiLie();
 }
 
-/**
- * 出队
- */
 int chuDui()
 {
     DLJD *pNow = NULL;

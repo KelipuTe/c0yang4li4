@@ -2,53 +2,53 @@
 #include <stdlib.h>
 #include <time.h>
 
-/**
- * 二叉树结点
- */
-struct ErChaShuJieDian
+/*#####二叉排序树#####*/
+
+// 二叉树结点
+typedef struct ErChaShuJieDian
 {
-    // 结点值，约定结点值都大于0
-    int num;
+    // 结点数值，约定都大于0
+    int iShuZhi;
     // 左结点
     struct ErChaShuJieDian *pZuo;
     // 右结点
     struct ErChaShuJieDian *pYou;
-};
+} ECSJD;
 
 // 头指针
-struct ErChaShuJieDian *pErChaShuHead = NULL;
+ECSJD *pErChaShuHead = NULL;
 // 定位指针，用于插入
-struct ErChaShuJieDian *pDingWei = NULL;
+ECSJD *pDingWei = NULL;
 // 定位指针，用于删除
-struct ErChaShuJieDian *pMuBiaoFu = NULL;
+ECSJD *pMuBiaoFu = NULL;
 
-extern struct ErChaShuJieDian *bianLiChaZhao(struct ErChaShuJieDian *, int);
+// 遍历查找
+extern ECSJD *bianLiChaZhao(ECSJD *, int);
+// 插入结点
 extern void chaRuJieDian(int);
+// 删除结点
 extern void shanChuJieDian(int);
 
-extern void qianXuBianLi(struct ErChaShuJieDian *);
-extern void zhongXuBianLi(struct ErChaShuJieDian *);
+extern void qianXuBianLi(ECSJD *);
+extern void zhongXuBianLi(ECSJD *);
 extern void shuChuXuLie(int *, int);
 
-/**
- * 二叉排序树
- */
+
+
 int main()
 {
-    int daiPaiXuArr[10];
-    int daiPaiXuLen = 10;
+    int iArrDaiPaiXu[10];
+    int iDaiPaiXuLen = 10;
     srand(time(NULL));
-    for (int i = 0; i < daiPaiXuLen; i++)
+    for (int i = 0; i < iDaiPaiXuLen; i++)
     {
-        int chaRuZhi = rand() % 100;
-        daiPaiXuArr[i] = chaRuZhi;
-        chaRuJieDian(chaRuZhi);
+        int iChaRuZhi = rand() % 100;
+        iArrDaiPaiXu[i] = iChaRuZhi;
+        chaRuJieDian(iChaRuZhi);
     }
 
     printf("pai2xu4qian2:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
-
-    shanChuJieDian(daiPaiXuArr[4]);
+    shuChuXuLie(&iArrDaiPaiXu, iDaiPaiXuLen);
 
     printf("qian2xu4bian4li4:");
     qianXuBianLi(pErChaShuHead);
@@ -57,51 +57,53 @@ int main()
     printf("zhong1xu4bian4li4:");
     zhongXuBianLi(pErChaShuHead);
     printf("\n");
+
+    shanChuJieDian(iArrDaiPaiXu[4]);
+
+    printf("zhong1xu4bian4li4:");
+    zhongXuBianLi(pErChaShuHead);
+    printf("\n");
 }
 
-/**
- * 遍历查找
- */
-struct ErChaShuJieDian *bianLiChaZhao(struct ErChaShuJieDian *chaXunZhiZhen, int chaZhaoZhi)
+ECSJD *bianLiChaZhao(ECSJD *pChaXunZhiZhen, int iChaZhaoZhi)
 {
-    struct ErChaShuJieDian *pTemp = NULL;
+    ECSJD *pTemp = NULL;
 
-    if (chaXunZhiZhen == NULL)
+    if (pChaXunZhiZhen == NULL)
     {
         return pTemp;
     }
     // 定位指针，记录查询过程中最后一次遍历的有效的结点
-    pDingWei = chaXunZhiZhen;
-    if (chaZhaoZhi > chaXunZhiZhen->num)
+    pDingWei = pChaXunZhiZhen;
+    if (iChaZhaoZhi > pChaXunZhiZhen->iShuZhi)
     {
         // 查找值大，访问右子树
-        pMuBiaoFu = chaXunZhiZhen;
-        return bianLiChaZhao(chaXunZhiZhen->pYou, chaZhaoZhi);
+        pMuBiaoFu = pChaXunZhiZhen;
+
+        return bianLiChaZhao(pChaXunZhiZhen->pYou, iChaZhaoZhi);
     }
-    else if (chaZhaoZhi < chaXunZhiZhen->num)
+    else if (iChaZhaoZhi < pChaXunZhiZhen->iShuZhi)
     {
         // 查找值小，访问左子树
-        pMuBiaoFu = chaXunZhiZhen;
-        return bianLiChaZhao(chaXunZhiZhen->pZuo, chaZhaoZhi);
+        pMuBiaoFu = pChaXunZhiZhen;
+
+        return bianLiChaZhao(pChaXunZhiZhen->pZuo, iChaZhaoZhi);
     }
     else
     {
         // 找到，则返回当前位置指针
-        return chaXunZhiZhen;
+        return pChaXunZhiZhen;
     }
 }
 
-/**
- * 插入结点
- */
-void chaRuJieDian(int chaRuZhi)
+void chaRuJieDian(int iChaRuZhi)
 {
-    struct ErChaShuJieDian *pTemp = NULL;
+    ECSJD *pTemp = NULL;
 
     if (pErChaShuHead == NULL)
     {
-        pErChaShuHead = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-        pErChaShuHead->num = chaRuZhi;
+        pErChaShuHead = (ECSJD *)malloc(sizeof(ECSJD));
+        pErChaShuHead->iShuZhi = iChaRuZhi;
         pErChaShuHead->pZuo = NULL;
         pErChaShuHead->pYou = NULL;
     }
@@ -109,17 +111,17 @@ void chaRuJieDian(int chaRuZhi)
     {
         // 重置查询指针的位置，用于插入结点
         pDingWei = NULL;
-        pTemp = bianLiChaZhao(pErChaShuHead, chaRuZhi);
+        pTemp = bianLiChaZhao(pErChaShuHead, iChaRuZhi);
         // 在查询之后，如果要插入的值已经存在，查询指针会指向查询到的结点
         // 如果要插入的值不存在，查询指针会指向将要插入结点的父结点
         if (pTemp == NULL)
         {
-            pTemp = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-            pTemp->num = chaRuZhi;
+            pTemp = (ECSJD *)malloc(sizeof(ECSJD));
+            pTemp->iShuZhi = iChaRuZhi;
             pTemp->pZuo = NULL;
             pTemp->pYou = NULL;
-            // 比较一下插入结点应该插到哪一边
-            if (chaRuZhi > pDingWei->num)
+            // 比较一下结点应该插到哪一边
+            if (iChaRuZhi > pDingWei->iShuZhi)
             {
                 pDingWei->pYou = pTemp;
             }
@@ -131,15 +133,12 @@ void chaRuJieDian(int chaRuZhi)
     }
 }
 
-/**
- * 删除结点
- */
-void shanChuJieDian(int shanChuZhi)
+void shanChuJieDian(int iShanChuZhi)
 {
-    struct ErChaShuJieDian *pMuBiao = NULL;
-    struct ErChaShuJieDian *pQianQu = NULL;
-    struct ErChaShuJieDian *pTiHuan = NULL;
-    int tag = 0;
+    ECSJD *pMuBiao = NULL;
+    ECSJD *pQianQu = NULL;
+    ECSJD *pTiHuan = NULL;
+    int iTag = 0;
 
     if (pErChaShuHead == NULL)
     {
@@ -147,28 +146,30 @@ void shanChuJieDian(int shanChuZhi)
     }
     // 找到要删除的结点的位置
     pMuBiaoFu = NULL;
-    pMuBiao = bianLiChaZhao(pErChaShuHead, shanChuZhi);
-    printf("%d", pMuBiaoFu->num);
-    printf("%d", pMuBiao->num);
+    pMuBiao = bianLiChaZhao(pErChaShuHead, iShanChuZhi);
+    printf("shan1chu2jie2dian3;", pMuBiaoFu->iShuZhi);
+    printf("mu4biao1fu4:%d;", pMuBiaoFu->iShuZhi);
+    printf("mu4biao1:%d\n", pMuBiao->iShuZhi);
     if (pMuBiao == NULL)
     {
+        // 没找到
         return;
     }
     else
     {
+        // 判断目标结点是父结点的哪个节点
         if (pMuBiaoFu->pZuo == pMuBiao)
         {
-            tag = 1;
+            iTag = 1;
         }
         else
         {
-            tag = 2;
+            iTag = 2;
         }
-
         if (pMuBiao->pZuo == NULL)
         {
-            // 如果左子树为空，直接把右子树接上来
-            if (tag == 1)
+            // 如果目标结点左子树为空，直接把右子树接上来
+            if (iTag == 1)
             {
                 pMuBiaoFu->pZuo = pMuBiao->pYou;
             }
@@ -176,12 +177,13 @@ void shanChuJieDian(int shanChuZhi)
             {
                 pMuBiaoFu->pYou = pMuBiao->pYou;
             }
+            // 释放资源
             free(pMuBiao);
         }
         else if (pMuBiao->pYou == NULL)
         {
-            // 如果右子树为空，直接把左子树接上来
-            if (tag == 1)
+            // 如果目标结点右子树为空，直接把左子树接上来
+            if (iTag == 1)
             {
                 pMuBiaoFu->pZuo = pMuBiao->pZuo;
             }
@@ -189,11 +191,12 @@ void shanChuJieDian(int shanChuZhi)
             {
                 pMuBiaoFu->pYou = pMuBiao->pZuo;
             }
+            // 释放资源
             free(pMuBiao);
         }
         else
         {
-            // 如果左子树和右子树都存在
+            // 如果目标结点的左子树和右子树都存在
             // 这里的办法是从左子树中找到结点值最大的结点替代被删除的结点
             // 同理，从右子树中找到结点值最小的结点也是可行的
             pQianQu = pMuBiao;
@@ -204,7 +207,7 @@ void shanChuJieDian(int shanChuZhi)
                 pTiHuan = pTiHuan->pYou;
             }
             // 直接把结点值最大的结点的结点值赋值到要删除的结点上
-            pMuBiao->num = pTiHuan->num;
+            pMuBiao->iShuZhi = pTiHuan->iShuZhi;
             if (pQianQu != pMuBiao)
             {
                 // 如果替代结点的前驱结点不是删除结点的位置
@@ -223,33 +226,33 @@ void shanChuJieDian(int shanChuZhi)
     }
 }
 
-void qianXuBianLi(struct ErChaShuJieDian *pNow)
+void qianXuBianLi(ECSJD *pNow)
 {
     if (pNow == NULL)
     {
         return;
     }
-    printf("%d,", pNow->num);
+    printf("%d,", pNow->iShuZhi);
     qianXuBianLi(pNow->pZuo);
     qianXuBianLi(pNow->pYou);
 }
 
-void zhongXuBianLi(struct ErChaShuJieDian *pNow)
+void zhongXuBianLi(ECSJD *pNow)
 {
     if (pNow == NULL)
     {
         return;
     }
     zhongXuBianLi(pNow->pZuo);
-    printf("%d,", pNow->num);
+    printf("%d,", pNow->iShuZhi);
     zhongXuBianLi(pNow->pYou);
 }
 
-void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen)
+void shuChuXuLie(int *iArrDaiPaiXu, int iDaiPaiXuLen)
 {
-    for (int i = 0; i < daiPaiXuLen; i++)
+    for (int i = 0; i < iDaiPaiXuLen; i++)
     {
-        printf("%d,", daiPaiXuArr[i]);
+        printf("%d,", iArrDaiPaiXu[i]);
     }
     printf("\n");
 }

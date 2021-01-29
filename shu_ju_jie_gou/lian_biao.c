@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*#####链表#####*/
+
 /**
  * 链表结点
  */
@@ -13,17 +15,17 @@ typedef struct LianBiaoJieDian
 } LBJD;
 
 // 链表头指针
-struct LianBiaoJieDian *pLianBiaoHead = NULL;
+LBJD *pLianBiaoHead = NULL;
 // 链表尾指针
-struct LianBiaoJieDian *pLianBiaoTail = NULL;
+LBJD *pLianBiaoTail = NULL;
 
+// 输出链表
 extern void shuChuLianBiao();
+// 添加结点
 extern void tianJiaXiang(int);
+// 移除指定结点
 extern void yiChuXiang();
 
-/**
- * 链表
- */
 int main()
 {
     tianJiaXiang(1);
@@ -36,9 +38,6 @@ int main()
     return 0;
 }
 
-/**
- * 输出链表
- */
 void shuChuLianBiao()
 {
     LBJD *pTemp = NULL;
@@ -59,9 +58,6 @@ void shuChuLianBiao()
     printf("\n");
 }
 
-/**
- * 添加结点
- */
 void tianJiaXiang(int iShuZhi)
 {
     // 申请内存
@@ -84,9 +80,6 @@ void tianJiaXiang(int iShuZhi)
     shuChuLianBiao();
 }
 
-/**
- * 移除指定结点
- */
 void yiChuXiang(int iShuZhi)
 {
     // 当前结点
