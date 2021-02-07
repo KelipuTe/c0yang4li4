@@ -157,7 +157,7 @@ void shanChuJieDian(int iShanChuZhi)
     }
     else
     {
-        // 判断目标结点是父结点的哪个节点
+        // 判断目标结点是父结点的哪个结点
         if (pMuBiaoFu->pZuo == pMuBiao)
         {
             iTag = 1;

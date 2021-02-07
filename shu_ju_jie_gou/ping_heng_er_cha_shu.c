@@ -210,10 +210,10 @@ void zuoXuan(struct ErChaShuJieDian *pNow)
     struct ErChaShuJieDian *pTYouZuo = pTYou->pZuo;
     if (pNow == pErChaShuHead)
     {
-        // 自己是根节点
+        // 自己是根结点
         pErChaShuHead = pNow->pYou;
     }
-    // 交换两个节点的位置
+    // 交换两个结点的位置
     pTYou->pFu = pTFu;
     pTYou->pZuo = pNow;
     pNow->pFu = pTYou;
@@ -236,7 +236,7 @@ void zuoXuan(struct ErChaShuJieDian *pNow)
     {
         pTYouZuo->pFu = pNow;
     }
-    // 重新计算参与旋转的两个节点的深度和平衡参数
+    // 重新计算参与旋转的两个结点的深度和平衡参数
     pNow->jieDianShenDu = jiSuanShenDu(pNow);
     pNow->pingHengCanShu = jiSuanPingHengCanShu(pNow);
     pTYou->jieDianShenDu = jiSuanShenDu(pTYou);

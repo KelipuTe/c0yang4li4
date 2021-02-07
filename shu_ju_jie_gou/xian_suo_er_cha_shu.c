@@ -156,7 +156,7 @@ void zhongXuBianLiXianSuoHua(struct ErChaShuJieDian *pNow)
     // 处理右结点
     if (pNow->youBiaoShi == 1)
     {
-        // 有右节点
+        // 有右结点
         zhongXuBianLiXianSuoHua(pNow->pYou);
     }
 }
