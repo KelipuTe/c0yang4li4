@@ -111,7 +111,7 @@ void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU])
 void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
 {
     // 广度优先遍历需要用到队列，这里和二叉树的广度优先遍历有点类似
-    int tiDingDian;
+    int tiDingDian = -1;
 
     for (int i = 0; i < DING_DIAN_SHU; i++)
     {
@@ -145,9 +145,8 @@ void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
 
 void ruDui(int iDingDian)
 {
-    DLJD *tpDLJD;
+    DLJD *tpDLJD = (DLJD *)malloc(sizeof(DLJD));
 
-    tpDLJD = (DLJD *)malloc(sizeof(DLJD));
     tpDLJD->iDingDian = iDingDian;
     tpDLJD->pNext = NULL;
     if (pDuiLieHead == NULL)

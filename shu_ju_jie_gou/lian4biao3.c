@@ -3,9 +3,7 @@
 
 /*#####链表#####*/
 
-/**
- * 链表结点
- */
+// 链表结点
 typedef struct LianBiaoJieDian
 {
     // 数值
@@ -40,7 +38,7 @@ int main()
 
 void shuChuLianBiao()
 {
-    LBJD *pTemp = NULL;
+    LBJD *tpLBJD = NULL;
 
     if (pLianBiaoHead == NULL)
     {
@@ -48,12 +46,12 @@ void shuChuLianBiao()
 
         return;
     }
-    pTemp = pLianBiaoHead;
+    tpLBJD = pLianBiaoHead;
     printf("lian4biao3:");
-    while (pTemp != NULL)
+    while (tpLBJD != NULL)
     {
-        printf("%d,", pTemp->iShuZhi);
-        pTemp = pTemp->pNext;
+        printf("%d,", tpLBJD->iShuZhi);
+        tpLBJD = tpLBJD->pNext;
     }
     printf("\n");
 }
@@ -61,21 +59,21 @@ void shuChuLianBiao()
 void tianJiaXiang(int iShuZhi)
 {
     // 申请内存
-    LBJD *pTemp = (LBJD *)malloc(sizeof(LBJD));
+    LBJD *tpLBJD = (LBJD *)malloc(sizeof(LBJD));
 
-    pTemp->iShuZhi = iShuZhi;
-    pTemp->pNext = NULL;
+    tpLBJD->iShuZhi = iShuZhi;
+    tpLBJD->pNext = NULL;
     if (pLianBiaoHead == NULL)
     {
         // 链表为空
-        pLianBiaoHead = pTemp;
-        pLianBiaoTail = pTemp;
+        pLianBiaoHead = tpLBJD;
+        pLianBiaoTail = tpLBJD;
     }
     else
     {
         // 把结点连接到链表尾部
-        pLianBiaoTail->pNext = pTemp;
-        pLianBiaoTail = pTemp;
+        pLianBiaoTail->pNext = tpLBJD;
+        pLianBiaoTail = tpLBJD;
     }
     shuChuLianBiao();
 }
