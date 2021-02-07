@@ -4,67 +4,71 @@
 
 /*#####二叉树#####*/
 
-/**
- * 二叉树结点
- */
-struct ErChaShuJieDian
+// 二叉树结点
+typedef struct ErChaShuJieDian
 {
     // 结点值，约定结点值都大于0
-    int num;
+    int iShuZhi;
     // 左结点
     struct ErChaShuJieDian *pZuo;
     // 右结点
     struct ErChaShuJieDian *pYou;
     // 结点层数
-    int jieDianCengShu;
-};
+    int iJieDianCengShu;
+} ECSJD;
 
 // 头指针
-struct ErChaShuJieDian *pErChaShuHead = NULL;
+ECSJD *pErChaShuHead = NULL;
 
-extern void gouZaoErChaShu(struct ErChaShuJieDian **, int *, int, int);
-extern void qianXuBianLi(struct ErChaShuJieDian *);
-extern void zhongXuBianLi(struct ErChaShuJieDian *);
-extern void houXuBianLi(struct ErChaShuJieDian *);
-extern int jiSuanErChaShuShenDu(struct ErChaShuJieDian *);
+// 从数组构造二叉树，注意参数pNow是二级指针
+extern void gouZaoErChaShu(ECSJD **, int *, int, int);
+// 前序遍历，根左右
+extern void qianXuBianLi(ECSJD *);
+// 中序遍历，左根右
+extern void zhongXuBianLi(ECSJD *);
+// 后序遍历，左右根
+extern void houXuBianLi(ECSJD *);
+// 计算二叉树深度
+extern int jiSuanErChaShuShenDu(ECSJD *);
+// 广度优先遍历
 extern void guangDuYouXianBianLi();
+// 深度优先遍历
 extern void shenDuYouXianBianLi();
 
 /*#####队列#####*/
 
-struct DuiLieJieDian
+typedef struct DuiLieJieDian
 {
-    struct ErChaShuJieDian *pErChaShu;
+    ECSJD *pErChaShu;
     struct DuiLieJieDian *pNext;
-};
+} DLJD;
 
-struct DuiLieJieDian *pDuiLieHead = NULL;
-struct DuiLieJieDian *pDuiLieTail = NULL;
+DLJD *pDuiLieHead = NULL;
+DLJD *pDuiLieTail = NULL;
 
-extern void ruDui(struct ErChaShuJieDian *, int);
-extern struct ErChaShuJieDian *chuDui();
+extern void ruDui(ECSJD *, int);
+extern ECSJD *chuDui();
 
 /*#####栈#####*/
 
-struct ZhanJieDian
+typedef struct ZhanJieDian
 {
-    struct ErChaShuJieDian *pErChaShu;
+    ECSJD *pErChaShu;
     struct ZhanJieDian *pNext;
-};
+} ZJD;
 
-struct ZhanJieDian *pZhanDing = NULL;
+ZJD *pZhanDing = NULL;
 
-extern void ruZhan(struct ErChaShuJieDian *);
-extern struct ErChaShuJieDian *chuZhan();
+extern void ruZhan(ECSJD *);
+extern ECSJD *chuZhan();
 
-/**
- * 二叉树
- */
+/*#####实现代码#####*/
+
 int main()
 {
-    int yuanSuBiao[] = {1, 2, 3, 4, 5, 6, 7, 0, 0, 10, 11};
-    int yuanSuBiaoLen = sizeof(yuanSuBiao) / sizeof(int);
-    gouZaoErChaShu(&pErChaShuHead, &yuanSuBiao, yuanSuBiaoLen, 1);
+    int iArrYuanSuBiao[] = {1, 2, 3, 4, 5, 6, 7, 0, 0, 10, 11};
+    int iYuanSuBiaoLen = sizeof(iArrYuanSuBiao) / sizeof(int);
+    gouZaoErChaShu(&pErChaShuHead, &iArrYuanSuBiao, iYuanSuBiaoLen, 1);
 
     printf("qian2xu4bian4li4:");
     qianXuBianLi(pErChaShuHead);
@@ -91,15 +95,11 @@ int main()
 
 /*#####二叉树#####*/
 
-/**
- * 从数组构造二叉树
- * 注意参数pNow是二级指针
- */
-void gouZaoErChaShu(struct ErChaShuJieDian **ppNow, int *yuanSuBiao, int yuanSuBiaoLen, int index)
+void gouZaoErChaShu(ECSJD **ppNow, int *pYuanSuBiao, int iYuanSuBiaoLen, int index)
 {
-    if (index <= yuanSuBiaoLen)
+    if (index <= iYuanSuBiaoLen)
     {
-        if (yuanSuBiao[index - 1] == 0)
+        if (pYuanSuBiao[index - 1] == 0)
         {
             // 识别无效值
             *ppNow = NULL;
@@ -108,56 +108,47 @@ void gouZaoErChaShu(struct ErChaShuJieDian **ppNow, int *yuanSuBiao, int yuanSuB
         }
         else
         {
-            *ppNow = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
+            *ppNow = (ECSJD *)malloc(sizeof(ECSJD));
             if (*ppNow == NULL)
             {
                 printf("nei4cun2fen1pei4shi1bai4!\n");
                 exit(0);
             }
-            (*ppNow)->num = yuanSuBiao[index - 1];
+            (*ppNow)->iShuZhi = pYuanSuBiao[index - 1];
             (*ppNow)->pZuo = NULL;
             (*ppNow)->pYou = NULL;
-            (*ppNow)->jieDianCengShu = 0;
+            (*ppNow)->iJieDianCengShu = 0;
             // 这里把这次构造的结点的左右结点传递下去，传递的参数其实是指向左右结点的指针
             // 但是不能简单地传递指针，直接把指针传下去就变形参了，所以传递一个二级指针
-            gouZaoErChaShu(&((*ppNow)->pZuo), yuanSuBiao, yuanSuBiaoLen, index * 2);
-            gouZaoErChaShu(&((*ppNow)->pYou), yuanSuBiao, yuanSuBiaoLen, index * 2 + 1);
+            gouZaoErChaShu(&((*ppNow)->pZuo), pYuanSuBiao, iYuanSuBiaoLen, index * 2);
+            gouZaoErChaShu(&((*ppNow)->pYou), pYuanSuBiao, iYuanSuBiaoLen, index * 2 + 1);
         }
     }
 }
 
-/**
- * 前序遍历，根左右
- */
-void qianXuBianLi(struct ErChaShuJieDian *pNow)
+void qianXuBianLi(ECSJD *pNow)
 {
     if (pNow == NULL)
     {
         return;
     }
-    printf("%d,", pNow->num);
+    printf("%d,", pNow->iShuZhi);
     qianXuBianLi(pNow->pZuo);
     qianXuBianLi(pNow->pYou);
 }
 
-/**
- * 中序遍历，左根右
- */
-void zhongXuBianLi(struct ErChaShuJieDian *pNow)
+void zhongXuBianLi(ECSJD *pNow)
 {
     if (pNow == NULL)
     {
         return;
     }
     zhongXuBianLi(pNow->pZuo);
-    printf("%d,", pNow->num);
+    printf("%d,", pNow->iShuZhi);
     zhongXuBianLi(pNow->pYou);
 }
 
-/**
- * 后序遍历，左右根
- */
-void houXuBianLi(struct ErChaShuJieDian *pNow)
+void houXuBianLi(ECSJD *pNow)
 {
     if (pNow == NULL)
     {
@@ -165,67 +156,58 @@ void houXuBianLi(struct ErChaShuJieDian *pNow)
     }
     houXuBianLi(pNow->pZuo);
     houXuBianLi(pNow->pYou);
-    printf("%d,", pNow->num);
+    printf("%d,", pNow->iShuZhi);
 }
 
-/**
- * 计算二叉树深度
- */
-int jiSuanErChaShuShenDu(struct ErChaShuJieDian *pNow)
+int jiSuanErChaShuShenDu(ECSJD *pNow)
 {
-    int zuoShenDu = 0;
-    int youShenDu = 0;
+    int iZuoShenDu = 0;
+    int iYouShenDu = 0;
     if (pNow == NULL)
     {
         return 0;
     }
-    zuoShenDu = jiSuanErChaShuShenDu(pNow->pZuo);
-    youShenDu = jiSuanErChaShuShenDu(pNow->pYou);
+    iZuoShenDu = jiSuanErChaShuShenDu(pNow->pZuo);
+    iYouShenDu = jiSuanErChaShuShenDu(pNow->pYou);
 
-    return (int)fmax(zuoShenDu, youShenDu) + 1;
+    return (int)fmax(iZuoShenDu, iYouShenDu) + 1;
 }
 
-/**
- * 广度优先遍历
- */
 void guangDuYouXianBianLi()
 {
-    int jieDianCengShu = 1;
-    struct ErChaShuJieDian *pErChaShu = NULL;
+    int iJieDianCengShu = 1;
+    ECSJD *pErChaShu = NULL;
 
-    ruDui(pErChaShuHead, jieDianCengShu);
+    ruDui(pErChaShuHead, iJieDianCengShu);
     pErChaShu = chuDui();
     while (pErChaShu != NULL)
     {
         // 持续遍历，直到队列为空
-        printf("%d-%d,", pErChaShu->jieDianCengShu, pErChaShu->num);
+        printf("%d-%d,", pErChaShu->iJieDianCengShu, pErChaShu->iShuZhi);
         if (pErChaShu->pZuo != NULL)
         {
             // 左结点先入队，先遍历
-            ruDui(pErChaShu->pZuo, pErChaShu->jieDianCengShu + 1);
+            ruDui(pErChaShu->pZuo, pErChaShu->iJieDianCengShu + 1);
         }
         if (pErChaShu->pYou != NULL)
         {
             // 右结点后入队，后遍历
-            ruDui(pErChaShu->pYou, pErChaShu->jieDianCengShu + 1);
+            ruDui(pErChaShu->pYou, pErChaShu->iJieDianCengShu + 1);
         }
         pErChaShu = chuDui();
     }
 }
 
-/**
- * 深度优先遍历
- */
 void shenDuYouXianBianLi()
 {
-    struct ErChaShuJieDian *pErChaShu = NULL;
+    ECSJD *pErChaShu = NULL;
 
     ruZhan(pErChaShuHead);
     pErChaShu = chuZhan();
     while (pErChaShu != NULL)
     {
         // 持续遍历，直到栈为空
-        printf("%d,", pErChaShu->num);
+        printf("%d,", pErChaShu->iShuZhi);
         if (pErChaShu->pYou != NULL)
         {
             // 右结点先入栈，后遍历
@@ -242,11 +224,11 @@ void shenDuYouXianBianLi()
 
 /*#####队列#####*/
 
-void ruDui(struct ErChaShuJieDian *pErChaShu, int jieDianCengShu)
+void ruDui(ECSJD *pErChaShu, int iJieDianCengShu)
 {
-    struct DuiLieJieDian *pTemp = (struct DuiLieJieDian *)malloc(sizeof(struct DuiLieJieDian));
+    DLJD *pTemp = (DLJD *)malloc(sizeof(DLJD));
     // 入队时记录层数
-    pErChaShu->jieDianCengShu = jieDianCengShu;
+    pErChaShu->iJieDianCengShu = iJieDianCengShu;
     pTemp->pErChaShu = pErChaShu;
     pTemp->pNext = NULL;
     if (pDuiLieHead == NULL)
@@ -260,10 +242,10 @@ void ruDui(struct ErChaShuJieDian *pErChaShu, int jieDianCengShu)
     }
 }
 
-struct ErChaShuJieDian *chuDui()
+ECSJD *chuDui()
 {
-    struct ErChaShuJieDian *pErChaShu = NULL;
-    struct DuiLieJieDian *pNow = NULL;
+    ECSJD *pErChaShu = NULL;
+    DLJD *pNow = NULL;
 
     if (pDuiLieHead == NULL)
     {
@@ -279,9 +261,9 @@ struct ErChaShuJieDian *chuDui()
 
 /*#####栈#####*/
 
-void ruZhan(struct ErChaShuJieDian *pErChaShu)
+void ruZhan(ECSJD *pErChaShu)
 {
-    struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
+    ZJD *pTemp = (ZJD *)malloc(sizeof(ZJD));
 
     pTemp->pErChaShu = pErChaShu;
     if (pZhanDing == NULL)
@@ -296,10 +278,10 @@ void ruZhan(struct ErChaShuJieDian *pErChaShu)
     }
 }
 
-struct ErChaShuJieDian *chuZhan()
+ECSJD *chuZhan()
 {
-    struct ErChaShuJieDian *pErChaShu = NULL;
-    struct ZhanJieDian *pNow = NULL;
+    ECSJD *pErChaShu = NULL;
+    ZJD *pNow = NULL;
 
     if (pZhanDing == NULL)
     {

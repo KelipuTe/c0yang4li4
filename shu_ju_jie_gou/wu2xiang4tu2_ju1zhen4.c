@@ -11,10 +11,10 @@ int iArr2WuXiangTu[DING_DIAN_SHU][DING_DIAN_SHU] = {0};
 
 // 输出无向图
 extern void shuChuWuXiangTu();
-// 深度优先遍历
-extern void shenDuYouXianBianLi(int, int[DING_DIAN_SHU]);
 // 广度优先遍历
 extern void guangDuYouXianBianLi(int[DING_DIAN_SHU]);
+// 深度优先遍历
+extern void shenDuYouXianBianLi(int, int[DING_DIAN_SHU]);
 
 /*#####队列#####*/
 
@@ -68,9 +68,11 @@ int main()
 
     printf("wu2xiang4tu2-lin2jie1ju1zhen4:\n");
     shuChuWuXiangTu();
+    
     printf("shen1du4you1xian1bian4li4:");
     shenDuYouXianBianLi(0, iArrDingDianFangWen1);
     printf("\n");
+    
     printf("guang3du4you1xian1bian4li4:");
     guangDuYouXianBianLi(iArrDingDianFangWen2);
     printf("\n");
@@ -90,24 +92,6 @@ void shuChuWuXiangTu()
     }
 }
 
-void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU])
-{
-    // 输出访问到的顶点
-    printf("%d,", i);
-    // 记录顶点访问情况
-    iArrDingDianFangWen[i] = 1;
-    // 遍历矩阵中对应顶点的行
-    for (int j = 0; j < DING_DIAN_SHU; j++)
-    {
-        if (iArr2WuXiangTu[i][j] == 1 && iArrDingDianFangWen[j] == 0)
-        {
-            // 如果找到没有访问过的顶点，就访问该顶点
-            shenDuYouXianBianLi(j, iArrDingDianFangWen);
-        }
-        // 这里是个递归，当里层顶点的行访问结束后，继续访问外层顶点的行
-    }
-}
-
 void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
 {
     // 广度优先遍历需要用到队列，这里和二叉树的广度优先遍历有点类似
@@ -119,7 +103,9 @@ void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
         {
             continue;
         }
+        // 输出访问到的顶点
         printf("%d,", i);
+        // 记录顶点访问情况
         iArrDingDianFangWen[i] = 1;
         ruDui(i);
         tiDingDian = chuDui();
@@ -138,6 +124,23 @@ void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
             }
             tiDingDian = chuDui();
         }
+    }
+}
+
+void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU])
+{
+    // 深度优先遍历需要用到递归，用栈也是可以的
+    printf("%d,", i);
+    iArrDingDianFangWen[i] = 1;
+    // 遍历矩阵中对应顶点的行
+    for (int j = 0; j < DING_DIAN_SHU; j++)
+    {
+        if (iArr2WuXiangTu[i][j] == 1 && iArrDingDianFangWen[j] == 0)
+        {
+            // 如果找到没有访问过的顶点，就访问该顶点
+            shenDuYouXianBianLi(j, iArrDingDianFangWen);
+        }
+        // 这里是个递归，当里层顶点的行访问结束后，继续访问外层顶点的行
     }
 }
 

@@ -24,6 +24,8 @@ extern void tianJiaXiang(int);
 // 移除指定结点
 extern void yiChuXiang();
 
+/*#####实现代码#####*/
+
 int main()
 {
     tianJiaXiang(1);

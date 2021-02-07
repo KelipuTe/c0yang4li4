@@ -22,7 +22,7 @@ extern void ruZhan(int);
 // 出栈
 extern int chuZhan();
 
-
+/*#####实现代码#####*/
 
 int main()
 {
@@ -38,7 +38,7 @@ int main()
 
 void shuChuZhan()
 {
-    ZJD *pTemp = NULL;
+    ZJD *tpZJD = NULL;
 
     if (pZhanDing == NULL)
     {
@@ -46,33 +46,33 @@ void shuChuZhan()
 
         return;
     }
-    pTemp = pZhanDing;
+    tpZJD = pZhanDing;
     printf("zhan4:");
-    while (pTemp != NULL)
+    while (tpZJD != NULL)
     {
-        printf("%d,", pTemp->iShuZhi);
-        pTemp = pTemp->pNext;
+        printf("%d,", tpZJD->iShuZhi);
+        tpZJD = tpZJD->pNext;
     }
     printf("\n");
 }
 
 void ruZhan(int iShuZhi)
 {
-    ZJD *pTemp = (ZJD *)malloc(sizeof(ZJD));
+    ZJD *tpZJD = (ZJD *)malloc(sizeof(ZJD));
 
-    pTemp->iShuZhi = iShuZhi;
+    tpZJD->iShuZhi = iShuZhi;
     printf("ru4zhan4:%d\n", iShuZhi);
     if (pZhanDing == NULL)
     {
         // 栈为空
-        pTemp->pNext = NULL;
-        pZhanDing = pTemp;
+        tpZJD->pNext = NULL;
+        pZhanDing = tpZJD;
     }
     else
     {
         // 移动栈顶指针
-        pTemp->pNext = pZhanDing;
-        pZhanDing = pTemp;
+        tpZJD->pNext = pZhanDing;
+        pZhanDing = tpZJD;
     }
     shuChuZhan();
 }

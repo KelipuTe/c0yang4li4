@@ -1,7 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+/*#####后缀表达式#####*/
+
+// 中缀表达式转后缀表达式
 extern void zhongZhuiZhuanHouZhui();
+// 后缀表达式计算结果
 extern float jiSuanHouZhuiBiaoDaShi(char *);
 
 /*#####栈-字符#####*/
@@ -33,9 +37,8 @@ struct ZhanJieDian2 *pZhanDing2 = NULL;
 extern void ruZhan2(float);
 extern float chuZhan2();
 
-/**
- * 后缀表达式
- */
+/*#####实现代码#####*/
+
 int main()
 {
     char zhongZhuiArr[] = "(1-9)*(2+8)";
@@ -49,9 +52,6 @@ int main()
     printf("%f\n", num);
 }
 
-/**
- * 中缀表达式转后缀表达式
- */
 void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr)
 {
     char caoZuoXiang;
@@ -139,9 +139,6 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr)
     houZhuiArr[j] = '\0';
 }
 
-/**
- * 后缀表达式计算结果
- */
 float jiSuanHouZhuiBiaoDaShi(char *houZhuiArr)
 {
     char caoZuoXiang;

@@ -24,7 +24,7 @@ extern void ruDui(int);
 // 出队
 extern int chuDui();
 
-
+/*#####实现代码#####*/
 
 int main()
 {
@@ -41,7 +41,7 @@ int main()
 
 void shuChuDuiLie()
 {
-    DLJD *pTemp = NULL;
+    DLJD *tpDLJD = NULL;
 
     if (pDuiLieHead == NULL)
     {
@@ -49,32 +49,32 @@ void shuChuDuiLie()
 
         return;
     }
-    pTemp = pDuiLieHead;
+    tpDLJD = pDuiLieHead;
     printf("dui4lie4:");
-    while (pTemp != NULL)
+    while (tpDLJD != NULL)
     {
-        printf("%d,", pTemp->iShuZhi);
-        pTemp = pTemp->pNext;
+        printf("%d,", tpDLJD->iShuZhi);
+        tpDLJD = tpDLJD->pNext;
     }
     printf("\n");
 }
 
 void ruDui(int iShuZhi)
 {
-    DLJD *pTemp = (DLJD *)malloc(sizeof(DLJD));
+    DLJD *tpDLJD = (DLJD *)malloc(sizeof(DLJD));
 
-    pTemp->iShuZhi = iShuZhi;
-    pTemp->pNext = NULL;
+    tpDLJD->iShuZhi = iShuZhi;
+    tpDLJD->pNext = NULL;
     printf("ru4dui4:%d\n", iShuZhi);
     if (pDuiLieHead == NULL)
     {
         // 队列为空
-        pDuiLieHead = pDuiLieTail = pTemp;
+        pDuiLieHead = pDuiLieTail = tpDLJD;
     }
     else
     {
         // 移动队列尾指针
-        pDuiLieTail->pNext = pTemp;
+        pDuiLieTail->pNext = tpDLJD;
         pDuiLieTail = pDuiLieTail->pNext;
     }
     shuChuDuiLie();

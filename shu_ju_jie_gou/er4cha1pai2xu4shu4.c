@@ -22,18 +22,20 @@ ECSJD *pDingWei = NULL;
 // 定位指针，用于删除
 ECSJD *pMuBiaoFu = NULL;
 
+// 输出数组
+extern void shuChuShuZu(int *, int);
 // 遍历查找
 extern ECSJD *bianLiChaZhao(ECSJD *, int);
 // 插入结点
 extern void chaRuJieDian(int);
 // 删除结点
 extern void shanChuJieDian(int);
-
+// 前序遍历
 extern void qianXuBianLi(ECSJD *);
+// 中序遍历
 extern void zhongXuBianLi(ECSJD *);
-extern void shuChuXuLie(int *, int);
 
-
+/*#####实现代码#####*/
 
 int main()
 {
@@ -48,7 +50,7 @@ int main()
     }
 
     printf("pai2xu4qian2:");
-    shuChuXuLie(&iArrDaiPaiXu, iDaiPaiXuLen);
+    shuChuShuZu(&iArrDaiPaiXu, iDaiPaiXuLen);
 
     printf("qian2xu4bian4li4:");
     qianXuBianLi(pErChaShuHead);
@@ -248,7 +250,7 @@ void zhongXuBianLi(ECSJD *pNow)
     zhongXuBianLi(pNow->pYou);
 }
 
-void shuChuXuLie(int *iArrDaiPaiXu, int iDaiPaiXuLen)
+void shuChuShuZu(int *iArrDaiPaiXu, int iDaiPaiXuLen)
 {
     for (int i = 0; i < iDaiPaiXuLen; i++)
     {
