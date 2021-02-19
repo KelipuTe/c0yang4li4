@@ -42,9 +42,8 @@ int main()
     int iArrZuiXiaoQuanZhongLieBiao[12] = {0};
     // 相关顶点用于记录上面最小路径权重的来源，即对应的路径是从哪个顶点出来的
     int iArrXiangGuanDingDianLieBiao[12] = {0};
-
     // 初始化邻接矩阵，这里和普通邻接矩阵初始化的方式不一样
-    // 初始化的时候除了对角线默认所有的值都是临界权重，对角线默认为0，自己到自己当然是0
+    // 初始化的时候除了对角线默认所有的值都是临界权重，对角线默认为0，自己到自己认为权重是0
     for (int i = 0; i < DING_DIAN_SHU; i++)
     {
         for (int j = 0; j < DING_DIAN_SHU; j++)
@@ -66,7 +65,6 @@ int main()
         iArr2WuXiangTu[iDingDian1][iDingDian2] = iArr2LuJing[i][2];
         iArr2WuXiangTu[iDingDian2][iDingDian1] = iArr2LuJing[i][2];
     }
-
     // 默认从顶点0开始，已经录入最小生成树的顶点，最小路径权重就标为0，表示顶点已经在最小生成树中
     iArrZuiXiaoQuanZhongLieBiao[0] = 0;
     // 因为是从顶点0开始的，所以默认顶点0是从顶点0出发的
