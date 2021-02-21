@@ -1,7 +1,8 @@
 {
+    "editor.formatOnSave": true,
+    "files.autoSave": "afterDelay",
     "files.associations": {
-        "string.h": "c",
         "stdio.h": "c",
-        "math.h": "c"
+        "stdlib.h": "c"
     }
 }
