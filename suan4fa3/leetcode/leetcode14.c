@@ -6,7 +6,7 @@
 
 char *longestCommonPrefix(char **strs, int strsSize) {
     int iOneCharSize = sizeof(char), iOneLineSize = sizeof(char) * 201;
-    char *sResStr = malloc(iOneLineSize);
+    char *sResStr = (char *)malloc(iOneLineSize);
 
     memset(sResStr, 0, iOneLineSize);
 
