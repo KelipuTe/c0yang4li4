@@ -1,5 +1,7 @@
 #include <stdio.h>
 
+/*#####leetcode69-x的平方根#####*/
+
 int mySqrt(int x) {
     long long iLeft = 0, iRight = 0, iMiddle = 0;
 
