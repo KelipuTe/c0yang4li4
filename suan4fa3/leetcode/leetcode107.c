@@ -78,9 +78,9 @@ int **levelOrderBottom(struct TreeNode *root, int *returnSize, int **returnColum
             iCengShu++;
         }
     }
-    // 倒序每层数量
     *returnSize = iCengShu;
     // printf("iCengShu:%d\n", iCengShu);
+    // 倒序每层遍历数量
     piarrMeiCengLen = (int *)malloc(sizeof(int) * iCengShu);
     for (int i = 0; i < iCengShu; i++) {
         piarrMeiCengLen[i] = iArrMeiCengLen[iCengShu - 1 - i];
