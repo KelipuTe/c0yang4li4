@@ -20,9 +20,11 @@ typedef struct ErChaShuJieDian {
     struct ErChaShuJieDian *pECSJDYou;
 } ECSJD;
 
+// 从数组构造二叉树
 extern void shuZuGouZaoECS(ECSJD **, int *, int, int, ECSJD *);
 // 中序遍历线索化
 extern void zhongXuBianLiXianSuoHua(ECSJD *, ECSJD **);
+// 中序遍历，左根右
 extern void zhongXuBianLi(ECSJD *);
 
 /*#####实现代码#####*/
@@ -40,6 +42,8 @@ int main() {
     printf("zhong1xu4bian4li4:");
     zhongXuBianLi(pECSJDTou);
     printf("\n");
+
+    return 0;
 }
 
 void shuZuGouZaoECS(ECSJD **tppECSJD, int *pYuanSuBiao, int iYuanSuBiaoLen, int iIndex, ECSJD *pECSJDLast) {

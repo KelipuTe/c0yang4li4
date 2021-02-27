@@ -1,318 +1,234 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
-#include <math.h>
 
-/**
- * 二叉树结点
- */
-struct ErChaShuJieDian
-{
-    // 数据域，约定结点值都大于0
-    int num;
-    // 左结点指针
-    struct ErChaShuJieDian *pZuo;
-    // 右结点指针
-    struct ErChaShuJieDian *pYou;
-    // 父结点指针
-    struct ErChaShuJieDian *pFu;
-    // 结点深度
-    // 从下往上依次增加，最下层叶子结点的深度约定为1。
-    int jieDianShenDu;
-    // 平衡参数
-    // 左右子树深度的差值。如果算出来是[-1,0,1]，就是平衡的。
-    int pingHengCanShu;
-};
+/*#####平衡二叉树#####*/
+// 平衡二叉树是一种特殊的二叉排序树
 
-// 头指针
-struct ErChaShuJieDian *pErChaShuHead = NULL;
+// 二叉树结点
+typedef struct ErChaShuJieDian {
+    // 结点值
+    int iShuZhi;
+    // 左子树结点
+    struct ErChaShuJieDian *pECSJDZuo;
+    // 右子树结点
+    struct ErChaShuJieDian *pECSJDYou;
+    // 父结点
+    struct ErChaShuJieDian *pECSJDFu;
+    // 结点深度，下往上依次增加，最下层叶子结点的深度约定为1。
+    int iJieDianShenDu;
+    // 平衡参数，左右子树深度的差值。如果算出来是[-1,0,1]，就是平衡的。
+    int iPingHengCanShu;
+} ECSJD;
 
-extern void chaRuJieDian(struct ErChaShuJieDian **, int);
-extern int jiSuanPingHengCanShu(struct ErChaShuJieDian *);
-extern void zuoXuan(struct ErChaShuJieDian *);
-extern void youXuan(struct ErChaShuJieDian *);
+// 输出数组
+extern void shuChuShuZu(int *, int);
+// 插入结点
+extern void chaRuJieDian(ECSJD **, int, ECSJD **);
+//计算结点深度，结点深度=左右子树中深度更大的子树那个子树的深度+1
+extern int jiSuanShenDu(ECSJD *);
+// 计算平衡参数，结点平衡参数=左子树深度-右子树深度
+extern int jiSuanPingHengCanShu(ECSJD *);
+// 左旋，自己的右结点变自己的父结点
+extern void zuoXuan(ECSJD *, ECSJD **);
+// 右旋，自己的左结点变自己的父结点
+extern void youXuan(ECSJD *, ECSJD **);
+// 中序遍历
+extern void zhongXuBianLi(ECSJD *);
 
-extern void qianXuBianLi(struct ErChaShuJieDian *);
-extern void zhongXuBianLi(struct ErChaShuJieDian *);
-extern void shuChuXuLie(int *, int);
+int main() {
+    // 头指针
+    ECSJD *pECSJDTou = NULL;
+    int iarrDaiPaiXu[10];
+    int iarrDaiPaiXuLen = 10;
 
-/**
- * 平衡二叉树
- * 平衡二叉树是一种特殊的二叉排序树
- */
-int main()
-{
-    int daiPaiXuArr[10];
-    int daiPaiXuLen = 10;
     srand(time(NULL));
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
+    for (int i = 0; i < iarrDaiPaiXuLen; i++) {
         int chaRuZhi = (rand() % 99) + 1;
-        daiPaiXuArr[i] = chaRuZhi;
-        chaRuJieDian(&pErChaShuHead, daiPaiXuArr[i]);
+        iarrDaiPaiXu[i] = chaRuZhi;
+        chaRuJieDian(&pECSJDTou, iarrDaiPaiXu[i], &pECSJDTou);
     }
 
-    printf("pai2xu4qian2:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
-
-    printf("qian2xu4bian4li4:");
-    qianXuBianLi(pErChaShuHead);
-    printf("\n");
+    printf("dai4pai2xu4:");
+    shuChuShuZu(iarrDaiPaiXu, iarrDaiPaiXuLen);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pErChaShuHead);
+    zhongXuBianLi(pECSJDTou);
+    printf("\n");
+
+    return 0;
+}
+
+void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {
+    for (int i = 0; i < iArrDaiPaiXuLen; i++) {
+        printf("%d,", iarrDaiPaiXu[i]);
+    }
     printf("\n");
 }
 
-/**
- * 插入结点
- */
-void chaRuJieDian(struct ErChaShuJieDian **ppNow, int chaRuZhi)
-{
-    if (*ppNow == NULL)
-    {
-        // 头指针为空
-        *ppNow = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-        if (*ppNow == NULL)
-        {
-            printf("nei4cun2fen1pei4shi1bai4!\n");
-            exit(0);
-        }
-        (*ppNow)->num = chaRuZhi;
-        (*ppNow)->pZuo = NULL;
-        (*ppNow)->pYou = NULL;
-        (*ppNow)->pFu = NULL;
-        (*ppNow)->jieDianShenDu = 1;
-        (*ppNow)->pingHengCanShu = 0;
-    }
-    else
-    {
-        if (chaRuZhi < (*ppNow)->num)
-        {
-            if ((*ppNow)->pZuo != NULL)
-            {
-                chaRuJieDian(&((*ppNow)->pZuo), chaRuZhi);
+void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDTou) {
+    if (*tpECSJD == NULL) {
+        *tpECSJD = (ECSJD *)malloc(sizeof(ECSJD));
+        (*tpECSJD)->iShuZhi = iChaRuZhi;
+        (*tpECSJD)->pECSJDZuo = NULL;
+        (*tpECSJD)->pECSJDYou = NULL;
+        (*tpECSJD)->pECSJDFu = NULL;
+        (*tpECSJD)->iJieDianShenDu = 1;
+        (*tpECSJD)->iPingHengCanShu = 0;
+    } else {
+        if (iChaRuZhi < (*tpECSJD)->iShuZhi) {
+            if ((*tpECSJD)->pECSJDZuo != NULL) {
+                chaRuJieDian(&((*tpECSJD)->pECSJDZuo), iChaRuZhi, tpECSJDTou);
+            } else {
+                (*tpECSJD)->pECSJDZuo = (ECSJD *)malloc(sizeof(ECSJD));
+                (*tpECSJD)->pECSJDZuo->iShuZhi = iChaRuZhi;
+                (*tpECSJD)->pECSJDZuo->pECSJDZuo = NULL;
+                (*tpECSJD)->pECSJDZuo->pECSJDYou = NULL;
+                (*tpECSJD)->pECSJDZuo->pECSJDFu = *tpECSJD;
+                (*tpECSJD)->pECSJDZuo->iJieDianShenDu = 1;
+                (*tpECSJD)->pECSJDZuo->iPingHengCanShu = 0;
             }
-            else
-            {
-                (*ppNow)->pZuo = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-                if ((*ppNow)->pZuo == NULL)
-                {
-                    printf("nei4cun2fen1pei4shi1bai4!\n");
-                    exit(0);
-                }
-                (*ppNow)->pZuo->num = chaRuZhi;
-                (*ppNow)->pZuo->pZuo = NULL;
-                (*ppNow)->pZuo->pYou = NULL;
-                (*ppNow)->pZuo->pFu = *ppNow;
-                (*ppNow)->pZuo->jieDianShenDu = 1;
-                (*ppNow)->pZuo->pingHengCanShu = 0;
+        } else if (iChaRuZhi > (*tpECSJD)->iShuZhi) {
+            if ((*tpECSJD)->pECSJDYou != NULL) {
+                chaRuJieDian(&((*tpECSJD)->pECSJDYou), iChaRuZhi, tpECSJDTou);
+            } else {
+                (*tpECSJD)->pECSJDYou = (ECSJD *)malloc(sizeof(ECSJD));
+                (*tpECSJD)->pECSJDYou->iShuZhi = iChaRuZhi;
+                (*tpECSJD)->pECSJDYou->pECSJDZuo = NULL;
+                (*tpECSJD)->pECSJDYou->pECSJDYou = NULL;
+                (*tpECSJD)->pECSJDYou->pECSJDFu = *tpECSJD;
+                (*tpECSJD)->pECSJDYou->iJieDianShenDu = 1;
+                (*tpECSJD)->pECSJDYou->iPingHengCanShu = 0;
             }
-        }
-        else if (chaRuZhi > (*ppNow)->num)
-        {
-            if ((*ppNow)->pYou != NULL)
-            {
-                chaRuJieDian(&((*ppNow)->pYou), chaRuZhi);
-            }
-            else
-            {
-                (*ppNow)->pYou = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-                if ((*ppNow)->pYou == NULL)
-                {
-                    printf("nei4cun2fen1pei4shi1bai4!\n");
-                    exit(0);
-                }
-                (*ppNow)->pYou->num = chaRuZhi;
-                (*ppNow)->pYou->pZuo = NULL;
-                (*ppNow)->pYou->pYou = NULL;
-                (*ppNow)->pYou->pFu = *ppNow;
-                (*ppNow)->pYou->jieDianShenDu = 1;
-                (*ppNow)->pYou->pingHengCanShu = 0;
-            }
+        } else {
+            // 要插入的值已经存在
         }
         // 检查是否需要旋转
-        (*ppNow)->pingHengCanShu = jiSuanPingHengCanShu(*ppNow);
-        if ((*ppNow)->pingHengCanShu > 1)
-        {
-            // 左子树高，LL型
-            if ((*ppNow)->pZuo->pingHengCanShu == -1)
-            {
-                // 左子树的右子树高，LR型
-                zuoXuan((*ppNow)->pZuo);
+        (*tpECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tpECSJD);
+        if ((*tpECSJD)->iPingHengCanShu > 1) {
+            // 左子树高
+            if ((*tpECSJD)->pECSJDZuo->iPingHengCanShu == -1) {
+                // LR型，先左旋变成LL型
+                zuoXuan((*tpECSJD)->pECSJDZuo, tpECSJDTou);
             }
-            youXuan(*ppNow);
+            // LL型
+            youXuan(*tpECSJD, tpECSJDTou);
         }
-        if ((*ppNow)->pingHengCanShu < -1)
-        {
-            // 右子树高，RR型
-            if ((*ppNow)->pYou->pingHengCanShu == 1)
-            {
-                // 右子树的左子树高，RL型
-                youXuan((*ppNow)->pYou);
+        if ((*tpECSJD)->iPingHengCanShu < -1) {
+            // 右子树高，
+            if ((*tpECSJD)->pECSJDYou->iPingHengCanShu == 1) {
+                // RL型，先右旋变成RR型
+                youXuan((*tpECSJD)->pECSJDYou, tpECSJDTou);
             }
-            zuoXuan(*ppNow);
+            // RR型
+            zuoXuan(*tpECSJD, tpECSJDTou);
         }
         // 计算深度和平衡参数
-        (*ppNow)->jieDianShenDu = jiSuanShenDu(*ppNow);
-        (*ppNow)->pingHengCanShu = jiSuanPingHengCanShu(*ppNow);
+        (*tpECSJD)->iJieDianShenDu = jiSuanShenDu(*tpECSJD);
+        (*tpECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tpECSJD);
     }
 }
 
-/**
- * 计算结点深度
- * 结点深度=左右子树中深度更大的子树那个子树的深度+1
- */
-int jiSuanShenDu(struct ErChaShuJieDian *pNow)
-{
-    int zuoShenDu = 0;
-    int youShenDu = 0;
-    if (pNow->pZuo != NULL)
-    {
-        zuoShenDu = pNow->pZuo->jieDianShenDu;
+int jiSuanShenDu(ECSJD *tpECSJD) {
+    int iShenDuZuo = 0, iShenDuYou = 0;
+    if (tpECSJD->pECSJDZuo != NULL) {
+        iShenDuZuo = tpECSJD->pECSJDZuo->iJieDianShenDu;
     }
-    if (pNow->pYou != NULL)
-    {
-        youShenDu = pNow->pYou->jieDianShenDu;
+    if (tpECSJD->pECSJDYou != NULL) {
+        iShenDuYou = tpECSJD->pECSJDYou->iJieDianShenDu;
     }
-    return (int)fmax(zuoShenDu, youShenDu) + 1;
+    return (int)fmax(iShenDuZuo, iShenDuYou) + 1;
 }
 
-/**
- * 计算结点平衡参数
- * 结点平衡参数=左子树深度-右子树深度
- */
-int jiSuanPingHengCanShu(struct ErChaShuJieDian *pNow)
-{
-    int zuoShenDu = 0;
-    int youShenDu = 0;
-    if (pNow->pZuo != NULL)
-    {
-        zuoShenDu = pNow->pZuo->jieDianShenDu;
+int jiSuanPingHengCanShu(ECSJD *tpECSJD) {
+    int iShenDuZuo = 0, iShenDuYou = 0;
+    if (tpECSJD->pECSJDZuo != NULL) {
+        iShenDuZuo = tpECSJD->pECSJDZuo->iJieDianShenDu;
     }
-    if (pNow->pYou != NULL)
-    {
-        youShenDu = pNow->pYou->jieDianShenDu;
+    if (tpECSJD->pECSJDYou != NULL) {
+        iShenDuYou = tpECSJD->pECSJDYou->iJieDianShenDu;
     }
-    return zuoShenDu - youShenDu;
+    return iShenDuZuo - iShenDuYou;
 }
 
-/**
- * 左旋，自己的右结点变自己的父结点
- */
-void zuoXuan(struct ErChaShuJieDian *pNow)
-{
-    // 自己的父结点指针
-    struct ErChaShuJieDian *pTFu = pNow->pFu;
-    // 自己的右结点指针
-    struct ErChaShuJieDian *pTYou = pNow->pYou;
-    // 自己的右结点的左结点指针
-    struct ErChaShuJieDian *pTYouZuo = pTYou->pZuo;
-    if (pNow == pErChaShuHead)
-    {
+void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
+    // 自己的父结点
+    ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
+    // 自己的右结点
+    ECSJD *tpECSJDYou = tpECSJD->pECSJDYou;
+    // 自己的右结点的左结点
+    ECSJD *tpECSJDYouZuo = tpECSJDYou->pECSJDZuo;
+
+    if (tpECSJD == *tpECSJDTou) {
         // 自己是根结点
-        pErChaShuHead = pNow->pYou;
+        *tpECSJDTou = tpECSJDYou;
     }
-    // 交换两个结点的位置
-    pTYou->pFu = pTFu;
-    pTYou->pZuo = pNow;
-    pNow->pFu = pTYou;
-    if (pTFu != NULL)
-    {
-        // 如果自己有父结点
-        // 要把左旋上去的自己的右结点接到父结点相应的位置
-        if (pNow == pTFu->pZuo)
-        {
-            pTFu->pZuo = pTYou;
-        }
-        else if (pNow == pTFu->pYou)
-        {
-            pTFu->pYou = pTYou;
+    // 自己的右结点变成自己的父结点
+    tpECSJDYou->pECSJDFu = tpECSJDFu;
+    tpECSJDYou->pECSJDZuo = tpECSJD;
+    // 自己变成自己的右结点的左结点
+    tpECSJD->pECSJDFu = tpECSJDYou;
+    if (tpECSJDFu != NULL) {
+        // 如果自己有父结点，要把左旋上去的自己的右结点接到父结点相应的位置
+        if (tpECSJD == tpECSJDFu->pECSJDZuo) {
+            tpECSJDFu->pECSJDZuo = tpECSJDYou;
+        } else if (tpECSJD == tpECSJDFu->pECSJDYou) {
+            tpECSJDFu->pECSJDYou = tpECSJDYou;
         }
     }
     // 如果自己的右结点有左结点，要把这个左结点变成自己的右结点
-    pNow->pYou = pTYouZuo;
-    if (pTYouZuo != NULL)
-    {
-        pTYouZuo->pFu = pNow;
+    tpECSJD->pECSJDYou = tpECSJDYouZuo;
+    if (tpECSJDYouZuo != NULL) {
+        tpECSJDYouZuo->pECSJDFu = tpECSJD;
     }
     // 重新计算参与旋转的两个结点的深度和平衡参数
-    pNow->jieDianShenDu = jiSuanShenDu(pNow);
-    pNow->pingHengCanShu = jiSuanPingHengCanShu(pNow);
-    pTYou->jieDianShenDu = jiSuanShenDu(pTYou);
-    pTYou->pingHengCanShu = jiSuanPingHengCanShu(pTYou);
+    tpECSJD->iJieDianShenDu = jiSuanShenDu(tpECSJD);
+    tpECSJD->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJD);
+    tpECSJDYou->iJieDianShenDu = jiSuanShenDu(tpECSJDYou);
+    tpECSJDYou->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJDYou);
 }
 
-/**
- * 右旋，自己的左结点变自己的父结点
- */
-void youXuan(struct ErChaShuJieDian *pNow)
-{
-    // 自己的父结点指针
-    struct ErChaShuJieDian *pTFu = pNow->pFu;
-    // 自己的左结点指针
-    struct ErChaShuJieDian *pTZuo = pNow->pZuo;
-    // 自己的左结点的右结点指针
-    struct ErChaShuJieDian *pTZuoYou = pTZuo->pYou;
-    if (pNow == pErChaShuHead)
-    {
-        pErChaShuHead = pTZuo;
+void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
+    // 自己的父结点
+    ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
+    // 自己的左结点
+    ECSJD *tpECSJDZuo = tpECSJD->pECSJDZuo;
+    // 自己的左结点的右结点
+    ECSJD *tpECSJDZuoYou = tpECSJDZuo->pECSJDYou;
+
+    if (tpECSJD == *tpECSJDTou) {
+        *tpECSJDTou = tpECSJDZuo;
     }
-    pTZuo->pFu = pTFu;
-    pTZuo->pYou = pNow;
-    pNow->pFu = pTZuo;
-    if (pTFu != NULL)
-    {
-        // 如果自己有父结点
-        // 要把右旋上去的自己的左结点接到父结点相应的位置
-        if (pNow == pTFu->pZuo)
-        {
-            pTFu->pZuo = pTZuo;
-        }
-        else if (pNow == pTFu->pYou)
-        {
-            pTFu->pYou = pTZuo;
+    // 自己的左结点变成自己的父结点
+    tpECSJDZuo->pECSJDFu = tpECSJDFu;
+    tpECSJDZuo->pECSJDYou = tpECSJD;
+    // 自己变成自己的左结点的右结点
+    tpECSJD->pECSJDFu = tpECSJDZuo;
+    if (tpECSJDFu != NULL) {
+        // 如果自己有父结点，要把右旋上去的自己的左结点接到父结点相应的位置
+        if (tpECSJD == tpECSJDFu->pECSJDZuo) {
+            tpECSJDFu->pECSJDZuo = tpECSJDZuo;
+        } else if (tpECSJD == tpECSJDFu->pECSJDYou) {
+            tpECSJDFu->pECSJDYou = tpECSJDZuo;
         }
     }
     // 如果自己的左结点有右结点，要把这个右结点变成自己的左结点
-    pNow->pZuo = pTZuoYou;
-    if (pTZuoYou != NULL)
-    {
-        pTZuoYou->pFu = pNow;
+    tpECSJD->pECSJDZuo = tpECSJDZuoYou;
+    if (tpECSJDZuoYou != NULL) {
+        tpECSJDZuoYou->pECSJDFu = tpECSJD;
     }
-    pNow->jieDianShenDu = jiSuanShenDu(pNow);
-    pNow->pingHengCanShu = jiSuanPingHengCanShu(pNow);
-    pTZuo->jieDianShenDu = jiSuanShenDu(pTZuo);
-    pTZuo->pingHengCanShu = jiSuanPingHengCanShu(pTZuo);
+    tpECSJD->iJieDianShenDu = jiSuanShenDu(tpECSJD);
+    tpECSJD->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJD);
+    tpECSJDZuo->iJieDianShenDu = jiSuanShenDu(tpECSJDZuo);
+    tpECSJDZuo->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJDZuo);
 }
 
-void qianXuBianLi(struct ErChaShuJieDian *pNow)
-{
-    if (pNow == NULL)
-    {
+void zhongXuBianLi(ECSJD *tpECSJD) {
+    if (tpECSJD == NULL) {
         return;
     }
-    printf("%d,", pNow->num);
-    qianXuBianLi(pNow->pZuo);
-    qianXuBianLi(pNow->pYou);
-}
-
-void zhongXuBianLi(struct ErChaShuJieDian *pNow)
-{
-    if (pNow == NULL)
-    {
-        return;
-    }
-    zhongXuBianLi(pNow->pZuo);
-    printf("%d,", pNow->num);
-    zhongXuBianLi(pNow->pYou);
-}
-
-void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen)
-{
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        printf("%d,", daiPaiXuArr[i]);
-    }
-    printf("\n");
+    zhongXuBianLi(tpECSJD->pECSJDZuo);
+    printf("%d,", tpECSJD->iShuZhi);
+    zhongXuBianLi(tpECSJD->pECSJDYou);
 }

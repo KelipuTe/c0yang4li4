@@ -28,12 +28,12 @@ extern void zhongXuBianLi(ECSJD *);
 int main() {
     // 头指针
     ECSJD *pECSJDTou = NULL;
-
     int iarrDaiPaiXu[10];
     int iarrDaiPaiXuLen = 10;
+
     srand(time(NULL));
     for (int i = 0; i < iarrDaiPaiXuLen; i++) {
-        iarrDaiPaiXu[i] = rand() % 100;
+        iarrDaiPaiXu[i] = rand() % 99 + 1;
         chaRuJieDian(&pECSJDTou, iarrDaiPaiXu[i]);
     }
 
@@ -49,6 +49,8 @@ int main() {
     printf("zhong1xu4bian4li4:");
     zhongXuBianLi(pECSJDTou);
     printf("\n");
+
+    return 0;
 }
 
 void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {

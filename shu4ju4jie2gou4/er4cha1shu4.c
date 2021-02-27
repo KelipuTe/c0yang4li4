@@ -64,6 +64,8 @@ int main() {
     printf("shen1du4you1xian1bian4li4:");
     shenDuYouXianBianLi(pECSJDTou);
     printf("\n");
+
+    return 0;
 }
 
 void shuZuGouZaoECS(ECSJD **tppECSJD, int *pYuanSuBiao, int iYuanSuBiaoLen, int iIndex) {
