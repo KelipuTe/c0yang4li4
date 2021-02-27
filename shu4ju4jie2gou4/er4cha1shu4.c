@@ -1,27 +1,24 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <math.h>
 
 /*#####二叉树#####*/
 
+// 用于标记无效的二叉树结点
+#define ECSJD_NULL -2147483648
+
 // 二叉树结点
-typedef struct ErChaShuJieDian
-{
-    // 结点值，约定结点值都大于0
+typedef struct ErChaShuJieDian {
+    // 结点值
     int iShuZhi;
-    // 左结点
-    struct ErChaShuJieDian *pZuo;
-    // 右结点
-    struct ErChaShuJieDian *pYou;
-    // 结点层数
-    int iJieDianCengShu;
+    // 左子树结点
+    struct ErChaShuJieDian *pECSJDZuo;
+    // 右子树结点
+    struct ErChaShuJieDian *pECSJDYou;
 } ECSJD;
 
-// 头指针
-ECSJD *pErChaShuHead = NULL;
-
-// 从数组构造二叉树，注意参数pNow是二级指针
-extern void gouZaoErChaShu(ECSJD **, int *, int, int);
+// 从数组构造二叉树
+extern void shuZuGouZaoECS(ECSJD **, int *, int, int);
 // 前序遍历，根左右
 extern void qianXuBianLi(ECSJD *);
 // 中序遍历，左根右
@@ -29,268 +26,159 @@ extern void zhongXuBianLi(ECSJD *);
 // 后序遍历，左右根
 extern void houXuBianLi(ECSJD *);
 // 计算二叉树深度
-extern int jiSuanErChaShuShenDu(ECSJD *);
+extern int jiSuanECSShenDu(ECSJD *);
 // 广度优先遍历
-extern void guangDuYouXianBianLi();
+extern void guangDuYouXianBianLi(ECSJD *);
 // 深度优先遍历
-extern void shenDuYouXianBianLi();
-
-/*#####队列#####*/
-
-typedef struct DuiLieJieDian
-{
-    ECSJD *pErChaShu;
-    struct DuiLieJieDian *pNext;
-} DLJD;
-
-DLJD *pDuiLieHead = NULL;
-DLJD *pDuiLieTail = NULL;
-
-extern void ruDui(ECSJD *, int);
-extern ECSJD *chuDui();
-
-/*#####栈#####*/
-
-typedef struct ZhanJieDian
-{
-    ECSJD *pErChaShu;
-    struct ZhanJieDian *pNext;
-} ZJD;
-
-ZJD *pZhanDing = NULL;
-
-extern void ruZhan(ECSJD *);
-extern ECSJD *chuZhan();
+extern void shenDuYouXianBianLi(ECSJD *);
 
 /*#####实现代码#####*/
 
-int main()
-{
-    int iArrYuanSuBiao[] = {1, 2, 3, 4, 5, 6, 7, 0, 0, 10, 11};
-    int iYuanSuBiaoLen = sizeof(iArrYuanSuBiao) / sizeof(int);
-    gouZaoErChaShu(&pErChaShuHead, &iArrYuanSuBiao, iYuanSuBiaoLen, 1);
+int main() {
+    // 用数组保存的二叉树结构
+    int iarrYuanSu[] = {1, 2, 3, 4, 5, 6, 7, ECSJD_NULL, ECSJD_NULL, 10, 11};
+    int iArrYuanSuLen = sizeof(iarrYuanSu) / sizeof(int);
+    // 头指针
+    ECSJD *pECSJDTou = NULL;
+
+    shuZuGouZaoECS(&pECSJDTou, iarrYuanSu, iArrYuanSuLen, 1);
 
     printf("qian2xu4bian4li4:");
-    qianXuBianLi(pErChaShuHead);
+    qianXuBianLi(pECSJDTou);
     printf("\n");
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pErChaShuHead);
+    zhongXuBianLi(pECSJDTou);
     printf("\n");
 
     printf("hou4xu4bian4li4:");
-    houXuBianLi(pErChaShuHead);
+    houXuBianLi(pECSJDTou);
     printf("\n");
 
-    ("er4cha1shu4shen1du4:%d\n", jiSuanErChaShuShenDu(pErChaShuHead));
+    printf("er4cha1shu4shen1du4:%d\n", jiSuanECSShenDu(pECSJDTou));
 
     printf("guang3du4you1xian1bian4li4:");
-    guangDuYouXianBianLi();
+    guangDuYouXianBianLi(pECSJDTou);
     printf("\n");
 
     printf("shen1du4you1xian1bian4li4:");
-    shenDuYouXianBianLi();
+    shenDuYouXianBianLi(pECSJDTou);
     printf("\n");
 }
 
-/*#####二叉树#####*/
-
-void gouZaoErChaShu(ECSJD **ppNow, int *pYuanSuBiao, int iYuanSuBiaoLen, int index)
-{
-    if (index <= iYuanSuBiaoLen)
-    {
-        if (pYuanSuBiao[index - 1] == 0)
-        {
+void shuZuGouZaoECS(ECSJD **tppECSJD, int *pYuanSuBiao, int iYuanSuBiaoLen, int iIndex) {
+    if (iIndex <= iYuanSuBiaoLen) {
+        if (pYuanSuBiao[iIndex - 1] == ECSJD_NULL) {
             // 识别无效值
-            *ppNow = NULL;
-
-            return;
-        }
-        else
-        {
-            *ppNow = (ECSJD *)malloc(sizeof(ECSJD));
-            if (*ppNow == NULL)
-            {
-                printf("nei4cun2fen1pei4shi1bai4!\n");
-                exit(0);
-            }
-            (*ppNow)->iShuZhi = pYuanSuBiao[index - 1];
-            (*ppNow)->pZuo = NULL;
-            (*ppNow)->pYou = NULL;
-            (*ppNow)->iJieDianCengShu = 0;
-            // 这里把这次构造的结点的左右结点传递下去，传递的参数其实是指向左右结点的指针
-            // 但是不能简单地传递指针，直接把指针传下去就变形参了，所以传递一个二级指针
-            gouZaoErChaShu(&((*ppNow)->pZuo), pYuanSuBiao, iYuanSuBiaoLen, index * 2);
-            gouZaoErChaShu(&((*ppNow)->pYou), pYuanSuBiao, iYuanSuBiaoLen, index * 2 + 1);
+            *tppECSJD = NULL;
+        } else {
+            *tppECSJD = (ECSJD *)malloc(sizeof(ECSJD));
+            (*tppECSJD)->iShuZhi = pYuanSuBiao[iIndex - 1];
+            (*tppECSJD)->pECSJDZuo = NULL;
+            (*tppECSJD)->pECSJDYou = NULL;
+            // 这里把这次构造的结点的左右结点传递下去，用递归的方式分别构造左右子树
+            // 这里需要利用，用数组保存的二叉树结构中，父节结点与子结点的数组下标关系
+            shuZuGouZaoECS(&((*tppECSJD)->pECSJDZuo), pYuanSuBiao, iYuanSuBiaoLen, iIndex * 2);
+            shuZuGouZaoECS(&((*tppECSJD)->pECSJDYou), pYuanSuBiao, iYuanSuBiaoLen, iIndex * 2 + 1);
         }
     }
 }
 
-void qianXuBianLi(ECSJD *pNow)
-{
-    if (pNow == NULL)
-    {
+void qianXuBianLi(ECSJD *pECSJDTou) {
+    ECSJD *tpECSJD = pECSJDTou;
+
+    if (tpECSJD == NULL) {
         return;
     }
-    printf("%d,", pNow->iShuZhi);
-    qianXuBianLi(pNow->pZuo);
-    qianXuBianLi(pNow->pYou);
+    printf("%d,", tpECSJD->iShuZhi);
+    qianXuBianLi(tpECSJD->pECSJDZuo);
+    qianXuBianLi(tpECSJD->pECSJDYou);
 }
 
-void zhongXuBianLi(ECSJD *pNow)
-{
-    if (pNow == NULL)
-    {
+void zhongXuBianLi(ECSJD *pECSJDTou) {
+    ECSJD *tpECSJD = pECSJDTou;
+
+    if (tpECSJD == NULL) {
         return;
     }
-    zhongXuBianLi(pNow->pZuo);
-    printf("%d,", pNow->iShuZhi);
-    zhongXuBianLi(pNow->pYou);
+    zhongXuBianLi(tpECSJD->pECSJDZuo);
+    printf("%d,", tpECSJD->iShuZhi);
+    zhongXuBianLi(tpECSJD->pECSJDYou);
 }
 
-void houXuBianLi(ECSJD *pNow)
-{
-    if (pNow == NULL)
-    {
+void houXuBianLi(ECSJD *pECSJDTou) {
+    ECSJD *tpECSJD = pECSJDTou;
+
+    if (tpECSJD == NULL) {
         return;
     }
-    houXuBianLi(pNow->pZuo);
-    houXuBianLi(pNow->pYou);
-    printf("%d,", pNow->iShuZhi);
+    houXuBianLi(tpECSJD->pECSJDZuo);
+    houXuBianLi(tpECSJD->pECSJDYou);
+    printf("%d,", tpECSJD->iShuZhi);
 }
 
-int jiSuanErChaShuShenDu(ECSJD *pNow)
-{
-    int iZuoShenDu = 0;
-    int iYouShenDu = 0;
-    if (pNow == NULL)
-    {
+int jiSuanECSShenDu(ECSJD *tpECSJD) {
+    int iZuoShenDu = 0, iYouShenDu = 0;
+
+    if (tpECSJD == NULL) {
         return 0;
     }
-    iZuoShenDu = jiSuanErChaShuShenDu(pNow->pZuo);
-    iYouShenDu = jiSuanErChaShuShenDu(pNow->pYou);
+    iZuoShenDu = jiSuanECSShenDu(tpECSJD->pECSJDZuo);
+    iYouShenDu = jiSuanECSShenDu(tpECSJD->pECSJDYou);
 
     return (int)fmax(iZuoShenDu, iYouShenDu) + 1;
 }
 
-void guangDuYouXianBianLi()
-{
-    int iJieDianCengShu = 1;
-    ECSJD *pErChaShu = NULL;
+void guangDuYouXianBianLi(ECSJD *pECSJDTou) {
+    // 队列
+    ECSJD *parrECSJDDuiLie[100] = {NULL};
+    int iDuiLieTou = 0, iDuiLieWei = 0;
 
-    ruDui(pErChaShuHead, iJieDianCengShu);
-    pErChaShu = chuDui();
-    while (pErChaShu != NULL)
-    {
+    ECSJD *tpECSJD = NULL;
+    // 当前循环层数，队尾结点在队列中的位置
+    int iJieDianCengShu = 1, tiCengWei = 0;
+
+    parrECSJDDuiLie[iDuiLieWei++] = pECSJDTou;
+    tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
+    while (tpECSJD != NULL) {
         // 持续遍历，直到队列为空
-        printf("%d-%d,", pErChaShu->iJieDianCengShu, pErChaShu->iShuZhi);
-        if (pErChaShu->pZuo != NULL)
-        {
-            // 左结点先入队，先遍历
-            ruDui(pErChaShu->pZuo, pErChaShu->iJieDianCengShu + 1);
+        tiCengWei = iDuiLieWei;
+        while (iDuiLieTou <= tiCengWei) {
+            printf("%d-%d,", iJieDianCengShu, tpECSJD->iShuZhi);
+            if (tpECSJD->pECSJDZuo != NULL) {
+                // 左结点先入队，先遍历
+                parrECSJDDuiLie[iDuiLieWei++] = tpECSJD->pECSJDZuo;
+            }
+            if (tpECSJD->pECSJDYou != NULL) {
+                // 右结点后入队，后遍历
+                parrECSJDDuiLie[iDuiLieWei++] = tpECSJD->pECSJDYou;
+            }
+            tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
         }
-        if (pErChaShu->pYou != NULL)
-        {
-            // 右结点后入队，后遍历
-            ruDui(pErChaShu->pYou, pErChaShu->iJieDianCengShu + 1);
-        }
-        pErChaShu = chuDui();
+        iJieDianCengShu++;
     }
 }
 
-void shenDuYouXianBianLi()
-{
-    ECSJD *pErChaShu = NULL;
+void shenDuYouXianBianLi(ECSJD *pECSJDTou) {
+    // 栈
+    ECSJD *arrECSJDZhan[100] = {NULL};
+    int iZhanDing = 0;
 
-    ruZhan(pErChaShuHead);
-    pErChaShu = chuZhan();
-    while (pErChaShu != NULL)
-    {
+    ECSJD *tpECSJD = NULL;
+
+    arrECSJDZhan[iZhanDing++] = pECSJDTou;
+    tpECSJD = arrECSJDZhan[--iZhanDing];
+    while (tpECSJD != NULL) {
         // 持续遍历，直到栈为空
-        printf("%d,", pErChaShu->iShuZhi);
-        if (pErChaShu->pYou != NULL)
-        {
+        printf("%d,", tpECSJD->iShuZhi);
+        if (tpECSJD->pECSJDYou != NULL) {
             // 右结点先入栈，后遍历
-            ruZhan(pErChaShu->pYou);
+            arrECSJDZhan[iZhanDing++] = tpECSJD->pECSJDYou;
         }
-        if (pErChaShu->pZuo != NULL)
-        {
+        if (tpECSJD->pECSJDZuo != NULL) {
             // 左结点后入栈，先遍历
-            ruZhan(pErChaShu->pZuo);
+            arrECSJDZhan[iZhanDing++] = tpECSJD->pECSJDZuo;
         }
-        pErChaShu = chuZhan();
+        tpECSJD = arrECSJDZhan[--iZhanDing];
     }
-}
-
-/*#####队列#####*/
-
-void ruDui(ECSJD *pErChaShu, int iJieDianCengShu)
-{
-    DLJD *pTemp = (DLJD *)malloc(sizeof(DLJD));
-    // 入队时记录层数
-    pErChaShu->iJieDianCengShu = iJieDianCengShu;
-    pTemp->pErChaShu = pErChaShu;
-    pTemp->pNext = NULL;
-    if (pDuiLieHead == NULL)
-    {
-        pDuiLieHead = pDuiLieTail = pTemp;
-    }
-    else
-    {
-        pDuiLieTail->pNext = pTemp;
-        pDuiLieTail = pDuiLieTail->pNext;
-    }
-}
-
-ECSJD *chuDui()
-{
-    ECSJD *pErChaShu = NULL;
-    DLJD *pNow = NULL;
-
-    if (pDuiLieHead == NULL)
-    {
-        return pErChaShu;
-    }
-    pNow = pDuiLieHead;
-    pErChaShu = pDuiLieHead->pErChaShu;
-    pDuiLieHead = pDuiLieHead->pNext;
-    free(pNow);
-
-    return pErChaShu;
-}
-
-/*#####栈#####*/
-
-void ruZhan(ECSJD *pErChaShu)
-{
-    ZJD *pTemp = (ZJD *)malloc(sizeof(ZJD));
-
-    pTemp->pErChaShu = pErChaShu;
-    if (pZhanDing == NULL)
-    {
-        pTemp->pNext = NULL;
-        pZhanDing = pTemp;
-    }
-    else
-    {
-        pTemp->pNext = pZhanDing;
-        pZhanDing = pTemp;
-    }
-}
-
-ECSJD *chuZhan()
-{
-    ECSJD *pErChaShu = NULL;
-    ZJD *pNow = NULL;
-
-    if (pZhanDing == NULL)
-    {
-        return pErChaShu;
-    }
-    pNow = pZhanDing;
-    pErChaShu = pZhanDing->pErChaShu;
-    pZhanDing = pZhanDing->pNext;
-    free(pNow);
-
-    return pErChaShu;
 }

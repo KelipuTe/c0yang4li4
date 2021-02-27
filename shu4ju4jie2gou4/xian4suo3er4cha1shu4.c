@@ -1,162 +1,111 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/**
- * 二叉树结点
- */
-struct ErChaShuJieDian
-{
-    // 结点值，约定结点值都大于0
-    int num;
+/*#####线索二叉树#####*/
+
+// 用于标记无效的二叉树结点
+#define ECSJD_NULL -2147483648
+
+// 二叉树结点
+typedef struct ErChaShuJieDian {
+    // 结点值
+    int iShuZhi;
     // 左标识:-1=未设置；0=前驱；1=左结点
-    int zuoBiaoShi;
-    // 左结点
-    struct ErChaShuJieDian *pZuo;
+    int iBiaoShiZuo;
+    // 左子树结点
+    struct ErChaShuJieDian *pECSJDZuo;
     // 右标识:-1=未设置；0=后继；1=右结点
-    int youBiaoShi;
-    // 右结点
-    struct ErChaShuJieDian *pYou;
-};
+    int iBiaoShiYou;
+    // 右子树结点
+    struct ErChaShuJieDian *pECSJDYou;
+} ECSJD;
 
-// 头指针
-struct ErChaShuJieDian *pErChaShuHead = NULL;
-// 前驱结点指针
-struct ErChaShuJieDian *pQianQu = NULL;
+extern void shuZuGouZaoECS(ECSJD **, int *, int, int, ECSJD *);
+// 中序遍历线索化
+extern void zhongXuBianLiXianSuoHua(ECSJD *, ECSJD **);
+extern void zhongXuBianLi(ECSJD *);
 
-extern void gouZaoErChaShu(struct ErChaShuJieDian **, int *, int, int, struct ErChaShuJieDian *);
-extern void zhongXuBianLiXianSuoHua(struct ErChaShuJieDian *);
-extern void qianXuBianLi(struct ErChaShuJieDian *);
-extern void zhongXuBianLi(struct ErChaShuJieDian *);
+/*#####实现代码#####*/
 
-/**
- * 线索二叉树
- */
-int main()
-{
-    int yuanSuBiao[] = {1, 2, 3, 0, 5, 0, 7, 0, 0, 10, 11, 0, 0, 14};
-    int yuanSuBiaoLen = sizeof(yuanSuBiao) / sizeof(int);
-    gouZaoErChaShu(&pErChaShuHead, &yuanSuBiao, yuanSuBiaoLen, 1, NULL);
-    zhongXuBianLiXianSuoHua(pErChaShuHead);
+int main() {
+    int iarrYuanSu[] = {1, 2, 3, ECSJD_NULL, 5, ECSJD_NULL, 7, ECSJD_NULL, ECSJD_NULL, 10, 11, ECSJD_NULL, ECSJD_NULL, 14};
+    int iArrYuanSuLen = sizeof(iarrYuanSu) / sizeof(int);
+    // 头指针，保存线索化时的前驱结点
+    ECSJD *pECSJDTou = NULL, *pECSJDQianQu = NULL;
 
-    printf("qian2xu4bian4li4:");
-    qianXuBianLi(pErChaShuHead);
-    printf("\n");
+    shuZuGouZaoECS(&pECSJDTou, iarrYuanSu, iArrYuanSuLen, 1, NULL);
+    pECSJDQianQu = pECSJDTou;
+    zhongXuBianLiXianSuoHua(pECSJDTou, &pECSJDQianQu);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pErChaShuHead);
+    zhongXuBianLi(pECSJDTou);
     printf("\n");
 }
 
-void gouZaoErChaShu(struct ErChaShuJieDian **ppNow, int *yuanSuBiao, int yuanSuBiaoLen, int index, struct ErChaShuJieDian *pFu)
-{
-    if (index <= yuanSuBiaoLen)
-    {
-        if (yuanSuBiao[index - 1] == 0)
-        {
-            *ppNow = NULL;
-
-            return;
-        }
-        else
-        {
-            *ppNow = (struct ErChaShuJieDian *)malloc(sizeof(struct ErChaShuJieDian));
-            if (*ppNow == NULL)
-            {
-                printf("nei4cun2fen1pei4shi1bai4!\n");
-                exit(0);
-            }
-            (*ppNow)->num = yuanSuBiao[index - 1];
-            (*ppNow)->zuoBiaoShi = -1;
-            (*ppNow)->pZuo = NULL;
-            (*ppNow)->youBiaoShi = -1;
-            (*ppNow)->pYou = NULL;
-            if (pFu != NULL)
-            {
-                if (pFu->pZuo == *ppNow)
-                {
-                    pFu->zuoBiaoShi = 1;
-                }
-                else if (pFu->pYou == *ppNow)
-                {
-                    pFu->youBiaoShi = 1;
+void shuZuGouZaoECS(ECSJD **tppECSJD, int *pYuanSuBiao, int iYuanSuBiaoLen, int iIndex, ECSJD *pECSJDLast) {
+    if (iIndex <= iYuanSuBiaoLen) {
+        if (pYuanSuBiao[iIndex - 1] == ECSJD_NULL) {
+            *tppECSJD = NULL;
+        } else {
+            *tppECSJD = (ECSJD *)malloc(sizeof(ECSJD));
+            (*tppECSJD)->iShuZhi = pYuanSuBiao[iIndex - 1];
+            (*tppECSJD)->iBiaoShiZuo = -1;
+            (*tppECSJD)->pECSJDZuo = NULL;
+            (*tppECSJD)->iBiaoShiYou = -1;
+            (*tppECSJD)->pECSJDYou = NULL;
+            if (pECSJDLast != NULL) {
+                if (pECSJDLast->pECSJDZuo == *tppECSJD) {
+                    pECSJDLast->iBiaoShiZuo = 1;
+                } else if (pECSJDLast->pECSJDYou == *tppECSJD) {
+                    pECSJDLast->iBiaoShiYou = 1;
                 }
             }
-            gouZaoErChaShu(&((*ppNow)->pZuo), yuanSuBiao, yuanSuBiaoLen, index * 2, *ppNow);
-            gouZaoErChaShu(&((*ppNow)->pYou), yuanSuBiao, yuanSuBiaoLen, index * 2 + 1, *ppNow);
+            shuZuGouZaoECS(&((*tppECSJD)->pECSJDZuo), pYuanSuBiao, iYuanSuBiaoLen, iIndex * 2, *tppECSJD);
+            shuZuGouZaoECS(&((*tppECSJD)->pECSJDYou), pYuanSuBiao, iYuanSuBiaoLen, iIndex * 2 + 1, *tppECSJD);
         }
     }
 }
 
-void qianXuBianLi(struct ErChaShuJieDian *pNow)
-{
-    if (pNow == NULL)
-    {
-        return;
-    }
-    printf("%d,", pNow->num);
-    if (pNow->zuoBiaoShi == 1)
-    {
-        qianXuBianLi(pNow->pZuo);
-    }
-    if (pNow->youBiaoShi == 1)
-    {
-        qianXuBianLi(pNow->pYou);
-    }
-}
-
-void zhongXuBianLi(struct ErChaShuJieDian *pNow)
-{
-    if (pNow == NULL)
-    {
-        return;
-    }
-    if (pNow->zuoBiaoShi == 1)
-    {
-        zhongXuBianLi(pNow->pZuo);
-    }
-    printf("%d,", pNow->num);
-    if (pNow->youBiaoShi == 1)
-    {
-        zhongXuBianLi(pNow->pYou);
-    }
-}
-
-/**
- * 中序遍历线索化
- */
-void zhongXuBianLiXianSuoHua(struct ErChaShuJieDian *pNow)
-{
-    if (pNow == NULL)
-    {
+void zhongXuBianLiXianSuoHua(ECSJD *tpECSJD, ECSJD **ppECSJDQianQu) {
+    if (tpECSJD == NULL) {
         return;
     }
     // 处理左结点
-    if (pNow->zuoBiaoShi == 1)
-    {
+    if (tpECSJD->iBiaoShiZuo == 1) {
         // 有左结点
-        zhongXuBianLiXianSuoHua(pNow->pZuo);
-    }
-    else if (pNow->zuoBiaoShi == -1)
-    {
+        zhongXuBianLiXianSuoHua(tpECSJD->pECSJDZuo, ppECSJDQianQu);
+    } else if (tpECSJD->iBiaoShiZuo == -1) {
         // 没设置左结点
-        if (pQianQu != NULL)
-        {
-            pNow->zuoBiaoShi = 0;
-            pNow->pZuo = pQianQu;
+        if (*ppECSJDQianQu != NULL) {
+            tpECSJD->iBiaoShiZuo = 0;
+            tpECSJD->pECSJDZuo = *ppECSJDQianQu;
         }
     }
     // 判断前驱结点有没有设置过后继结点
-    if (pQianQu != NULL && pQianQu->youBiaoShi == -1)
-    {
-        pQianQu->youBiaoShi = 0;
-        pQianQu->pYou = pNow;
+    if (*ppECSJDQianQu != NULL && (*ppECSJDQianQu)->iBiaoShiYou == -1) {
+        (*ppECSJDQianQu)->iBiaoShiYou = 0;
+        (*ppECSJDQianQu)->pECSJDYou = tpECSJD;
     }
     // 登记自己为新的前驱结点
-    pQianQu = pNow;
+    *ppECSJDQianQu = tpECSJD;
     // 处理右结点
-    if (pNow->youBiaoShi == 1)
-    {
+    if (tpECSJD->iBiaoShiYou == 1) {
         // 有右结点
-        zhongXuBianLiXianSuoHua(pNow->pYou);
+        zhongXuBianLiXianSuoHua(tpECSJD->pECSJDYou, ppECSJDQianQu);
+    }
+}
+
+void zhongXuBianLi(ECSJD *pECSJDTou) {
+    ECSJD *tpECSJD = pECSJDTou;
+
+    if (tpECSJD == NULL) {
+        return;
+    }
+    if (tpECSJD->iBiaoShiZuo == 1) {
+        zhongXuBianLi(tpECSJD->pECSJDZuo);
+    }
+    printf("%d,", tpECSJD->iShuZhi);
+    if (tpECSJD->iBiaoShiYou == 1) {
+        zhongXuBianLi(tpECSJD->pECSJDYou);
     }
 }
