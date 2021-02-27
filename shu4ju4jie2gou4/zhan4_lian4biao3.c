@@ -3,100 +3,92 @@
 
 /*#####链表栈#####*/
 
+// 栈为空时输出的无效值
+#define ZHAN_NULL -2147483648
+
 // 栈结点
-typedef struct ZhanJieDian
-{
+typedef struct ZhanJieDian {
     // 结点数值
     int iShuZhi;
     // 下一个结点的指针
-    struct ZhanJieDian *pNext;
+    struct ZhanJieDian *pZJDNext;
 } ZJD;
 
-// 栈顶指针
-ZJD *pZhanDing = NULL;
-
 // 输出栈中元素
-extern void shuChuZhan();
+extern void shuChuZhan(ZJD *);
 // 入栈
-extern void ruZhan(int);
+extern void ruZhan(ZJD **, int);
 // 出栈
-extern int chuZhan();
+extern int chuZhan(ZJD **);
 
 /*#####实现代码#####*/
 
-int main()
-{
-    ruZhan(1);
-    ruZhan(2);
-    ruZhan(3);
-    chuZhan();
-    chuZhan();
-    chuZhan();
-    chuZhan();
+int main() {
+    // 栈顶指针
+    ZJD *pZJDZhanDing = NULL;
+
+    ruZhan(&pZJDZhanDing, 1);
+
+    chuZhan(&pZJDZhanDing);
+    chuZhan(&pZJDZhanDing);
+
+    ruZhan(&pZJDZhanDing, 2);
+    ruZhan(&pZJDZhanDing, 3);
+
+    shuChuZhan(pZJDZhanDing);
+
+    chuZhan(&pZJDZhanDing);
+    chuZhan(&pZJDZhanDing);
+    chuZhan(&pZJDZhanDing);
+
     return 0;
 }
 
-void shuChuZhan()
-{
-    ZJD *tpZJD = NULL;
+void shuChuZhan(ZJD *pZJDZhanDing) {
+    ZJD *tpZJD = pZJDZhanDing;
 
-    if (pZhanDing == NULL)
-    {
-        printf("zhan4:kong1!\n");
-
+    printf("zhan4:");
+    if (tpZJD == NULL) {
         return;
     }
-    tpZJD = pZhanDing;
-    printf("zhan4:");
-    while (tpZJD != NULL)
-    {
+    while (tpZJD != NULL) {
         printf("%d,", tpZJD->iShuZhi);
-        tpZJD = tpZJD->pNext;
+        tpZJD = tpZJD->pZJDNext;
     }
     printf("\n");
 }
 
-void ruZhan(int iShuZhi)
-{
+void ruZhan(ZJD **ppZJDZhanDing, int iShuZhi) {
     ZJD *tpZJD = (ZJD *)malloc(sizeof(ZJD));
 
     tpZJD->iShuZhi = iShuZhi;
     printf("ru4zhan4:%d\n", iShuZhi);
-    if (pZhanDing == NULL)
-    {
+    if (*ppZJDZhanDing == NULL) {
         // 栈为空
-        tpZJD->pNext = NULL;
-        pZhanDing = tpZJD;
-    }
-    else
-    {
+        tpZJD->pZJDNext = NULL;
+        *ppZJDZhanDing = tpZJD;
+    } else {
         // 移动栈顶指针
-        tpZJD->pNext = pZhanDing;
-        pZhanDing = tpZJD;
+        tpZJD->pZJDNext = *ppZJDZhanDing;
+        *ppZJDZhanDing = tpZJD;
     }
-    shuChuZhan();
 }
 
-int chuZhan()
-{
-    ZJD *pNow = NULL;
-    int iShuZhi = 0;
+int chuZhan(ZJD **ppZJDZhanDing) {
+    ZJD *pZJDNow = *ppZJDZhanDing;
+    int iShuZhi = ZHAN_NULL;
 
-    if (pZhanDing == NULL)
-    {
-        printf("zhan4:kong1!\n");
-
-        return 0;
+    if (*ppZJDZhanDing == NULL) {
+        printf("kong1zhan4:%d\n", iShuZhi);
+        return iShuZhi;
     }
     // 出栈的元素
-    pNow = pZhanDing;
-    iShuZhi = pZhanDing->iShuZhi;
+    iShuZhi = pZJDNow->iShuZhi;
     printf("chu1zhan4:%d\n", iShuZhi);
     // 移动栈顶指针
-    pZhanDing = pZhanDing->pNext;
+    *ppZJDZhanDing = (*ppZJDZhanDing)->pZJDNext;
     // 释放资源
-    free(pNow);
-    shuChuZhan();
+    free(pZJDNow);
 
     return iShuZhi;
 }

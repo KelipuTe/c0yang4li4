@@ -3,103 +3,92 @@
 
 /*#####链表队列#####*/
 
+// 栈为空时输出的无效值
+#define DUI_LIE_NULL -2147483648
+
 // 队列结点
-typedef struct DuiLieJieDian
-{
+typedef struct DuiLieJieDian {
     // 结点数值
     int iShuZhi;
     // 下一个结点的指针
-    struct DuiLieJieDian *pNext;
+    struct DuiLieJieDian *pDLJDNext;
 } DLJD;
 
-// 队列头指针
-DLJD *pDuiLieHead = NULL;
-// 队列尾指针
-DLJD *pDuiLieTail = NULL;
-
 // 输出队列元素
-extern void shuChuDuiLie();
+extern void shuChuDuiLie(DLJD *);
 // 入队
-extern void ruDui(int);
+extern void ruDui(DLJD **, DLJD **, int);
 // 出队
-extern int chuDui();
+extern int chuDui(DLJD **);
 
 /*#####实现代码#####*/
 
-int main()
-{
-    ruDui(1);
-    ruDui(2);
-    chuDui();
-    ruDui(3);
-    chuDui();
-    chuDui();
-    chuDui();
+int main() {
+    // 队列头指针，队列尾指针
+    DLJD *pDLJDTou = NULL, *pDLJDWei = NULL;
+
+    ruDui(&pDLJDTou, &pDLJDWei, 1);
+
+    chuDui(&pDLJDTou);
+    chuDui(&pDLJDTou);
+
+    ruDui(&pDLJDTou, &pDLJDWei, 2);
+    ruDui(&pDLJDTou, &pDLJDWei, 3);
+
+    shuChuDuiLie(pDLJDTou);
+
+    chuDui(&pDLJDTou);
+    chuDui(&pDLJDTou);
+    chuDui(&pDLJDTou);
 
     return 0;
 }
 
-void shuChuDuiLie()
-{
-    DLJD *tpDLJD = NULL;
+void shuChuDuiLie(DLJD *pDLJDTou) {
+    DLJD *tpDLJD = pDLJDTou;
 
-    if (pDuiLieHead == NULL)
-    {
-        printf("dui4lie4:kong1!\n");
-
+    printf("dui4lie4:");
+    if (tpDLJD == NULL) {
         return;
     }
-    tpDLJD = pDuiLieHead;
-    printf("dui4lie4:");
-    while (tpDLJD != NULL)
-    {
+    while (tpDLJD != NULL) {
         printf("%d,", tpDLJD->iShuZhi);
-        tpDLJD = tpDLJD->pNext;
+        tpDLJD = tpDLJD->pDLJDNext;
     }
     printf("\n");
 }
 
-void ruDui(int iShuZhi)
-{
+void ruDui(DLJD **ppDLJDTou, DLJD **ppDLJDWei, int iShuZhi) {
     DLJD *tpDLJD = (DLJD *)malloc(sizeof(DLJD));
 
     tpDLJD->iShuZhi = iShuZhi;
-    tpDLJD->pNext = NULL;
+    tpDLJD->pDLJDNext = NULL;
     printf("ru4dui4:%d\n", iShuZhi);
-    if (pDuiLieHead == NULL)
-    {
+    if (*ppDLJDTou == NULL) {
         // 队列为空
-        pDuiLieHead = pDuiLieTail = tpDLJD;
-    }
-    else
-    {
+        *ppDLJDTou = *ppDLJDWei = tpDLJD;
+    } else {
         // 移动队列尾指针
-        pDuiLieTail->pNext = tpDLJD;
-        pDuiLieTail = pDuiLieTail->pNext;
+        (*ppDLJDWei)->pDLJDNext = tpDLJD;
+        *ppDLJDWei = tpDLJD;
     }
-    shuChuDuiLie();
 }
 
-int chuDui()
-{
-    DLJD *pNow = NULL;
-    int iShuZhi = 0;
+int chuDui(DLJD **ppDLJDTou) {
+    DLJD *pDLJDNow = *ppDLJDTou;
+    int iShuZhi = DUI_LIE_NULL;
 
-    if (pDuiLieHead == NULL)
-    {
-        printf("dui4lie4:kong1!\n");
-
-        return 0;
+    if (pDLJDNow == NULL) {
+        printf("kong1dui4lie4:%d\n", iShuZhi);
+        return iShuZhi;
     }
     // 出队的元素
-    pNow = pDuiLieHead;
-    iShuZhi = pDuiLieHead->iShuZhi;
+    iShuZhi = pDLJDNow->iShuZhi;
     printf("chu1dui4:%d\n", iShuZhi);
     // 移动队列头指针
-    pDuiLieHead = pDuiLieHead->pNext;
+    *ppDLJDTou = (*ppDLJDTou)->pDLJDNext;
     // 释放资源
-    free(pNow);
-    shuChuDuiLie();
+    free(pDLJDNow);
 
     return iShuZhi;
 }

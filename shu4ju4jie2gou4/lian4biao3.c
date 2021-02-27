@@ -4,127 +4,99 @@
 /*#####链表#####*/
 
 // 链表结点
-typedef struct LianBiaoJieDian
-{
+typedef struct LianBiaoJieDian {
     // 数值
     int iShuZhi;
     // 下一个结点的指针
-    struct LianBiaoJieDian *pNext;
+    struct LianBiaoJieDian *pLBJDNext;
 } LBJD;
 
-// 链表头指针
-LBJD *pLianBiaoHead = NULL;
-// 链表尾指针
-LBJD *pLianBiaoTail = NULL;
-
 // 输出链表
-extern void shuChuLianBiao();
+extern void shuChuLianBiao(LBJD *);
 // 添加结点
-extern void tianJiaXiang(int);
+extern void tianJiaXiang(LBJD **, LBJD **, int);
 // 移除指定结点
-extern void yiChuXiang();
+extern void yiChuXiang(LBJD **, LBJD **, int);
 
 /*#####实现代码#####*/
 
-int main()
-{
-    tianJiaXiang(1);
-    tianJiaXiang(2);
-    tianJiaXiang(3);
-    tianJiaXiang(4);
-    tianJiaXiang(3);
-    tianJiaXiang(4);
-    yiChuXiang(3);
+int main() {
+    // 链表头指针，链表尾指针
+    LBJD *pLBJDTou = NULL, *pLBJDWei = NULL;
+
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 1);
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 2);
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 3);
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 4);
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 3);
+    tianJiaXiang(&pLBJDTou, &pLBJDWei, 4);
+    shuChuLianBiao(pLBJDTou);
+
+    yiChuXiang(&pLBJDTou, &pLBJDWei, 3);
+    shuChuLianBiao(pLBJDTou);
+
     return 0;
 }
 
-void shuChuLianBiao()
-{
-    LBJD *tpLBJD = NULL;
+void shuChuLianBiao(LBJD *pLBJDTou) {
+    LBJD *tpLBJD = pLBJDTou;
 
-    if (pLianBiaoHead == NULL)
-    {
-        printf("kong1lian4biao3!\n");
-
+    printf("lian4biao3:");
+    if (pLBJDTou == NULL) {
         return;
     }
-    tpLBJD = pLianBiaoHead;
-    printf("lian4biao3:");
-    while (tpLBJD != NULL)
-    {
+    while (tpLBJD != NULL) {
         printf("%d,", tpLBJD->iShuZhi);
-        tpLBJD = tpLBJD->pNext;
+        tpLBJD = tpLBJD->pLBJDNext;
     }
     printf("\n");
 }
 
-void tianJiaXiang(int iShuZhi)
-{
-    // 申请内存
+void tianJiaXiang(LBJD **ppLBJDTou, LBJD **ppLBJDWei, int iShuZhi) {
     LBJD *tpLBJD = (LBJD *)malloc(sizeof(LBJD));
 
     tpLBJD->iShuZhi = iShuZhi;
-    tpLBJD->pNext = NULL;
-    if (pLianBiaoHead == NULL)
-    {
+    tpLBJD->pLBJDNext = NULL;
+    if (*ppLBJDTou == NULL) {
         // 链表为空
-        pLianBiaoHead = tpLBJD;
-        pLianBiaoTail = tpLBJD;
-    }
-    else
-    {
+        *ppLBJDTou = *ppLBJDWei = tpLBJD;
+    } else {
         // 把结点连接到链表尾部
-        pLianBiaoTail->pNext = tpLBJD;
-        pLianBiaoTail = tpLBJD;
+        (*ppLBJDWei)->pLBJDNext = tpLBJD;
+        *ppLBJDWei = tpLBJD;
     }
-    shuChuLianBiao();
 }
 
-void yiChuXiang(int iShuZhi)
-{
-    // 当前结点
-    LBJD *pNow;
-    // 上一个结点
-    LBJD *pLast;
+void yiChuXiang(LBJD **ppLBJDTou, LBJD **ppLBJDWei, int iShuZhi) {
+    // 当前结点，上一个结点
+    LBJD *tpLBJDNow = *ppLBJDTou, *tpLBJDLast = *ppLBJDTou;
 
-    if (pLianBiaoHead == NULL)
-    {
+    if (*ppLBJDTou == NULL) {
         return;
     }
-    pLast = pNow = pLianBiaoHead;
-    while (pNow != NULL)
-    {
-        if (pNow->iShuZhi == iShuZhi)
-        {
-            if (pNow == pLianBiaoHead)
-            {
+    while (tpLBJDNow != NULL) {
+        if (tpLBJDNow->iShuZhi == iShuZhi) {
+            if (tpLBJDNow == *ppLBJDTou) {
                 // 刚好是头
-                pLianBiaoHead = pNow->pNext;
-                free(pNow);
-                pNow = pLianBiaoHead;
-            }
-            else if (pNow == pLianBiaoTail)
-            {
+                *ppLBJDTou = tpLBJDNow->pLBJDNext;
+                free(tpLBJDNow);
+                tpLBJDNow = *ppLBJDTou;
+            } else if (tpLBJDNow == *ppLBJDWei) {
                 // 刚好是尾
-                pLast->pNext = NULL;
-                pLianBiaoTail = pLast;
-                free(pNow);
-                pNow = NULL;
-            }
-            else
-            {
+                tpLBJDLast->pLBJDNext = NULL;
+                *ppLBJDWei = tpLBJDLast;
+                free(tpLBJDNow);
+                tpLBJDNow = NULL;
+            } else {
                 // 连接当前结点的前一个结点和后一个结点
-                pLast->pNext = pNow->pNext;
-                free(pNow);
-                pNow = pLast->pNext;
+                tpLBJDLast->pLBJDNext = tpLBJDNow->pLBJDNext;
+                free(tpLBJDNow);
+                tpLBJDNow = tpLBJDLast->pLBJDNext;
             }
-        }
-        else
-        {
+        } else {
             // 指针后移继续寻找
-            pLast = pNow;
-            pNow = pNow->pNext;
+            tpLBJDLast = tpLBJDNow;
+            tpLBJDNow = tpLBJDNow->pLBJDNext;
         }
     }
-    shuChuLianBiao();
 }
