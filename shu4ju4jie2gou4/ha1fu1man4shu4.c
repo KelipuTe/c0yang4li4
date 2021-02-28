@@ -42,7 +42,7 @@ int main() {
     // 临时字符权重数组，用于统计字符权重
     int tiarrZiFuQuanZhong[MAX_ZI_FU_NUM] = {0};
     // 哈夫曼树根节点
-    HFMSJD *pHFMSJDTou = NULL;
+    HFMSJD *pHFMSJDGen = NULL;
     // 哈夫曼字符表数量
     int iHafuManZiFuNum = 0;
     // 临时字符串，用于构造哈夫曼编码
@@ -61,8 +61,8 @@ int main() {
         }
     }
 
-    gouZaoHaFuManShu(&pHFMSJDTou, carrZiFu, iarrZiFuQuanZhong);
-    gouZaoHaFuManBianMaBiao(pHFMSJDTou, &iHafuManZiFuNum, &tsBianMa, 0);
+    gouZaoHaFuManShu(&pHFMSJDGen, carrZiFu, iarrZiFuQuanZhong);
+    gouZaoHaFuManBianMaBiao(pHFMSJDGen, &iHafuManZiFuNum, &tsBianMa, 0);
 
     for (int i = 0; i < iHafuManZiFuNum; i++) {
         printf("%c:", carrHafuManZiFu[i]);
@@ -75,7 +75,7 @@ int main() {
     return 0;
 }
 
-void gouZaoHaFuManShu(HFMSJD **ppHFMSJDTou, char *carrZiFu, int *iarrZiFuQuanZhong) {
+void gouZaoHaFuManShu(HFMSJD **ppHFMSJDGen, char *carrZiFu, int *iarrZiFuQuanZhong) {
     // 保存所有的字符结点的指针数组
     HFMSJD *tparrHFMSJD[MAX_ZI_FU_NUM] = {NULL};
     // 临时结点指针
@@ -132,10 +132,10 @@ void gouZaoHaFuManShu(HFMSJD **ppHFMSJDTou, char *carrZiFu, int *iarrZiFuQuanZho
         } else {
             // 指针数组中只剩一个结点，那么哈夫曼树就已经构造完成了
             if (tpHFMSJD1 != NULL) {
-                *ppHFMSJDTou = tpHFMSJD1;
+                *ppHFMSJDGen = tpHFMSJD1;
                 break;
             } else {
-                *ppHFMSJDTou = tpHFMSJD2;
+                *ppHFMSJDGen = tpHFMSJD2;
                 break;
             }
         }

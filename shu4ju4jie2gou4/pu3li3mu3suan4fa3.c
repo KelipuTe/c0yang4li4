@@ -17,8 +17,7 @@ void shuChuZuiXiaoShenChengShu(int[][2], int);
 
 /*#####实现代码#####*/
 
-int main()
-{
+int main() {
     // 带权重的路径列表
     int iArr2LuJing[][3] = {
         {0, 1, 10},
@@ -44,22 +43,16 @@ int main()
     int iArrXiangGuanDingDianLieBiao[12] = {0};
     // 初始化邻接矩阵，这里和普通邻接矩阵初始化的方式不一样
     // 初始化的时候除了对角线默认所有的值都是临界权重，对角线默认为0，自己到自己认为权重是0
-    for (int i = 0; i < DING_DIAN_SHU; i++)
-    {
-        for (int j = 0; j < DING_DIAN_SHU; j++)
-        {
-            if (i == j)
-            {
+    for (int i = 0; i < DING_DIAN_SHU; i++) {
+        for (int j = 0; j < DING_DIAN_SHU; j++) {
+            if (i == j) {
                 iArr2WuXiangTu[i][j] = 0;
-            }
-            else
-            {
+            } else {
                 iArr2WuXiangTu[i][j] = LIN_JIE_QUAN_ZHONG;
             }
         }
     }
-    for (int i = 0; i < iLuJingShu; i++)
-    {
+    for (int i = 0; i < iLuJingShu; i++) {
         int iDingDian1 = iArr2LuJing[i][0];
         int iDingDian2 = iArr2LuJing[i][1];
         iArr2WuXiangTu[iDingDian1][iDingDian2] = iArr2LuJing[i][2];
@@ -70,21 +63,17 @@ int main()
     // 因为是从顶点0开始的，所以默认顶点0是从顶点0出发的
     iArrXiangGuanDingDianLieBiao[0] = 0;
     // 初始化，因为是从顶点0开始的，所以初始化的时候，最小路径全部默认是从顶点0出发的
-    for (int i = 0; i < iLuJingShu; i++)
-    {
+    for (int i = 0; i < iLuJingShu; i++) {
         iArrZuiXiaoQuanZhongLieBiao[i] = iArr2WuXiangTu[0][i];
         iArrXiangGuanDingDianLieBiao[i] = 0;
     }
     // 每轮判断都是寻找从当前已经找到的最小生成树的顶点出发的所有边中最小权重的边和对应的那个顶点
-    for (int i = 1, tiNum = 0; i < DING_DIAN_SHU; i++)
-    {
+    for (int i = 1, tiNum = 0; i < DING_DIAN_SHU; i++) {
         int tiZuiXiaoQuanZhong = LIN_JIE_QUAN_ZHONG;
         int tiDingDian = 0;
         // 比较本次从最小生成树顶点出发的所有边的权重，找出最小的边
-        for (int j = 1; j < DING_DIAN_SHU; j++)
-        {
-            if (iArrZuiXiaoQuanZhongLieBiao[j] != 0 && iArrZuiXiaoQuanZhongLieBiao[j] < tiZuiXiaoQuanZhong)
-            {
+        for (int j = 1; j < DING_DIAN_SHU; j++) {
+            if (iArrZuiXiaoQuanZhongLieBiao[j] != 0 && iArrZuiXiaoQuanZhongLieBiao[j] < tiZuiXiaoQuanZhong) {
                 tiZuiXiaoQuanZhong = iArrZuiXiaoQuanZhongLieBiao[j];
                 tiDingDian = j;
             }
@@ -95,11 +84,9 @@ int main()
         tiNum++;
         // 把这个顶点标记为已找到
         iArrZuiXiaoQuanZhongLieBiao[tiDingDian] = 0;
-        for (int j = 1; j < DING_DIAN_SHU; j++)
-        {
+        for (int j = 1; j < DING_DIAN_SHU; j++) {
             // 把新找到的顶点加入最小生成树，然后把从这个顶点出发的边和当前的最小路劲比较一下，权重更小的路径加入下一轮的判断
-            if (iArrZuiXiaoQuanZhongLieBiao[j] != 0 && iArr2WuXiangTu[tiDingDian][j] < iArrZuiXiaoQuanZhongLieBiao[j])
-            {
+            if (iArrZuiXiaoQuanZhongLieBiao[j] != 0 && iArr2WuXiangTu[tiDingDian][j] < iArrZuiXiaoQuanZhongLieBiao[j]) {
                 iArrZuiXiaoQuanZhongLieBiao[j] = iArr2WuXiangTu[tiDingDian][j];
                 iArrXiangGuanDingDianLieBiao[j] = tiDingDian;
             }
@@ -115,24 +102,18 @@ int main()
     return 0;
 }
 
-void shuChuWuXiangTu()
-{
-    for (int i = 0; i < DING_DIAN_SHU; i++)
-    {
-        for (int j = 0; j < DING_DIAN_SHU; j++)
-        {
+void shuChuWuXiangTu() {
+    for (int i = 0; i < DING_DIAN_SHU; i++) {
+        for (int j = 0; j < DING_DIAN_SHU; j++) {
             printf("%5d,", iArr2WuXiangTu[i][j]);
         }
         printf("\n");
     }
 }
 
-void shuChuZuiXiaoShenChengShu(int iArrZuiXiaoShengChengShu[][2], int iLuJingShu)
-{
-    for (int i = 0; i < iLuJingShu; i++)
-    {
-        if (iArrZuiXiaoShengChengShu[i][0] != 0 || iArrZuiXiaoShengChengShu[i][1] != 0)
-        {
+void shuChuZuiXiaoShenChengShu(int iArrZuiXiaoShengChengShu[][2], int iLuJingShu) {
+    for (int i = 0; i < iLuJingShu; i++) {
+        if (iArrZuiXiaoShengChengShu[i][0] != 0 || iArrZuiXiaoShengChengShu[i][1] != 0) {
             printf("%d,%d\n", iArrZuiXiaoShengChengShu[i][0], iArrZuiXiaoShengChengShu[i][1]);
         }
     }

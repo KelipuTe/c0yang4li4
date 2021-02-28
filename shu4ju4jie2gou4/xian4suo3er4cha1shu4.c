@@ -32,15 +32,15 @@ extern void zhongXuBianLi(ECSJD *);
 int main() {
     int iarrYuanSu[] = {1, 2, 3, ECSJD_NULL, 5, ECSJD_NULL, 7, ECSJD_NULL, ECSJD_NULL, 10, 11, ECSJD_NULL, ECSJD_NULL, 14};
     int iArrYuanSuLen = sizeof(iarrYuanSu) / sizeof(int);
-    // 头指针，保存线索化时的前驱结点
-    ECSJD *pECSJDTou = NULL, *pECSJDQianQu = NULL;
+    // 根节点指针，保存线索化时的前驱结点
+    ECSJD *pECSJDGen = NULL, *pECSJDQianQu = NULL;
 
-    shuZuGouZaoECS(&pECSJDTou, iarrYuanSu, iArrYuanSuLen, 1, NULL);
-    pECSJDQianQu = pECSJDTou;
-    zhongXuBianLiXianSuoHua(pECSJDTou, &pECSJDQianQu);
+    shuZuGouZaoECS(&pECSJDGen, iarrYuanSu, iArrYuanSuLen, 1, NULL);
+    pECSJDQianQu = pECSJDGen;
+    zhongXuBianLiXianSuoHua(pECSJDGen, &pECSJDQianQu);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pECSJDTou);
+    zhongXuBianLi(pECSJDGen);
     printf("\n");
 
     return 0;
@@ -99,8 +99,8 @@ void zhongXuBianLiXianSuoHua(ECSJD *tpECSJD, ECSJD **ppECSJDQianQu) {
     }
 }
 
-void zhongXuBianLi(ECSJD *pECSJDTou) {
-    ECSJD *tpECSJD = pECSJDTou;
+void zhongXuBianLi(ECSJD *pECSJDGen) {
+    ECSJD *tpECSJD = pECSJDGen;
 
     if (tpECSJD == NULL) {
         return;

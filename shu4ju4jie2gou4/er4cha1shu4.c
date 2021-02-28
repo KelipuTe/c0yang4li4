@@ -38,31 +38,31 @@ int main() {
     // 用数组保存的二叉树结构
     int iarrYuanSu[] = {1, 2, 3, 4, 5, 6, 7, ECSJD_NULL, ECSJD_NULL, 10, 11};
     int iArrYuanSuLen = sizeof(iarrYuanSu) / sizeof(int);
-    // 头指针
-    ECSJD *pECSJDTou = NULL;
+    // 根节点指针
+    ECSJD *pECSJDGen = NULL;
 
-    shuZuGouZaoECS(&pECSJDTou, iarrYuanSu, iArrYuanSuLen, 1);
+    shuZuGouZaoECS(&pECSJDGen, iarrYuanSu, iArrYuanSuLen, 1);
 
     printf("qian2xu4bian4li4:");
-    qianXuBianLi(pECSJDTou);
+    qianXuBianLi(pECSJDGen);
     printf("\n");
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pECSJDTou);
+    zhongXuBianLi(pECSJDGen);
     printf("\n");
 
     printf("hou4xu4bian4li4:");
-    houXuBianLi(pECSJDTou);
+    houXuBianLi(pECSJDGen);
     printf("\n");
 
-    printf("er4cha1shu4shen1du4:%d\n", jiSuanECSShenDu(pECSJDTou));
+    printf("er4cha1shu4shen1du4:%d\n", jiSuanECSShenDu(pECSJDGen));
 
     printf("guang3du4you1xian1bian4li4:");
-    guangDuYouXianBianLi(pECSJDTou);
+    guangDuYouXianBianLi(pECSJDGen);
     printf("\n");
 
     printf("shen1du4you1xian1bian4li4:");
-    shenDuYouXianBianLi(pECSJDTou);
+    shenDuYouXianBianLi(pECSJDGen);
     printf("\n");
 
     return 0;
@@ -86,8 +86,8 @@ void shuZuGouZaoECS(ECSJD **tppECSJD, int *pYuanSuBiao, int iYuanSuBiaoLen, int 
     }
 }
 
-void qianXuBianLi(ECSJD *pECSJDTou) {
-    ECSJD *tpECSJD = pECSJDTou;
+void qianXuBianLi(ECSJD *pECSJDGen) {
+    ECSJD *tpECSJD = pECSJDGen;
 
     if (tpECSJD == NULL) {
         return;
@@ -97,8 +97,8 @@ void qianXuBianLi(ECSJD *pECSJDTou) {
     qianXuBianLi(tpECSJD->pECSJDYou);
 }
 
-void zhongXuBianLi(ECSJD *pECSJDTou) {
-    ECSJD *tpECSJD = pECSJDTou;
+void zhongXuBianLi(ECSJD *pECSJDGen) {
+    ECSJD *tpECSJD = pECSJDGen;
 
     if (tpECSJD == NULL) {
         return;
@@ -108,8 +108,8 @@ void zhongXuBianLi(ECSJD *pECSJDTou) {
     zhongXuBianLi(tpECSJD->pECSJDYou);
 }
 
-void houXuBianLi(ECSJD *pECSJDTou) {
-    ECSJD *tpECSJD = pECSJDTou;
+void houXuBianLi(ECSJD *pECSJDGen) {
+    ECSJD *tpECSJD = pECSJDGen;
 
     if (tpECSJD == NULL) {
         return;
@@ -131,7 +131,7 @@ int jiSuanECSShenDu(ECSJD *tpECSJD) {
     return (int)fmax(iZuoShenDu, iYouShenDu) + 1;
 }
 
-void guangDuYouXianBianLi(ECSJD *pECSJDTou) {
+void guangDuYouXianBianLi(ECSJD *pECSJDGen) {
     // 队列
     ECSJD *parrECSJDDuiLie[100] = {NULL};
     int iDuiLieTou = 0, iDuiLieWei = 0;
@@ -140,7 +140,7 @@ void guangDuYouXianBianLi(ECSJD *pECSJDTou) {
     // 当前循环层数，队尾结点在队列中的位置
     int iJieDianCengShu = 1, tiCengWei = 0;
 
-    parrECSJDDuiLie[iDuiLieWei++] = pECSJDTou;
+    parrECSJDDuiLie[iDuiLieWei++] = pECSJDGen;
     tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
     while (tpECSJD != NULL) {
         // 持续遍历，直到队列为空
@@ -161,14 +161,14 @@ void guangDuYouXianBianLi(ECSJD *pECSJDTou) {
     }
 }
 
-void shenDuYouXianBianLi(ECSJD *pECSJDTou) {
+void shenDuYouXianBianLi(ECSJD *pECSJDGen) {
     // 栈
     ECSJD *arrECSJDZhan[100] = {NULL};
     int iZhanDing = 0;
 
     ECSJD *tpECSJD = NULL;
 
-    arrECSJDZhan[iZhanDing++] = pECSJDTou;
+    arrECSJDZhan[iZhanDing++] = pECSJDGen;
     tpECSJD = arrECSJDZhan[--iZhanDing];
     while (tpECSJD != NULL) {
         // 持续遍历，直到栈为空

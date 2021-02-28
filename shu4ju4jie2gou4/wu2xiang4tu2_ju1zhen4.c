@@ -18,8 +18,7 @@ extern void shenDuYouXianBianLi(int, int[DING_DIAN_SHU]);
 
 /*#####队列#####*/
 
-typedef struct DuiLieJieDian
-{
+typedef struct DuiLieJieDian {
     // 顶点
     int iDingDian;
     struct DuiLieJieDian *pNext;
@@ -33,8 +32,7 @@ extern int chuDui();
 
 /*#####实现代码#####*/
 
-int main()
-{
+int main() {
     // 路径列表
     int iArr2LuJing[][2] = {
         {0, 1},
@@ -57,8 +55,7 @@ int main()
     int iArrDingDianFangWen2[DING_DIAN_SHU] = {0};
 
     // 构造无向图邻接矩阵
-    for (int i = 0; i < iLuJingShu; i++)
-    {
+    for (int i = 0; i < iLuJingShu; i++) {
         int iDingDian1 = iArr2LuJing[i][0];
         int iDingDian2 = iArr2LuJing[i][1];
         // 无向图是对称的
@@ -68,7 +65,7 @@ int main()
 
     printf("wu2xiang4tu2-lin2jie1ju1zhen4:\n");
     shuChuWuXiangTu();
-    
+
     printf("guang3du4you1xian1bian4li4:");
     guangDuYouXianBianLi(iArrDingDianFangWen1);
     printf("\n");
@@ -80,27 +77,21 @@ int main()
     return 0;
 }
 
-void shuChuWuXiangTu()
-{
-    for (int i = 0; i < DING_DIAN_SHU; i++)
-    {
-        for (int j = 0; j < DING_DIAN_SHU; j++)
-        {
+void shuChuWuXiangTu() {
+    for (int i = 0; i < DING_DIAN_SHU; i++) {
+        for (int j = 0; j < DING_DIAN_SHU; j++) {
             printf("%d,", iArr2WuXiangTu[i][j]);
         }
         printf("\n");
     }
 }
 
-void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
-{
+void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU]) {
     // 广度优先遍历需要用到队列，这里和二叉树的广度优先遍历有点类似
     int tiDingDian = -1;
 
-    for (int i = 0; i < DING_DIAN_SHU; i++)
-    {
-        if (iArrDingDianFangWen[i] == 1)
-        {
+    for (int i = 0; i < DING_DIAN_SHU; i++) {
+        if (iArrDingDianFangWen[i] == 1) {
             continue;
         }
         // 输出访问到的顶点
@@ -109,14 +100,11 @@ void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
         iArrDingDianFangWen[i] = 1;
         ruDui(i);
         tiDingDian = chuDui();
-        while (tiDingDian != -1)
-        {
+        while (tiDingDian != -1) {
             // 持续遍历，直到队列为空
-            for (int j = 0; j < DING_DIAN_SHU; j++)
-            {
+            for (int j = 0; j < DING_DIAN_SHU; j++) {
                 // 优先遍历一行，把遇到的顶点都入队
-                if (iArr2WuXiangTu[tiDingDian][j] == 1 && iArrDingDianFangWen[j] == 0)
-                {
+                if (iArr2WuXiangTu[tiDingDian][j] == 1 && iArrDingDianFangWen[j] == 0) {
                     printf("%d,", j);
                     iArrDingDianFangWen[j] = 1;
                     ruDui(j);
@@ -127,16 +115,13 @@ void guangDuYouXianBianLi(int iArrDingDianFangWen[DING_DIAN_SHU])
     }
 }
 
-void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU])
-{
+void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU]) {
     // 深度优先遍历需要用到递归，用栈也是可以的
     printf("%d,", i);
     iArrDingDianFangWen[i] = 1;
     // 遍历矩阵中对应顶点的行
-    for (int j = 0; j < DING_DIAN_SHU; j++)
-    {
-        if (iArr2WuXiangTu[i][j] == 1 && iArrDingDianFangWen[j] == 0)
-        {
+    for (int j = 0; j < DING_DIAN_SHU; j++) {
+        if (iArr2WuXiangTu[i][j] == 1 && iArrDingDianFangWen[j] == 0) {
             // 如果找到没有访问过的顶点，就访问该顶点
             shenDuYouXianBianLi(j, iArrDingDianFangWen);
         }
@@ -146,30 +131,24 @@ void shenDuYouXianBianLi(int i, int iArrDingDianFangWen[DING_DIAN_SHU])
 
 /*#####队列#####*/
 
-void ruDui(int iDingDian)
-{
+void ruDui(int iDingDian) {
     DLJD *tpDLJD = (DLJD *)malloc(sizeof(DLJD));
 
     tpDLJD->iDingDian = iDingDian;
     tpDLJD->pNext = NULL;
-    if (pDuiLieHead == NULL)
-    {
+    if (pDuiLieHead == NULL) {
         pDuiLieHead = pDuiLieTail = tpDLJD;
-    }
-    else
-    {
+    } else {
         pDuiLieTail->pNext = tpDLJD;
         pDuiLieTail = pDuiLieTail->pNext;
     }
 }
 
-int chuDui()
-{
+int chuDui() {
     DLJD *tpNow = NULL;
     int iDingDian = -1;
 
-    if (pDuiLieHead == NULL)
-    {
+    if (pDuiLieHead == NULL) {
         return iDingDian;
     }
     tpNow = pDuiLieHead;

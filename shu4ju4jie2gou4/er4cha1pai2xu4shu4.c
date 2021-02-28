@@ -26,28 +26,28 @@ extern void zhongXuBianLi(ECSJD *);
 /*#####实现代码#####*/
 
 int main() {
-    // 头指针
-    ECSJD *pECSJDTou = NULL;
+    // 根节点指针
+    ECSJD *pECSJDGen = NULL;
     int iarrDaiPaiXu[10];
     int iarrDaiPaiXuLen = 10;
 
     srand(time(NULL));
     for (int i = 0; i < iarrDaiPaiXuLen; i++) {
         iarrDaiPaiXu[i] = rand() % 99 + 1;
-        chaRuJieDian(&pECSJDTou, iarrDaiPaiXu[i]);
+        chaRuJieDian(&pECSJDGen, iarrDaiPaiXu[i]);
     }
 
     printf("dai4pai2xu4:");
     shuChuShuZu(&iarrDaiPaiXu, iarrDaiPaiXuLen);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pECSJDTou);
+    zhongXuBianLi(pECSJDGen);
     printf("\n");
 
-    shanChuJieDian(pECSJDTou, iarrDaiPaiXu[4]);
+    shanChuJieDian(pECSJDGen, iarrDaiPaiXu[4]);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pECSJDTou);
+    zhongXuBianLi(pECSJDGen);
     printf("\n");
 
     return 0;
@@ -60,18 +60,18 @@ void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {
     printf("\n");
 }
 
-void chaRuJieDian(ECSJD **ppECSJDTou, int iChaRuZhi) {
+void chaRuJieDian(ECSJD **ppECSJDGen, int iChaRuZhi) {
     // 记录要插入的结点的父结点
     ECSJD *pECSJDLast = NULL;
     ECSJD *tpECSJD = NULL;
 
-    if (*ppECSJDTou == NULL) {
-        *ppECSJDTou = (ECSJD *)malloc(sizeof(ECSJD));
-        (*ppECSJDTou)->iShuZhi = iChaRuZhi;
-        (*ppECSJDTou)->pECSJDZuo = NULL;
-        (*ppECSJDTou)->pECSJDYou = NULL;
+    if (*ppECSJDGen == NULL) {
+        *ppECSJDGen = (ECSJD *)malloc(sizeof(ECSJD));
+        (*ppECSJDGen)->iShuZhi = iChaRuZhi;
+        (*ppECSJDGen)->pECSJDZuo = NULL;
+        (*ppECSJDGen)->pECSJDYou = NULL;
     } else {
-        pECSJDLast = tpECSJD = *ppECSJDTou;
+        pECSJDLast = tpECSJD = *ppECSJDGen;
         while (tpECSJD != NULL) {
             if (iChaRuZhi < tpECSJD->iShuZhi) {
                 pECSJDLast = tpECSJD;
@@ -102,12 +102,12 @@ void chaRuJieDian(ECSJD **ppECSJDTou, int iChaRuZhi) {
     }
 }
 
-void shanChuJieDian(ECSJD *pECSJDTou, int iShanChuZhi) {
+void shanChuJieDian(ECSJD *pECSJDGen, int iShanChuZhi) {
     // 记录要删除的结点的父结点，记录要删除的结点
     ECSJD *pECSJDLast = NULL, *pECSJDDel = NULL;
     ECSJD *tpECSJD = NULL;
 
-    tpECSJD = pECSJDTou;
+    tpECSJD = pECSJDGen;
     while (tpECSJD != NULL) {
         if (iShanChuZhi < tpECSJD->iShuZhi) {
             pECSJDLast = tpECSJD;
@@ -165,8 +165,8 @@ void shanChuJieDian(ECSJD *pECSJDTou, int iShanChuZhi) {
     }
 }
 
-void zhongXuBianLi(ECSJD *pECSJDTou) {
-    ECSJD *tpECSJD = pECSJDTou;
+void zhongXuBianLi(ECSJD *pECSJDGen) {
+    ECSJD *tpECSJD = pECSJDGen;
 
     if (tpECSJD == NULL) {
         return;

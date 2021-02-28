@@ -38,8 +38,8 @@ extern void youXuan(ECSJD *, ECSJD **);
 extern void zhongXuBianLi(ECSJD *);
 
 int main() {
-    // 头指针
-    ECSJD *pECSJDTou = NULL;
+    // 根节点指针
+    ECSJD *pECSJDGen = NULL;
     int iarrDaiPaiXu[10];
     int iarrDaiPaiXuLen = 10;
 
@@ -47,14 +47,14 @@ int main() {
     for (int i = 0; i < iarrDaiPaiXuLen; i++) {
         int chaRuZhi = (rand() % 99) + 1;
         iarrDaiPaiXu[i] = chaRuZhi;
-        chaRuJieDian(&pECSJDTou, iarrDaiPaiXu[i], &pECSJDTou);
+        chaRuJieDian(&pECSJDGen, iarrDaiPaiXu[i], &pECSJDGen);
     }
 
     printf("dai4pai2xu4:");
     shuChuShuZu(iarrDaiPaiXu, iarrDaiPaiXuLen);
 
     printf("zhong1xu4bian4li4:");
-    zhongXuBianLi(pECSJDTou);
+    zhongXuBianLi(pECSJDGen);
     printf("\n");
 
     return 0;
@@ -67,7 +67,7 @@ void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {
     printf("\n");
 }
 
-void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDTou) {
+void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDGen) {
     if (*tpECSJD == NULL) {
         *tpECSJD = (ECSJD *)malloc(sizeof(ECSJD));
         (*tpECSJD)->iShuZhi = iChaRuZhi;
@@ -79,7 +79,7 @@ void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDTou) {
     } else {
         if (iChaRuZhi < (*tpECSJD)->iShuZhi) {
             if ((*tpECSJD)->pECSJDZuo != NULL) {
-                chaRuJieDian(&((*tpECSJD)->pECSJDZuo), iChaRuZhi, tpECSJDTou);
+                chaRuJieDian(&((*tpECSJD)->pECSJDZuo), iChaRuZhi, tpECSJDGen);
             } else {
                 (*tpECSJD)->pECSJDZuo = (ECSJD *)malloc(sizeof(ECSJD));
                 (*tpECSJD)->pECSJDZuo->iShuZhi = iChaRuZhi;
@@ -91,7 +91,7 @@ void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDTou) {
             }
         } else if (iChaRuZhi > (*tpECSJD)->iShuZhi) {
             if ((*tpECSJD)->pECSJDYou != NULL) {
-                chaRuJieDian(&((*tpECSJD)->pECSJDYou), iChaRuZhi, tpECSJDTou);
+                chaRuJieDian(&((*tpECSJD)->pECSJDYou), iChaRuZhi, tpECSJDGen);
             } else {
                 (*tpECSJD)->pECSJDYou = (ECSJD *)malloc(sizeof(ECSJD));
                 (*tpECSJD)->pECSJDYou->iShuZhi = iChaRuZhi;
@@ -110,19 +110,19 @@ void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDTou) {
             // 左子树高
             if ((*tpECSJD)->pECSJDZuo->iPingHengCanShu == -1) {
                 // LR型，先左旋变成LL型
-                zuoXuan((*tpECSJD)->pECSJDZuo, tpECSJDTou);
+                zuoXuan((*tpECSJD)->pECSJDZuo, tpECSJDGen);
             }
             // LL型
-            youXuan(*tpECSJD, tpECSJDTou);
+            youXuan(*tpECSJD, tpECSJDGen);
         }
         if ((*tpECSJD)->iPingHengCanShu < -1) {
             // 右子树高，
             if ((*tpECSJD)->pECSJDYou->iPingHengCanShu == 1) {
                 // RL型，先右旋变成RR型
-                youXuan((*tpECSJD)->pECSJDYou, tpECSJDTou);
+                youXuan((*tpECSJD)->pECSJDYou, tpECSJDGen);
             }
             // RR型
-            zuoXuan(*tpECSJD, tpECSJDTou);
+            zuoXuan(*tpECSJD, tpECSJDGen);
         }
         // 计算深度和平衡参数
         (*tpECSJD)->iJieDianShenDu = jiSuanShenDu(*tpECSJD);
@@ -152,7 +152,7 @@ int jiSuanPingHengCanShu(ECSJD *tpECSJD) {
     return iShenDuZuo - iShenDuYou;
 }
 
-void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
+void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
     // 自己的父结点
     ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
     // 自己的右结点
@@ -160,9 +160,9 @@ void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
     // 自己的右结点的左结点
     ECSJD *tpECSJDYouZuo = tpECSJDYou->pECSJDZuo;
 
-    if (tpECSJD == *tpECSJDTou) {
+    if (tpECSJD == *tpECSJDGen) {
         // 自己是根结点
-        *tpECSJDTou = tpECSJDYou;
+        *tpECSJDGen = tpECSJDYou;
     }
     // 自己的右结点变成自己的父结点
     tpECSJDYou->pECSJDFu = tpECSJDFu;
@@ -189,7 +189,7 @@ void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
     tpECSJDYou->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJDYou);
 }
 
-void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
+void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
     // 自己的父结点
     ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
     // 自己的左结点
@@ -197,8 +197,8 @@ void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDTou) {
     // 自己的左结点的右结点
     ECSJD *tpECSJDZuoYou = tpECSJDZuo->pECSJDYou;
 
-    if (tpECSJD == *tpECSJDTou) {
-        *tpECSJDTou = tpECSJDZuo;
+    if (tpECSJD == *tpECSJDGen) {
+        *tpECSJDGen = tpECSJDZuo;
     }
     // 自己的左结点变成自己的父结点
     tpECSJDZuo->pECSJDFu = tpECSJDFu;
