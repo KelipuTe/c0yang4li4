@@ -135,14 +135,13 @@ void guangDuYouXianBianLi(ECSJD *pECSJDGen) {
     // 队列
     ECSJD *parrECSJDDuiLie[100] = {NULL};
     int iDuiLieTou = 0, iDuiLieWei = 0;
-
     ECSJD *tpECSJD = NULL;
     // 当前循环层数，队尾结点在队列中的位置
     int iJieDianCengShu = 1, tiCengWei = 0;
 
     parrECSJDDuiLie[iDuiLieWei++] = pECSJDGen;
     tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
-    while (tpECSJD != NULL) {
+    while (iDuiLieTou <= iDuiLieWei && tpECSJD != NULL) {
         // 持续遍历，直到队列为空
         tiCengWei = iDuiLieWei;
         while (iDuiLieTou <= tiCengWei) {
@@ -155,7 +154,13 @@ void guangDuYouXianBianLi(ECSJD *pECSJDGen) {
                 // 右结点后入队，后遍历
                 parrECSJDDuiLie[iDuiLieWei++] = tpECSJD->pECSJDYou;
             }
-            tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
+            if (iDuiLieTou < iDuiLieWei) {
+                tpECSJD = parrECSJDDuiLie[iDuiLieTou++];
+            } else {
+                // 控制外层遍历结束条件
+                iDuiLieTou = iDuiLieWei + 1;
+                tpECSJD = NULL;
+            }
         }
         iJieDianCengShu++;
     }
@@ -165,12 +170,11 @@ void shenDuYouXianBianLi(ECSJD *pECSJDGen) {
     // 栈
     ECSJD *arrECSJDZhan[100] = {NULL};
     int iZhanDing = 0;
-
     ECSJD *tpECSJD = NULL;
 
     arrECSJDZhan[iZhanDing++] = pECSJDGen;
     tpECSJD = arrECSJDZhan[--iZhanDing];
-    while (tpECSJD != NULL) {
+    while (iZhanDing >= 0 && tpECSJD != NULL) {
         // 持续遍历，直到栈为空
         printf("%d,", tpECSJD->iShuZhi);
         if (tpECSJD->pECSJDYou != NULL) {
@@ -181,6 +185,10 @@ void shenDuYouXianBianLi(ECSJD *pECSJDGen) {
             // 左结点后入栈，先遍历
             arrECSJDZhan[iZhanDing++] = tpECSJD->pECSJDZuo;
         }
-        tpECSJD = arrECSJDZhan[--iZhanDing];
+        if (iZhanDing > 1) {
+            tpECSJD = arrECSJDZhan[--iZhanDing];
+        } else {
+            tpECSJD = NULL;
+        }
     }
 }
