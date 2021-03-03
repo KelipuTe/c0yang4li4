@@ -63,8 +63,8 @@ int main() {
     return 0;
 }
 
-void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu) {
-    for (int i = 0; i < iArrLieShu; i++) {
+void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen) {
+    for (int i = 0; i < iArrLen; i++) {
         for (int j = 0; j < DING_DIAN_SHU; j++) {
             printf("%d,", piarrYiHang[i][j]);
         }
@@ -72,7 +72,7 @@ void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu) {
     }
 }
 
-void guangDuYouXianBianLi(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu, int *piarrDingDianFangWen) {
+void guangDuYouXianBianLi(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen, int *piarrDingDianFangWen) {
     // 广度优先遍历需要用到队列
     int iarrDuiLie[100] = {0};
     int iDuiLieTou = 0, iDuiLieWei = 0;
@@ -100,7 +100,7 @@ void guangDuYouXianBianLi(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu, int
     }
 }
 
-void shenDuYouXianBianLi(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu, int *piarrDingDianFangWen) {
+void shenDuYouXianBianLi(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen, int *piarrDingDianFangWen) {
     // 深度优先遍历需要用到栈或者递归
     int iarrZhan[100] = {0};
     int iZhanDing = 0;

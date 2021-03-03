@@ -98,8 +98,8 @@ int main() {
     return 0;
 }
 
-void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLieShu) {
-    for (int i = 0; i < iArrLieShu; i++) {
+void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen) {
+    for (int i = 0; i < iArrLen; i++) {
         for (int j = 0; j < DING_DIAN_SHU; j++) {
             printf("%5d,", piarrYiHang[i][j]);
         }

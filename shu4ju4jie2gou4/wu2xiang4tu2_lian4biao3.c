@@ -91,10 +91,10 @@ void tianJiaJieDian(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iDingDian1, int iDi
     }
 }
 
-void shuChuWuXiangTu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLieShu) {
+void shuChuWuXiangTu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen) {
     LJBJD *tpLJBJD = NULL;
 
-    for (int i; i < iArrLieShu; i++) {
+    for (int i = 0; i < iArrLen; i++) {
         tpLJBJD = parrWuXiangTu[i];
         printf("%d:", i);
         while (tpLJBJD != NULL) {
@@ -105,14 +105,14 @@ void shuChuWuXiangTu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLieShu) {
     }
 }
 
-void guangDuYouXianBianLi(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLieShu, int *piarrDingDianFangWen) {
+void guangDuYouXianBianLi(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen, int *piarrDingDianFangWen) {
     // 广度优先遍历需要用到队列
     int iarrDuiLie[100] = {0};
     int iDuiLieTou = 0, iDuiLieWei = 0;
     int tiDingDian = 0;
     LJBJD *tpLJBJD = NULL;
 
-    for (int i = 0; i < iArrLieShu; i++) {
+    for (int i = 0; i < iArrLen; i++) {
         iarrDuiLie[iDuiLieWei++] = i;
         while (iDuiLieTou <= iDuiLieWei) {
             tiDingDian = iarrDuiLie[iDuiLieTou++];
@@ -133,7 +133,7 @@ void guangDuYouXianBianLi(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLieShu, i
     }
 }
 
-void shenDuYouXianBianLi(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLieShu, int *piarrDingDianFangWen) {
+void shenDuYouXianBianLi(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen, int *piarrDingDianFangWen) {
     int iarrZhan[100] = {0};
     int iZhanDing = 0;
     int tiDingDian = 0, tiDingDianLast = 0;
