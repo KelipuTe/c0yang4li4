@@ -45,8 +45,7 @@ int main() {
 
     srand(time(NULL));
     for (int i = 0; i < iarrDaiPaiXuLen; i++) {
-        int chaRuZhi = (rand() % 99) + 1;
-        iarrDaiPaiXu[i] = chaRuZhi;
+        iarrDaiPaiXu[i] = (rand() % 99) + 1;
         chaRuJieDian(&pECSJDGen, iarrDaiPaiXu[i], &pECSJDGen);
     }
 
@@ -67,66 +66,66 @@ void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {
     printf("\n");
 }
 
-void chaRuJieDian(ECSJD **tpECSJD, int iChaRuZhi, ECSJD **tpECSJDGen) {
-    if (*tpECSJD == NULL) {
-        *tpECSJD = (ECSJD *)malloc(sizeof(ECSJD));
-        (*tpECSJD)->iShuZhi = iChaRuZhi;
-        (*tpECSJD)->pECSJDZuo = NULL;
-        (*tpECSJD)->pECSJDYou = NULL;
-        (*tpECSJD)->pECSJDFu = NULL;
-        (*tpECSJD)->iJieDianShenDu = 1;
-        (*tpECSJD)->iPingHengCanShu = 0;
+void chaRuJieDian(ECSJD **tppECSJD, int iChaRuZhi, ECSJD **tppECSJDGen) {
+    if (*tppECSJD == NULL) {
+        *tppECSJD = (ECSJD *)malloc(sizeof(ECSJD));
+        (*tppECSJD)->iShuZhi = iChaRuZhi;
+        (*tppECSJD)->pECSJDZuo = NULL;
+        (*tppECSJD)->pECSJDYou = NULL;
+        (*tppECSJD)->pECSJDFu = NULL;
+        (*tppECSJD)->iJieDianShenDu = 1;
+        (*tppECSJD)->iPingHengCanShu = 0;
     } else {
-        if (iChaRuZhi < (*tpECSJD)->iShuZhi) {
-            if ((*tpECSJD)->pECSJDZuo != NULL) {
-                chaRuJieDian(&((*tpECSJD)->pECSJDZuo), iChaRuZhi, tpECSJDGen);
+        if (iChaRuZhi < (*tppECSJD)->iShuZhi) {
+            if ((*tppECSJD)->pECSJDZuo != NULL) {
+                chaRuJieDian(&((*tppECSJD)->pECSJDZuo), iChaRuZhi, tppECSJDGen);
             } else {
-                (*tpECSJD)->pECSJDZuo = (ECSJD *)malloc(sizeof(ECSJD));
-                (*tpECSJD)->pECSJDZuo->iShuZhi = iChaRuZhi;
-                (*tpECSJD)->pECSJDZuo->pECSJDZuo = NULL;
-                (*tpECSJD)->pECSJDZuo->pECSJDYou = NULL;
-                (*tpECSJD)->pECSJDZuo->pECSJDFu = *tpECSJD;
-                (*tpECSJD)->pECSJDZuo->iJieDianShenDu = 1;
-                (*tpECSJD)->pECSJDZuo->iPingHengCanShu = 0;
+                (*tppECSJD)->pECSJDZuo = (ECSJD *)malloc(sizeof(ECSJD));
+                (*tppECSJD)->pECSJDZuo->iShuZhi = iChaRuZhi;
+                (*tppECSJD)->pECSJDZuo->pECSJDZuo = NULL;
+                (*tppECSJD)->pECSJDZuo->pECSJDYou = NULL;
+                (*tppECSJD)->pECSJDZuo->pECSJDFu = *tppECSJD;
+                (*tppECSJD)->pECSJDZuo->iJieDianShenDu = 1;
+                (*tppECSJD)->pECSJDZuo->iPingHengCanShu = 0;
             }
-        } else if (iChaRuZhi > (*tpECSJD)->iShuZhi) {
-            if ((*tpECSJD)->pECSJDYou != NULL) {
-                chaRuJieDian(&((*tpECSJD)->pECSJDYou), iChaRuZhi, tpECSJDGen);
+        } else if (iChaRuZhi > (*tppECSJD)->iShuZhi) {
+            if ((*tppECSJD)->pECSJDYou != NULL) {
+                chaRuJieDian(&((*tppECSJD)->pECSJDYou), iChaRuZhi, tppECSJDGen);
             } else {
-                (*tpECSJD)->pECSJDYou = (ECSJD *)malloc(sizeof(ECSJD));
-                (*tpECSJD)->pECSJDYou->iShuZhi = iChaRuZhi;
-                (*tpECSJD)->pECSJDYou->pECSJDZuo = NULL;
-                (*tpECSJD)->pECSJDYou->pECSJDYou = NULL;
-                (*tpECSJD)->pECSJDYou->pECSJDFu = *tpECSJD;
-                (*tpECSJD)->pECSJDYou->iJieDianShenDu = 1;
-                (*tpECSJD)->pECSJDYou->iPingHengCanShu = 0;
+                (*tppECSJD)->pECSJDYou = (ECSJD *)malloc(sizeof(ECSJD));
+                (*tppECSJD)->pECSJDYou->iShuZhi = iChaRuZhi;
+                (*tppECSJD)->pECSJDYou->pECSJDZuo = NULL;
+                (*tppECSJD)->pECSJDYou->pECSJDYou = NULL;
+                (*tppECSJD)->pECSJDYou->pECSJDFu = *tppECSJD;
+                (*tppECSJD)->pECSJDYou->iJieDianShenDu = 1;
+                (*tppECSJD)->pECSJDYou->iPingHengCanShu = 0;
             }
         } else {
             // 要插入的值已经存在
         }
         // 检查是否需要旋转
-        (*tpECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tpECSJD);
-        if ((*tpECSJD)->iPingHengCanShu > 1) {
+        (*tppECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tppECSJD);
+        if ((*tppECSJD)->iPingHengCanShu > 1) {
             // 左子树高
-            if ((*tpECSJD)->pECSJDZuo->iPingHengCanShu == -1) {
+            if ((*tppECSJD)->pECSJDZuo->iPingHengCanShu == -1) {
                 // LR型，先左旋变成LL型
-                zuoXuan((*tpECSJD)->pECSJDZuo, tpECSJDGen);
+                zuoXuan((*tppECSJD)->pECSJDZuo, tppECSJDGen);
             }
             // LL型
-            youXuan(*tpECSJD, tpECSJDGen);
+            youXuan(*tppECSJD, tppECSJDGen);
         }
-        if ((*tpECSJD)->iPingHengCanShu < -1) {
+        if ((*tppECSJD)->iPingHengCanShu < -1) {
             // 右子树高，
-            if ((*tpECSJD)->pECSJDYou->iPingHengCanShu == 1) {
+            if ((*tppECSJD)->pECSJDYou->iPingHengCanShu == 1) {
                 // RL型，先右旋变成RR型
-                youXuan((*tpECSJD)->pECSJDYou, tpECSJDGen);
+                youXuan((*tppECSJD)->pECSJDYou, tppECSJDGen);
             }
             // RR型
-            zuoXuan(*tpECSJD, tpECSJDGen);
+            zuoXuan(*tppECSJD, tppECSJDGen);
         }
         // 计算深度和平衡参数
-        (*tpECSJD)->iJieDianShenDu = jiSuanShenDu(*tpECSJD);
-        (*tpECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tpECSJD);
+        (*tppECSJD)->iJieDianShenDu = jiSuanShenDu(*tppECSJD);
+        (*tppECSJD)->iPingHengCanShu = jiSuanPingHengCanShu(*tppECSJD);
     }
 }
 
@@ -152,7 +151,7 @@ int jiSuanPingHengCanShu(ECSJD *tpECSJD) {
     return iShenDuZuo - iShenDuYou;
 }
 
-void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
+void zuoXuan(ECSJD *tpECSJD, ECSJD **tppECSJDGen) {
     // 自己的父结点
     ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
     // 自己的右结点
@@ -160,9 +159,9 @@ void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
     // 自己的右结点的左结点
     ECSJD *tpECSJDYouZuo = tpECSJDYou->pECSJDZuo;
 
-    if (tpECSJD == *tpECSJDGen) {
+    if (tpECSJD == *tppECSJDGen) {
         // 自己是根结点
-        *tpECSJDGen = tpECSJDYou;
+        *tppECSJDGen = tpECSJDYou;
     }
     // 自己的右结点变成自己的父结点
     tpECSJDYou->pECSJDFu = tpECSJDFu;
@@ -189,7 +188,7 @@ void zuoXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
     tpECSJDYou->iPingHengCanShu = jiSuanPingHengCanShu(tpECSJDYou);
 }
 
-void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
+void youXuan(ECSJD *tpECSJD, ECSJD **tppECSJDGen) {
     // 自己的父结点
     ECSJD *tpECSJDFu = tpECSJD->pECSJDFu;
     // 自己的左结点
@@ -197,8 +196,8 @@ void youXuan(ECSJD *tpECSJD, ECSJD **tpECSJDGen) {
     // 自己的左结点的右结点
     ECSJD *tpECSJDZuoYou = tpECSJDZuo->pECSJDYou;
 
-    if (tpECSJD == *tpECSJDGen) {
-        *tpECSJDGen = tpECSJDZuo;
+    if (tpECSJD == *tppECSJDGen) {
+        *tppECSJDGen = tpECSJDZuo;
     }
     // 自己的左结点变成自己的父结点
     tpECSJDZuo->pECSJDFu = tpECSJDFu;
