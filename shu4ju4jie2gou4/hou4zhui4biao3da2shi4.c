@@ -1,90 +1,70 @@
 #include <stdio.h>
-#include <stdlib.h>
 
 /*#####后缀表达式#####*/
+
+// 表达式长度
+#define BIAO_DA_SHI_LEN 256
 
 // 中缀表达式转后缀表达式
 extern void zhongZhuiZhuanHouZhui();
 // 后缀表达式计算结果
-extern float jiSuanHouZhuiBiaoDaShi(char *);
-
-/*#####栈-字符#####*/
-
-struct ZhanJieDian {
-    // 操作符
-    char caoZuoFu;
-    struct ZhanJieDian *pNext;
-};
-
-struct ZhanJieDian *pZhanDing = NULL;
-
-extern void ruZhan(char);
-extern char chuZhan();
-extern char yuChuZhan();
-
-/*#####栈-数值#####*/
-
-struct ZhanJieDian2 {
-    // 数值
-    float num;
-    struct ZhanJieDian2 *pNext;
-};
-
-struct ZhanJieDian2 *pZhanDing2 = NULL;
-
-extern void ruZhan2(float);
-extern float chuZhan2();
+extern float jiSuanHouZhui(char *);
 
 /*#####实现代码#####*/
 
 int main() {
-    char zhongZhuiArr[] = "(1-9)*(2+8)";
-    char houZhuiArr[32];
-    float num = 0;
+    char sZhongZhui[BIAO_DA_SHI_LEN] = "(1-9)*(2+8)";
+    char sHouZhui[BIAO_DA_SHI_LEN];
 
-    printf("%s\n", zhongZhuiArr);
-    zhongZhuiZhuanHouZhui(&zhongZhuiArr, &houZhuiArr);
-    printf("%s\n", houZhuiArr);
-    num = jiSuanHouZhuiBiaoDaShi(&houZhuiArr);
-    printf("%f\n", num);
+    printf("%s\n", sZhongZhui);
+    zhongZhuiZhuanHouZhui(&sZhongZhui, &sHouZhui);
+    printf("%s\n", sHouZhui);
+    printf("%f\n", jiSuanHouZhui(&sHouZhui));
 }
 
-void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr) {
-    char caoZuoXiang;
-    char tCaoZuoFu;
+void zhongZhuiZhuanHouZhui(char *sZhongZhui, char *sHouZhui) {
+    char cCaoZuoXiang;
+    char cCaoZuoFu;
+    // 操作符栈
+    char carrCaoZuoFuZhan[BIAO_DA_SHI_LEN] = {0};
+    int iCaoZuoFuZhanDing = 0;
 
     int j = 0;
-    for (int i = 0; zhongZhuiArr[i] != '\0'; i++) {
-        caoZuoXiang = zhongZhuiArr[i];
-        if (caoZuoXiang >= '0' && caoZuoXiang <= '9') {
+    for (int i = 0; sZhongZhui[i] != '\0'; i++) {
+        cCaoZuoXiang = sZhongZhui[i];
+        if (cCaoZuoXiang >= '0' && cCaoZuoXiang <= '9') {
             // 处理数字
-            houZhuiArr[j++] = caoZuoXiang;
+            sHouZhui[j++] = cCaoZuoXiang;
         } else {
             // 处理操作符
-            switch (caoZuoXiang) {
+            switch (cCaoZuoXiang) {
                 case '(':
-                    ruZhan(caoZuoXiang);
+                    carrCaoZuoFuZhan[iCaoZuoFuZhanDing++] = cCaoZuoXiang;
                     break;
                 case ')':
                     while (1) {
                         // 遇到右括号时，持续输出操作符，直到匹配到左括号
-                        tCaoZuoFu = chuZhan();
-                        if (tCaoZuoFu == '(') {
+                        cCaoZuoFu = carrCaoZuoFuZhan[--iCaoZuoFuZhanDing];
+                        if (cCaoZuoFu == '(') {
                             break;
                         }
-                        houZhuiArr[j++] = tCaoZuoFu;
+                        sHouZhui[j++] = cCaoZuoFu;
                     }
                     break;
                 case '+':
                 case '-':
                     while (1) {
                         // 如果加号和减号前面有其他操作符则需要输出
-                        tCaoZuoFu = yuChuZhan();
-                        if (tCaoZuoFu == '+' || tCaoZuoFu == '-' || tCaoZuoFu == '*' || tCaoZuoFu == '/') {
-                            tCaoZuoFu = chuZhan();
-                            houZhuiArr[j++] = tCaoZuoFu;
+                        if (iCaoZuoFuZhanDing < 1) {
+                            carrCaoZuoFuZhan[iCaoZuoFuZhanDing++] = cCaoZuoXiang;
+                            break;
+                        }
+                        cCaoZuoFu = carrCaoZuoFuZhan[iCaoZuoFuZhanDing - 1];
+                        if (cCaoZuoFu == '+' || cCaoZuoFu == '-' || cCaoZuoFu == '*' || cCaoZuoFu == '/') {
+                            cCaoZuoFu = carrCaoZuoFuZhan[--iCaoZuoFuZhanDing];
+                            sHouZhui[j++] = cCaoZuoFu;
                         } else {
-                            ruZhan(caoZuoXiang);
+                            carrCaoZuoFuZhan[iCaoZuoFuZhanDing++] = cCaoZuoXiang;
                             break;
                         }
                     }
@@ -93,12 +73,12 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr) {
                 case '/':
                     while (1) {
                         // 如果乘号和除号前面有乘号或除号则需要输出，加号或减号则不输出
-                        tCaoZuoFu = yuChuZhan();
-                        if (tCaoZuoFu == '*' || tCaoZuoFu == '/') {
-                            tCaoZuoFu = chuZhan();
-                            houZhuiArr[j++] = tCaoZuoFu;
+                        cCaoZuoFu = carrCaoZuoFuZhan[iCaoZuoFuZhanDing - 1];
+                        if (cCaoZuoFu == '*' || cCaoZuoFu == '/') {
+                            cCaoZuoFu = carrCaoZuoFuZhan[--iCaoZuoFuZhanDing];
+                            sHouZhui[j++] = cCaoZuoFu;
                         } else {
-                            ruZhan(caoZuoXiang);
+                            carrCaoZuoFuZhan[iCaoZuoFuZhanDing++] = cCaoZuoXiang;
                             break;
                         }
                     }
@@ -109,124 +89,75 @@ void zhongZhuiZhuanHouZhui(char *zhongZhuiArr, char *houZhuiArr) {
     // 把栈中操作符全部输出
     // 注意这里用的是字符数组，所以要加\0
     while (1) {
-        tCaoZuoFu = chuZhan();
-        if (tCaoZuoFu == '\0') {
+        cCaoZuoFu = carrCaoZuoFuZhan[--iCaoZuoFuZhanDing];
+        if (cCaoZuoFu == '\0') {
             break;
         }
-        houZhuiArr[j++] = tCaoZuoFu;
+        sHouZhui[j++] = cCaoZuoFu;
     }
-    houZhuiArr[j] = '\0';
+    sHouZhui[j] = '\0';
 }
 
-float jiSuanHouZhuiBiaoDaShi(char *houZhuiArr) {
-    char caoZuoXiang;
-    float num1 = 0, num2 = 0, num3 = 0;
+float jiSuanHouZhui(char *sHouZhui) {
+    char cCaoZuoXiang;
+    float fNum1 = 0, fNum2 = 0, fNum3 = 0;
+    // 操作项栈
+    char carrCaoZuoXiangZhan[BIAO_DA_SHI_LEN] = {0};
+    int iCaoZuoXiangZhanDing = 0;
+
     // 每次从栈中取两个数字，将计算的结果再入栈
     // 最后栈中的那个数字就是结果
-    for (int i = 0; houZhuiArr[i] != '\0'; i++) {
-        caoZuoXiang = houZhuiArr[i];
-        if (caoZuoXiang >= '0' && caoZuoXiang <= '9') {
+    for (int i = 0; sHouZhui[i] != '\0'; i++) {
+        cCaoZuoXiang = sHouZhui[i];
+        if (cCaoZuoXiang >= '0' && cCaoZuoXiang <= '9') {
             // 处理数字，因为这里只考虑了10以内的四则运算，所以可以直接使用字符相减
-            ruZhan2((float)(caoZuoXiang - '0'));
+            carrCaoZuoXiangZhan[iCaoZuoXiangZhanDing++] = (float)(cCaoZuoXiang - '0');
             continue;
         }
-        switch (caoZuoXiang) {
+        switch (cCaoZuoXiang) {
             case '+':
-                num1 = chuZhan2();
-                num2 = chuZhan2();
-                num3 = num2 + num1;
-                ruZhan2(num3);
+                fNum1 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                if (iCaoZuoXiangZhanDing < 1) {
+                    fNum2 = 0;
+                } else {
+                    fNum2 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                }
+                fNum3 = fNum2 + fNum1;
+                carrCaoZuoXiangZhan[iCaoZuoXiangZhanDing++] = fNum3;
                 break;
             case '-':
-                num1 = chuZhan2();
-                num2 = chuZhan2();
-                num3 = num2 - num1;
-                ruZhan2(num3);
+                fNum1 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                if (iCaoZuoXiangZhanDing < 1) {
+                    fNum2 = 0;
+                } else {
+                    fNum2 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                }
+                fNum3 = fNum2 - fNum1;
+                carrCaoZuoXiangZhan[iCaoZuoXiangZhanDing++] = fNum3;
                 break;
             case '*':
-                num1 = chuZhan2();
-                num2 = chuZhan2();
-                num3 = num2 * num1;
-                ruZhan2(num3);
+                fNum1 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                if (iCaoZuoXiangZhanDing < 1) {
+                    fNum2 = 1;
+                } else {
+                    fNum2 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                }
+                fNum3 = fNum2 * fNum1;
+                carrCaoZuoXiangZhan[iCaoZuoXiangZhanDing++] = fNum3;
                 break;
             case '/':
-                num1 = chuZhan2();
-                num2 = chuZhan2();
-                num3 = num2 / num1;
-                ruZhan2(num3);
+                fNum1 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                if (iCaoZuoXiangZhanDing < 1) {
+                    fNum3 = fNum1;
+                } else {
+                    fNum2 = carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
+                    fNum3 = fNum2 / fNum1;
+                }
+                carrCaoZuoXiangZhan[iCaoZuoXiangZhanDing++] = fNum3;
+                ;
                 break;
         }
     }
-    return chuZhan2();
-}
 
-/*#####栈-字符#####*/
-
-void ruZhan(char caoZuoFu) {
-    struct ZhanJieDian *pTemp = (struct ZhanJieDian *)malloc(sizeof(struct ZhanJieDian));
-
-    pTemp->caoZuoFu = caoZuoFu;
-    if (pZhanDing == NULL) {
-        pTemp->pNext = NULL;
-        pZhanDing = pTemp;
-    } else {
-        pTemp->pNext = pZhanDing;
-        pZhanDing = pTemp;
-    }
-}
-
-char chuZhan() {
-    char caoZuoFu = '\0';
-    struct ZhanJieDian *pNow = NULL;
-
-    if (pZhanDing == NULL) {
-        return caoZuoFu;
-    }
-    pNow = pZhanDing;
-    caoZuoFu = pZhanDing->caoZuoFu;
-    pZhanDing = pZhanDing->pNext;
-    free(pNow);
-
-    return caoZuoFu;
-}
-
-/**
- * 预出栈，只获取元素，不出栈
- */
-char yuChuZhan() {
-    char caoZuoFu = '\0';
-    if (pZhanDing == NULL) {
-        return caoZuoFu;
-    }
-    caoZuoFu = pZhanDing->caoZuoFu;
-
-    return caoZuoFu;
-}
-
-/*#####栈-数值#####*/
-
-void ruZhan2(float num) {
-    struct ZhanJieDian2 *pTemp = (struct ZhanJieDian2 *)malloc(sizeof(struct ZhanJieDian2));
-
-    pTemp->num = num;
-    if (pZhanDing2 == NULL) {
-        pTemp->pNext = NULL;
-        pZhanDing2 = pTemp;
-    } else {
-        pTemp->pNext = pZhanDing2;
-        pZhanDing2 = pTemp;
-    }
-}
-
-float chuZhan2() {
-    float num = 0;
-    if (pZhanDing2 == NULL) {
-        return num;
-    }
-    struct ZhanJieDian2 *pNow = pZhanDing2;
-    num = pZhanDing2->num;
-    pZhanDing2 = pZhanDing2->pNext;
-    free(pNow);
-
-    return num;
+    return carrCaoZuoXiangZhan[--iCaoZuoXiangZhanDing];
 }
