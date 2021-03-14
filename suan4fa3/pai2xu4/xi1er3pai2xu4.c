@@ -1,56 +1,49 @@
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *, int);
+/*#####希尔排序#####*/
 
-/**
- * 希尔排序
- */
-int main()
-{
-    int daiPaiXuArr[10];
-    int daiPaiXuLen = 10;
+void arrToString(int *iarr, int iArrLen) {
+    for (int ii = 0; ii < iArrLen; ii++) {
+        printf("%d,", iarr[ii]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int iarr[10] = {0};
+    int iArrLen = 10;
+
     srand(time(NULL));
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        daiPaiXuArr[i] = (rand() % 99) + 1;
+    for (int ii = 0; ii < iArrLen; ii++) {
+        iarr[ii] = (rand() % 99) + 1;
     }
 
     printf("pai2xu4qian2:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
 
-    // 按一定的跨度分组
-    int range = (int)(daiPaiXuLen / 2);
-    while (range > 0)
-    {
+    // 按一定的跨度分组，[0,0+n,0+2n,...]一组
+    int iRange = floor(iArrLen / 2);
+    int tiNum = 0;
+    while (iRange > 0) {
         // 组内进行插入排序
-        for (int i = range; i < daiPaiXuLen; i++)
-        {
-            int tNum = daiPaiXuArr[i];
-            int j = i - range;
-            while (j >= 0 && daiPaiXuArr[j] > tNum)
-            {
-                daiPaiXuArr[j + range] = daiPaiXuArr[j];
-                j -= range;
+        for (int ii = iRange; ii < iArrLen; ii++) {
+            tiNum = iarr[ii];
+            int ij = ii - iRange;
+            while (ij >= 0 && iarr[ij] > tiNum) {
+                iarr[ij + iRange] = iarr[ij];
+                ij -= iRange;
             }
-            daiPaiXuArr[j + range] = tNum;
+            iarr[ij + iRange] = tiNum;
         }
         // 重新设置一个更小的跨度
-        range = (int)(range / 2);
+        iRange = floor(iRange / 2);
     }
 
     printf("pai2xu4hou4:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
 
     return 0;
-}
-
-void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen)
-{
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        printf("%d,", daiPaiXuArr[i]);
-    }
-    printf("\n");
 }

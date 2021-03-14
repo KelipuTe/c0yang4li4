@@ -2,52 +2,45 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *, int);
+/*#####选择排序#####*/
 
-/**
- * 选择排序
- */
-int main()
-{
-    int daiPaiXuArr[10];
-    int daiPaiXuLen = 10;
+void arrToString(int *iarr, int iArrLen) {
+    for (int ii = 0; ii < iArrLen; ii++) {
+        printf("%d,", iarr[ii]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int iarr[10] = {0};
+    int iArrLen = 10;
+
     srand(time(NULL));
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        daiPaiXuArr[i] = (rand() % 99) + 1;
+    for (int ii = 0; ii < iArrLen; ii++) {
+        iarr[ii] = (rand() % 99) + 1;
     }
 
     printf("pai2xu4qian2:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
 
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        // 第n次循环找到第n小的那个元素
-        int minIndex = i;
-        for (int j = i; j < daiPaiXuLen; j++)
-        {
-            if (daiPaiXuArr[j] < daiPaiXuArr[minIndex])
-            {
-                minIndex = j;
+    // 第n次循环找到第n小的那个元素
+    // 最小元素的下标
+    int iMinIndex = 0, tiNum = 0;
+    for (int ii = 0; ii < iArrLen; ii++) {
+        iMinIndex = ii;
+        for (int ij = ii; ij < iArrLen; ij++) {
+            if (iarr[ij] < iarr[iMinIndex]) {
+                iMinIndex = ij;
             }
         }
         // 把第n小的值和序列第n个位置的元素交换
-        int tNum = daiPaiXuArr[i];
-        daiPaiXuArr[i] = daiPaiXuArr[minIndex];
-        daiPaiXuArr[minIndex] = tNum;
+        tiNum = iarr[ii];
+        iarr[ii] = iarr[iMinIndex];
+        iarr[iMinIndex] = tiNum;
     }
 
     printf("pai2xu4hou4:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
 
     return 0;
-}
-
-void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen)
-{
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        printf("%d,", daiPaiXuArr[i]);
-    }
-    printf("\n");
 }

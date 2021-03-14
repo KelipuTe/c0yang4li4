@@ -2,50 +2,43 @@
 #include <stdlib.h>
 #include <time.h>
 
-extern void shuChuXuLie(int *, int );
+/*#####插入排序#####*/
 
-/**
- * 插入排序
- */
-int main()
-{
-    int daiPaiXuArr[10];
-    int daiPaiXuLen = 10;
+void arrToString(int *iarr, int iArrLen) {
+    for (int ii = 0; ii < iArrLen; ii++) {
+        printf("%d,", iarr[ii]);
+    }
+    printf("\n");
+}
+
+int main() {
+    int iarr[10] = {0};
+    int iArrLen = 10;
+
     srand(time(NULL));
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        daiPaiXuArr[i] = (rand() % 99) + 1;
+    for (int ii = 0; ii < iArrLen; ii++) {
+        iarr[ii] = (rand() % 99) + 1;
     }
 
     printf("pai2xu4qian2:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
+
     // 认为第一个元素有序，排序从第二个元素开始
-    for (int i = 1; i < daiPaiXuLen; i++)
-    {
-        int j = i;
-        // 待排序元素
-        int tNum = daiPaiXuArr[j];
-        while (j > 0 && tNum < daiPaiXuArr[j - 1])
-        {
-            // 如果比前面小，就往前移动，直到移动到第一位
-            daiPaiXuArr[j] = daiPaiXuArr[j - 1];
-            j--;
+    for (int ii = 1; ii < iArrLen; ii++) {
+        int ij = ii;
+        // 本次循环的待排序元素
+        int tiNum = iarr[ij];
+        while (ij > 0 && tiNum < iarr[ij - 1]) {
+            // 如果待排序元素比前的元素面小，就把前面的元素往后移一位
+            iarr[ij] = iarr[ij - 1];
+            ij--;
         }
-        // 插入有序序列
-        daiPaiXuArr[j] = tNum;
+        // 将待排序元素插入有序序列
+        iarr[ij] = tiNum;
     }
-    
+
     printf("pai2xu4hou4:");
-    shuChuXuLie(&daiPaiXuArr, daiPaiXuLen);
+    arrToString(&iarr, iArrLen);
 
     return 0;
-}
-
-void shuChuXuLie(int *daiPaiXuArr, int daiPaiXuLen)
-{
-    for (int i = 0; i < daiPaiXuLen; i++)
-    {
-        printf("%d,", daiPaiXuArr[i]);
-    }
-    printf("\n");
 }

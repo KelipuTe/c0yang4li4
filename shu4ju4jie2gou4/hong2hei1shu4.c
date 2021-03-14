@@ -16,8 +16,6 @@ typedef struct HongHeiShuJieDian {
     struct HongHeiShuJieDian *pHHSJDYou;
     // 父结点
     struct HongHeiShuJieDian *pHHSJDFu;
-    // 结点黑深度，下往上依次增加，最下层叶子结点的黑深度约定为0。
-    int iJieDianHeiShenDu;
     // 结点颜色
     char cYanSe;
 } HHSJD;
@@ -32,13 +30,13 @@ extern void tiaoZheng(HHSJD *, HHSJD **);
 extern void zuoXuan();
 // 右旋，自己的左结点变自己的父结点
 extern void youXuan();
-// 删除节点
+// 删除结点
 extern void shanChuJieDian();
 // 中序遍历
 extern void zhongXuBianLi(HHSJD *);
 
 int main() {
-    // 根节点指针
+    // 根结点指针
     HHSJD *pHHSJDGen = NULL;
     int iarrDaiPaiXu[10] = {87, 29, 87, 65, 25, 33, 78, 12, 5, 85};
     int iarrDaiPaiXuLen = 10;
@@ -75,28 +73,32 @@ void shuChuShuZu(int *iarrDaiPaiXu, int iArrDaiPaiXuLen) {
 
 void chaRuJieDian(HHSJD **tppHHSJD, int iChaRuZhi, HHSJD **tppHHSJDGen) {
     if (*tppHHSJD == NULL) {
+        // 结点为空
         *tppHHSJD = (HHSJD *)malloc(sizeof(HHSJD));
         (*tppHHSJD)->iShuZhi = iChaRuZhi;
         (*tppHHSJD)->pHHSJDZuo = NULL;
         (*tppHHSJD)->pHHSJDYou = NULL;
         (*tppHHSJD)->pHHSJDFu = NULL;
-        (*tppHHSJD)->iJieDianHeiShenDu = 1;
         (*tppHHSJD)->cYanSe = 'h';
     } else {
         if (iChaRuZhi < (*tppHHSJD)->iShuZhi) {
+            // 插入值小于结点值，插到左边
             if ((*tppHHSJD)->pHHSJDZuo != NULL) {
+                // 左子树存在就递归插入
                 chaRuJieDian(&((*tppHHSJD)->pHHSJDZuo), iChaRuZhi, tppHHSJDGen);
             } else {
+                // 左子树不存在就构造左子树
                 (*tppHHSJD)->pHHSJDZuo = (HHSJD *)malloc(sizeof(HHSJD));
                 (*tppHHSJD)->pHHSJDZuo->iShuZhi = iChaRuZhi;
                 (*tppHHSJD)->pHHSJDZuo->pHHSJDZuo = NULL;
                 (*tppHHSJD)->pHHSJDZuo->pHHSJDYou = NULL;
                 (*tppHHSJD)->pHHSJDZuo->pHHSJDFu = *tppHHSJD;
-                (*tppHHSJD)->pHHSJDZuo->iJieDianHeiShenDu = 1;
                 (*tppHHSJD)->pHHSJDZuo->cYanSe = 'r';
+                // 左子树插入的红结点可能会破坏红黑树，需要调整左子树
                 tiaoZheng((*tppHHSJD)->pHHSJDZuo, tppHHSJDGen);
             }
         } else if (iChaRuZhi > (*tppHHSJD)->iShuZhi) {
+            // 插入值大于结点值，插到右边
             if ((*tppHHSJD)->pHHSJDYou != NULL) {
                 chaRuJieDian(&((*tppHHSJD)->pHHSJDYou), iChaRuZhi, tppHHSJDGen);
             } else {
@@ -105,12 +107,11 @@ void chaRuJieDian(HHSJD **tppHHSJD, int iChaRuZhi, HHSJD **tppHHSJDGen) {
                 (*tppHHSJD)->pHHSJDYou->pHHSJDZuo = NULL;
                 (*tppHHSJD)->pHHSJDYou->pHHSJDYou = NULL;
                 (*tppHHSJD)->pHHSJDYou->pHHSJDFu = *tppHHSJD;
-                (*tppHHSJD)->pHHSJDYou->iJieDianHeiShenDu = 1;
                 (*tppHHSJD)->pHHSJDYou->cYanSe = 'r';
                 tiaoZheng((*tppHHSJD)->pHHSJDYou, tppHHSJDGen);
             }
         } else {
-            // 要插入的值已经存在
+            // 插入值等于结点值，不做操作
         }
     }
 }
@@ -120,48 +121,58 @@ void tiaoZheng(HHSJD *tpHHSJD, HHSJD **tppHHSJDGen) {
     HHSJD *tpHHSJDShu = NULL;
 
     while (tpHHSJD != (*tppHHSJDGen) && tpHHSJD->pHHSJDFu->cYanSe == 'r') {
-        // 当父节点为红色时才需要调整
+        // 根结点不需要调整，父结点为红色时需要调整（如果父结点是黑色的，直接插入就行）
         if (tpHHSJD->pHHSJDFu == tpHHSJD->pHHSJDFu->pHHSJDFu->pHHSJDZuo) {
-            // 父结点是祖父节点的左孩子
+            // 父结点是祖父结点的左子树
+            // 则叔叔结点是祖父结点的右子树
             tpHHSJDShu = tpHHSJD->pHHSJDFu->pHHSJDFu->pHHSJDYou;
             if (tpHHSJDShu != NULL && tpHHSJDShu->cYanSe == 'r') {
-                // 叔叔结点是红色，父结点和叔叔结点改黑色，祖父结点改红色
+                // 叔叔结点是红色
+                // 情况1：父结点和叔叔结点都是红色
+                // 则父结点和叔叔结点改黑色，祖父结点改红色
                 tpHHSJD->pHHSJDFu->cYanSe = 'h';
                 tpHHSJDShu->cYanSe = 'h';
                 tpHHSJD->pHHSJDFu->pHHSJDFu->cYanSe = 'r';
-                // 继续判断祖父节点
+                // 因为祖父结点改了红色，可能破坏红黑树，所以需要继续判断祖父结点是否需要调整
                 tpHHSJD = tpHHSJD->pHHSJDFu->pHHSJDFu;
             } else {
-                // 叔叔结点是黑色，叔叔结点不存在是也认为是黑色的
+                // 叔叔结点是黑色（叔叔结点不存在时，就相当于是定义中的黑色叶子结点）
                 if (tpHHSJD == tpHHSJD->pHHSJDFu->pHHSJDYou) {
-                    // 自己是父结点的右孩子，父结点左旋，继续判断父节点
+                    // 情况2：叔叔结点是黑色，自己是父结点的右子树
+                    // 父结点左旋，由于左旋后父结点变成了自己的左子树，两个红色结点相连一定破坏红黑树，所以继续判断父结点（父结点在更下层）
+                    // 情况2通过这个操作实际上演变成了情况3
+                    // 这里要先赋值，左旋完位置就变了
                     tpHHSJD = tpHHSJD->pHHSJDFu;
                     zuoXuan(tpHHSJD, tppHHSJDGen);
                 } else {
-                    // 自己是父结点的左孩子，父结点改黑色，祖父节点改红色，祖父节点右旋
+                    // 情况3：叔叔结点是黑色，自己是父结点的左子树
+                    // 父结点改黑色，祖父结点改红色，祖父结点右旋
                     tpHHSJD->pHHSJDFu->cYanSe = 'h';
                     tpHHSJD->pHHSJDFu->pHHSJDFu->cYanSe = 'r';
                     youXuan(tpHHSJD->pHHSJDFu->pHHSJDFu, tppHHSJDGen);
                 }
             }
         } else {
-            // 父结点是祖父节点的右孩子
+            // 父结点是祖父结点的右子树
+            // 把上面左子树的操作反过来就行了
             tpHHSJDShu = tpHHSJD->pHHSJDFu->pHHSJDFu->pHHSJDZuo;
             if (tpHHSJDShu != NULL && tpHHSJDShu->cYanSe == 'r') {
-                // 叔叔结点是红色，父结点和叔叔结点改黑色，祖父结点改红色
+                // 叔叔结点是红色
+                // 情况1：父结点和叔叔结点都是红色
                 tpHHSJD->pHHSJDFu->cYanSe = 'h';
                 tpHHSJDShu->cYanSe = 'h';
                 tpHHSJD->pHHSJDFu->pHHSJDFu->cYanSe = 'r';
-                // 继续判断祖父节点
                 tpHHSJD = tpHHSJD->pHHSJDFu->pHHSJDFu;
             } else {
-                // 叔叔结点是黑色，叔叔结点不存在是也认为是黑色的
+                // 叔叔结点是黑色
                 if (tpHHSJD == tpHHSJD->pHHSJDFu->pHHSJDZuo) {
-                    // 自己是父结点的右孩子，父结点右旋，继续判断父节点
+                    // 情况2：叔叔结点是黑色，自己是父结点的左子树
+                    // 父结点右旋
                     tpHHSJD = tpHHSJD->pHHSJDFu;
                     youXuan(tpHHSJD, tppHHSJDGen);
                 } else {
-                    // 自己是父结点的左孩子，父结点改黑色，祖父节点改红色，祖父节点左旋
+                    // 情况3：叔叔结点是黑色，自己是父结点的右子树
+                    // 父结点改黑色，祖父结点改红色，祖父结点左旋
                     tpHHSJD->pHHSJDFu->cYanSe = 'h';
                     tpHHSJD->pHHSJDFu->pHHSJDFu->cYanSe = 'r';
                     zuoXuan(tpHHSJD->pHHSJDFu->pHHSJDFu, tppHHSJDGen);
@@ -169,6 +180,7 @@ void tiaoZheng(HHSJD *tpHHSJD, HHSJD **tppHHSJDGen) {
             }
         }
     }
+    // 根结点的颜色调整为黑色
     (*tppHHSJDGen)->cYanSe = 'h';
 }
 
@@ -230,11 +242,14 @@ void zhongXuBianLi(HHSJD *tpHHSJD) {
 }
 
 void shanChuJieDian(HHSJD **tppHHSJDGen, int iShanChuZhi) {
-    HHSJD *pHHSJDDel = NULL;
     HHSJD *tpHHSJD = NULL;
+    // 要删除的结点
+    HHSJD *pHHSJDDel = NULL;
+    // 兄弟结点
     HHSJD *tpHHSJDXiong = NULL;
 
     tpHHSJD = *tppHHSJDGen;
+    // 找到要删除的结点
     while (tpHHSJD != NULL) {
         if (iShanChuZhi < tpHHSJD->iShuZhi) {
             tpHHSJD = tpHHSJD->pHHSJDZuo;
@@ -246,78 +261,30 @@ void shanChuJieDian(HHSJD **tppHHSJDGen, int iShanChuZhi) {
         }
     }
     if (pHHSJDDel != NULL) {
-        if (pHHSJDDel->pHHSJDZuo == NULL) {
-            // 如果要删除的结点左子树为空，直接把右子树接上来
-            if (pHHSJDDel->pHHSJDFu->pHHSJDZuo == pHHSJDDel) {
-                pHHSJDDel->pHHSJDFu->pHHSJDZuo = pHHSJDDel->pHHSJDYou;
-            } else if (pHHSJDDel->pHHSJDFu->pHHSJDYou == pHHSJDDel) {
-                pHHSJDDel->pHHSJDFu->pHHSJDYou = pHHSJDDel->pHHSJDYou;
-            }
-        } else if (pHHSJDDel->pHHSJDYou == NULL) {
-            // 如果要删除的结点左子树为空，直接把左子树接上来
-            if (pHHSJDDel->pHHSJDFu->pHHSJDZuo == pHHSJDDel) {
-                pHHSJDDel->pHHSJDFu->pHHSJDZuo = pHHSJDDel->pHHSJDZuo;
-            } else if (pHHSJDDel->pHHSJDFu->pHHSJDYou == pHHSJDDel) {
-                pHHSJDDel->pHHSJDFu->pHHSJDYou = pHHSJDDel->pHHSJDZuo;
-            }
-        } else {
-            // 如果目标结点的左子树和右子树都存在
-            // 可以从左子树中找到结点值最大的结点替代被删除的结点
-            // 同理，从右子树中找到结点值最小的结点也是可行的
-            pHHSJDDel->pHHSJDFu = pHHSJDDel;
-            tpHHSJD = pHHSJDDel->pHHSJDZuo;
-            while (tpHHSJD->pHHSJDYou != NULL) {
-                pHHSJDDel->pHHSJDFu = tpHHSJD;
-                tpHHSJD = tpHHSJD->pHHSJDYou;
-            }
-            // 直接把结点值最大的结点的结点值赋值到要删除的结点上，颜色不变
-            pHHSJDDel->iShuZhi = tpHHSJD->iShuZhi;
-            if (pHHSJDDel->pHHSJDFu != pHHSJDDel) {
-                // 如果替代结点的前驱结点不是删除结点的位置
-                // 则删除结点左结点有右结点，需要考虑该右结点的左子树
-                pHHSJDDel->pHHSJDFu->pHHSJDYou = tpHHSJD->pHHSJDZuo;
-            } else {
-                // 如果替代结点的前驱结点就是删除结点的位置
-                // 则删除结点左结点没有右结点，直接把该左结点的左子树接过来
-                pHHSJDDel->pHHSJDFu->pHHSJDZuo = tpHHSJD->pHHSJDZuo;
-            }
-            pHHSJDDel = tpHHSJD;
-        }
-        // 如果删除的结点颜色是红色，可以直接删除，黑色需要额外处理
-        if (pHHSJDDel->cYanSe == 'h') {
-            tpHHSJD = pHHSJDDel;
-            while (tpHHSJD != *tppHHSJDGen && tpHHSJD->cYanSe == 'h') {
-                if (tpHHSJD == tpHHSJD->pHHSJDFu->pHHSJDZuo) {
-                    tpHHSJDXiong = tpHHSJD->pHHSJDFu->pHHSJDYou;
-                    if (tpHHSJDXiong->cYanSe = 'r') {
-                        // 兄弟节点是红色的
-                        tpHHSJDXiong->cYanSe = 'h';
-                        tpHHSJDXiong->pHHSJDFu->cYanSe = 'r';
-                        zuoXuan(tpHHSJD->pHHSJDFu, tppHHSJDGen);
-                        tpHHSJDXiong = tpHHSJD->pHHSJDFu->pHHSJDYou;
-                    }
-                    if (tpHHSJDXiong->pHHSJDZuo->cYanSe == 'h' && tpHHSJDXiong->pHHSJDYou->cYanSe == 'h') {
-                        tpHHSJDXiong->cYanSe = 'r';
-                        tpHHSJD = tpHHSJD->pHHSJDFu;
-                    }
-                    if (tpHHSJDXiong->pHHSJDZuo->cYanSe == 'r' && tpHHSJDXiong->pHHSJDYou->cYanSe == 'h') {
-                        tpHHSJDXiong->pHHSJDZuo->cYanSe = 'h';
-                        tpHHSJDXiong->cYanSe = 'r';
-                        youXuan(tpHHSJDXiong, tppHHSJDGen);
-                        tpHHSJDXiong = tpHHSJD->pHHSJDFu->pHHSJDYou;
-                    }
-                    if (tpHHSJDXiong->pHHSJDYou->cYanSe = 'r') {
-                        tpHHSJDXiong->cYanSe = tpHHSJD->pHHSJDFu->cYanSe;
-                        tpHHSJD->pHHSJDFu->cYanSe = 'h';
-                        tpHHSJDXiong->pHHSJDYou = 'h';
-                        zuoXuan(tpHHSJD->pHHSJDFu, tppHHSJDGen);
-                        tpHHSJD = *tppHHSJDGen;
-                    }
+        // 能找到要删除的结点
+        if (pHHSJDDel->pHHSJDZuo == NULL || pHHSJDDel->pHHSJDYou == NULL) {
+            // 情况1：要删除的结点只有一个子树
+            // 这种情况要删除的结点一定是黑色的，子树的根节点一定是红色的
+            // 直接把子树接上来，并把子树的根节点改黑色
+            if (pHHSJDDel->pHHSJDZuo == NULL) {
+                // 左子树为空，把右子树接上来
+                pHHSJDDel->pHHSJDYou->cYanSe = 'h';
+                if (pHHSJDDel->pHHSJDFu->pHHSJDZuo == pHHSJDDel) {
+                    pHHSJDDel->pHHSJDFu->pHHSJDZuo = pHHSJDDel->pHHSJDYou;
                 } else {
-                    tpHHSJDXiong = tpHHSJD->pHHSJDFu->pHHSJDZuo;
+                    pHHSJDDel->pHHSJDFu->pHHSJDYou = pHHSJDDel->pHHSJDYou;
+                }
+            } else {
+                // 右子树为空，把左子树接上来
+                pHHSJDDel->pHHSJDZuo->cYanSe = 'h';
+                if (pHHSJDDel->pHHSJDFu->pHHSJDZuo == pHHSJDDel) {
+                    pHHSJDDel->pHHSJDFu->pHHSJDZuo = pHHSJDDel->pHHSJDZuo;
+                } else {
+                    pHHSJDDel->pHHSJDFu->pHHSJDYou = pHHSJDDel->pHHSJDZuo;
                 }
             }
-            tpHHSJD->cYanSe = 'h';
+        } else {
+            // 到要删除的结点的左子树和右子树都存在
         }
         free(pHHSJDDel);
     }

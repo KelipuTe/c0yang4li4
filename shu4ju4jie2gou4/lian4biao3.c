@@ -61,7 +61,7 @@ void tianJiaXiang(LBJD **ppLBJDTou, LBJD **ppLBJDWei, int iShuZhi) {
         // 链表为空
         *ppLBJDTou = *ppLBJDWei = tpLBJD;
     } else {
-        // 把结点连接到链表尾部
+        // 链表不为空，则把结点连接到链表尾部
         (*ppLBJDWei)->pLBJDNext = tpLBJD;
         *ppLBJDWei = tpLBJD;
     }
