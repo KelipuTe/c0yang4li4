@@ -10,9 +10,7 @@
 // 输出无向图
 extern void shuChuWuXiangTu(int (*)[DING_DIAN_SHU], int);
 // 输出最短路径
-void shuChuZuoDuanLuJing(int *, int *, int);
-
-/*#####实现代码#####*/
+extern void shuChuZuiDuanLuJing(int *, int *, int);
 
 int main() {
     // 带权重的路径列表
@@ -93,7 +91,7 @@ int main() {
     shuChuWuXiangTu(iarr2WuXiangTu, DING_DIAN_SHU);
 
     printf("zui4duan3lu4jing4:\n");
-    shuChuZuoDuanLuJing(iarrXiangGuanDingDian, iarrZuiXiaoQuanZhong, DING_DIAN_SHU);
+    shuChuZuiDuanLuJing(iarrXiangGuanDingDian, iarrZuiXiaoQuanZhong, DING_DIAN_SHU);
 
     return 0;
 }
@@ -107,7 +105,7 @@ void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen) {
     }
 }
 
-void shuChuZuoDuanLuJing(int *iarrXiangGuanDingDian, int *iarrZuiXiaoQuanZhong, int iArrLen) {
+void shuChuZuiDuanLuJing(int *iarrXiangGuanDingDian, int *iarrZuiXiaoQuanZhong, int iArrLen) {
     for (int i = 0; i < iArrLen; i++) {
         int j = i;
         printf("quan2zhong4:%3d,lu4jing4:v%d<-", iarrZuiXiaoQuanZhong[i], j);
