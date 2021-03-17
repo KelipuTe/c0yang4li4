@@ -21,8 +21,6 @@ extern void ruDui(DLJD **, DLJD **, int);
 // 出队
 extern int chuDui(DLJD **);
 
-/*#####实现代码#####*/
-
 int main() {
     // 队列头指针，队列尾指针
     DLJD *pDLJDTou = NULL, *pDLJDWei = NULL;

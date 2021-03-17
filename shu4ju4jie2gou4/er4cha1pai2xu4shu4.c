@@ -23,8 +23,6 @@ extern void shanChuJieDian(ECSJD *, int);
 // 中序遍历
 extern void zhongXuBianLi(ECSJD *);
 
-/*#####实现代码#####*/
-
 int main() {
     // 根节点指针
     ECSJD *pECSJDGen = NULL;

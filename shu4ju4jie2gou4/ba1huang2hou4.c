@@ -46,7 +46,7 @@ void baHuangHou(int *piCount, int iarrHuangHou[HANG_SHU], int iLine) {
         if (iCheckRes == 1) {
             iarrHuangHou[iLine] = ii;
             if (iLine == HANG_SHU - 1) {
-                // 已经到最后一排，则找到一个符合条件的解
+                // 已经到最后一行，则找到一个符合条件的解
                 shuChuWeiZhi(iarrHuangHou);
                 (*piCount)++;
                 // 把这行重置，回到上一行继续求解
@@ -54,17 +54,17 @@ void baHuangHou(int *piCount, int iarrHuangHou[HANG_SHU], int iLine) {
 
                 return;
             }
-            // 如果没到最后一排，就进入下一行去求解
+            // 如果没到最后一行，就进入下一行去求解
             baHuangHou(piCount, iarrHuangHou, iLine + 1);
-            // 无论下一行有没有解，这行得到求解结束，把这行重置，回到上一行继续求解
+            // 无论下一行有没有解，这行得到求解结束，把这行重置
+            // 继续求解这行的下一个位置，或者循环结束回到上一行继续求解
             iarrHuangHou[iLine] = 0;
         }
     }
 }
 
 int jiaoYan(int iarrHuangHou[HANG_SHU], int iSelfX, int iSelfY) {
-    // 自身皇后位置[iSelfX,iSelfY]
-    // 前排皇后位置
+    // 自身皇后位置[iSelfX,iSelfY]，前排各个皇后位置[tiX,tiY]
     int tiX = 0, tiY = 0;
     for (int ii = 0; ii < iSelfX; ii++) {
         tiX = ii;
@@ -74,7 +74,7 @@ int jiaoYan(int iarrHuangHou[HANG_SHU], int iSelfX, int iSelfY) {
             return 0;
         }
         if (abs(tiX - iSelfX) == abs(tiY - iSelfY)) {
-            // 同一斜线，横纵坐标差值，绝对值相等
+            // 同一斜线，横纵坐标差值的绝对值相等
             return 0;
         }
     }

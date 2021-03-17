@@ -13,7 +13,7 @@ void arrToString(int *iarr, int iArrLen) {
 }
 
 int main() {
-    // int iarr[10] = {99,92,97,86,42,73,3,6,20,34};
+    // int iarr[10] = {55, 87, 73, 89, 79, 38, 94, 15, 79, 97};
     int iarr[10] = {0};
     int iArrLen = 10;
 
@@ -25,14 +25,16 @@ int main() {
     printf("pai2xu4qian2:");
     arrToString(&iarr, iArrLen);
 
-    // 构建大根堆
+    // 从上往下的构建方式，构建大根堆(还有小根堆)
     // 父结点下标
     int tiFuJieDian = 0, tiNum = 0;
     for (int ii = 0; ii < iArrLen; ii++) {
-        // 注意转换下标，数组下标和数组二叉树下标差1
+        // 注意转换下标，数组下标n保存的是数组二叉树第n+1个结点
         int ij = ii + 1;
         while (ij >= 1) {
+            // 计算父结点下标
             tiFuJieDian = floor(ij / 2) - 1;
+            // 父结点大，交换
             if (tiFuJieDian >= 0 && iarr[tiFuJieDian] < iarr[ij - 1]) {
                 tiNum = iarr[tiFuJieDian];
                 iarr[tiFuJieDian] = iarr[ij - 1];
@@ -41,8 +43,11 @@ int main() {
             ij = tiFuJieDian;
         }
     }
+    // 从下往上的构建方式
+    // 从最后一个非叶子结点开始，将结点与子结点比较
+    // 如果子结点大，选更大的那个子结点交换
 
-    printf("pai2xu4hou4:");
+    printf("jian4dui1:");
     arrToString(&iarr, iArrLen);
 
     // 堆排序
