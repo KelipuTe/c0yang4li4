@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-/*#####无向图-普里姆算法#####*/
+/*#####普里姆算法-无向图#####*/
 
 // 无向图顶点数
 #define DING_DIAN_SHU 8
@@ -8,11 +8,23 @@
 #define LIN_JIE_QUAN_ZHONG 65535
 
 // 输出无向图
-extern void shuChuWuXiangTu(int (*)[DING_DIAN_SHU], int);
-// 输出最小生成树
-void shuChuZuiXiaoShenChengShu(int[][2], int);
+void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen) {
+    for (int i = 0; i < iArrLen; i++) {
+        for (int j = 0; j < DING_DIAN_SHU; j++) {
+            printf("%5d,", piarrYiHang[i][j]);
+        }
+        printf("\n");
+    }
+}
 
-/*#####实现代码#####*/
+// 输出最小生成树
+void shuChuZuiXiaoShenChengShu(int iarrZuiXiaoShengChengShu[][2], int iLuJingShu) {
+    for (int i = 0; i < iLuJingShu; i++) {
+        if (iarrZuiXiaoShengChengShu[i][0] != 0 || iarrZuiXiaoShengChengShu[i][1] != 0) {
+            printf("%d,%d\n", iarrZuiXiaoShengChengShu[i][0], iarrZuiXiaoShengChengShu[i][1]);
+        }
+    }
+}
 
 int main() {
     // 带权重的路径列表
@@ -97,21 +109,4 @@ int main() {
     shuChuZuiXiaoShenChengShu(iarrZuiXiaoShengChengShu, iLuJingShu);
 
     return 0;
-}
-
-void shuChuWuXiangTu(int (*piarrYiHang)[DING_DIAN_SHU], int iArrLen) {
-    for (int i = 0; i < iArrLen; i++) {
-        for (int j = 0; j < DING_DIAN_SHU; j++) {
-            printf("%5d,", piarrYiHang[i][j]);
-        }
-        printf("\n");
-    }
-}
-
-void shuChuZuiXiaoShenChengShu(int iarrZuiXiaoShengChengShu[][2], int iLuJingShu) {
-    for (int i = 0; i < iLuJingShu; i++) {
-        if (iarrZuiXiaoShengChengShu[i][0] != 0 || iarrZuiXiaoShengChengShu[i][1] != 0) {
-            printf("%d,%d\n", iarrZuiXiaoShengChengShu[i][0], iarrZuiXiaoShengChengShu[i][1]);
-        }
-    }
 }

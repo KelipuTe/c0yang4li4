@@ -1,20 +1,21 @@
 #include <math.h>
 #include <stdio.h>
 
-/*#####八皇后#####*/
+/*#####回溯-八皇后#####*/
 
-#define HANG_SHU 8
+// 棋盘8*8
+#define HUANG_HOU_SHU 8
 
 // 输出符合条件的位置
-extern void shuChuWeiZhi(int[HANG_SHU]);
+extern void shuChuWeiZhi(int[HUANG_HOU_SHU]);
 // 主体递归
-extern void baHuangHou(int *, int[HANG_SHU], int);
+extern void baHuangHou(int *, int[HUANG_HOU_SHU], int);
 // 校验皇后位置
-extern int jiaoYan(int[HANG_SHU], int, int);
+extern int jiaoYan(int[HUANG_HOU_SHU], int, int);
 
 int main() {
     // 每一排皇后的坐标
-    int iarrHuangHou[HANG_SHU] = {0};
+    int iarrHuangHou[HUANG_HOU_SHU] = {0};
     // 输出符合条件的位置总数
     int iCount = 0;
 
@@ -24,10 +25,10 @@ int main() {
     return 0;
 }
 
-void shuChuWeiZhi(int iarrHuangHou[HANG_SHU]) {
+void shuChuWeiZhi(int iarrHuangHou[HUANG_HOU_SHU]) {
     printf("get\n");
-    for (int ii = 0; ii < HANG_SHU; ii++) {
-        for (int ij = 0; ij < HANG_SHU; ij++) {
+    for (int ii = 0; ii < HUANG_HOU_SHU; ii++) {
+        for (int ij = 0; ij < HUANG_HOU_SHU; ij++) {
             if (ij != iarrHuangHou[ii]) {
                 printf("0,");
             } else {
@@ -39,13 +40,13 @@ void shuChuWeiZhi(int iarrHuangHou[HANG_SHU]) {
     printf("\n");
 }
 
-void baHuangHou(int *piCount, int iarrHuangHou[HANG_SHU], int iLine) {
-    for (int ii = 0; ii < HANG_SHU; ii++) {
+void baHuangHou(int *piCount, int iarrHuangHou[HUANG_HOU_SHU], int iLine) {
+    for (int ii = 0; ii < HUANG_HOU_SHU; ii++) {
         // 校验[iLine,ii]位置能不能放
         int iCheckRes = jiaoYan(iarrHuangHou, iLine, ii);
         if (iCheckRes == 1) {
             iarrHuangHou[iLine] = ii;
-            if (iLine == HANG_SHU - 1) {
+            if (iLine == HUANG_HOU_SHU - 1) {
                 // 已经到最后一行，则找到一个符合条件的解
                 shuChuWeiZhi(iarrHuangHou);
                 (*piCount)++;
@@ -63,7 +64,7 @@ void baHuangHou(int *piCount, int iarrHuangHou[HANG_SHU], int iLine) {
     }
 }
 
-int jiaoYan(int iarrHuangHou[HANG_SHU], int iSelfX, int iSelfY) {
+int jiaoYan(int iarrHuangHou[HUANG_HOU_SHU], int iSelfX, int iSelfY) {
     // 自身皇后位置[iSelfX,iSelfY]，前排各个皇后位置[tiX,tiY]
     int tiX = 0, tiY = 0;
     for (int ii = 0; ii < iSelfX; ii++) {

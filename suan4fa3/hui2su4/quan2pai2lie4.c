@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-/*#####递归-全排列#####*/
+/*#####回溯-全排列#####*/
 
 void quanPaiLie(int *piarr, int iArrLen, int ik) {
     // 每轮递归固定第ik位置的数字，然后处理前面的部分
