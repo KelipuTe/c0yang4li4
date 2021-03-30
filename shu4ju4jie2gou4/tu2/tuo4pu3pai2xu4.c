@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/*#####有向无环图-拓扑排序#####*/
+/*#####拓扑排序-有向无环图#####*/
 
 // 有向图顶点数
 #define DING_DIAN_SHU 8
