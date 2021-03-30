@@ -10,8 +10,9 @@
 // 模式串长度
 #define MO_SHI_CHUAN_LEN 128
 
+// 插入结点
 extern void chaRuJieDian();
-
+// 查询字符串
 extern int chaXunZiFuChuan();
 
 // Trie树结点

@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*#####链表队列#####*/
+/*#####链表-队列#####*/
 
 // 队列为空时输出的无效值
 #define DUI_LIE_NULL -2147483648

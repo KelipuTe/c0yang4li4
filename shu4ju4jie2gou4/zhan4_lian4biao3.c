@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/*#####链表栈#####*/
+/*#####链表-栈#####*/
 
 // 栈为空时输出的无效值
 #define ZHAN_NULL -2147483648

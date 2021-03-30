@@ -116,6 +116,7 @@ void chaRuJieDian(TBJD *pTBJDTou, int iShuZhi) {
 int suiJiCengShu() {
     int iCengShu = 0;
 
+    // rand函数是基于时间的伪随机函数，sleep是为了将执行时间错开
     for (int ii = 0; ii < BIAO_CENG_SHU; ii++) {
         if ((rand() % 4) > 1) {
             iCengShu++;
