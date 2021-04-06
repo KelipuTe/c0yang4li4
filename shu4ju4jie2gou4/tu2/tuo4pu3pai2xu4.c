@@ -25,52 +25,39 @@ extern void tuoPuPaiXu(LJBJD *[DING_DIAN_SHU], int);
 /*#####实现代码#####*/
 
 int main() {
-    // 路径列表
-    int iarr2LuJing[][2] = {
-        {0, 1},
-        {0, 5},
-        {1, 2},
-        {1, 6},
-        {2, 3},
-        {3, 6},
-        {3, 7},
-        {4, 5},
-        {4, 7},
-        {5, 1},
-        {5, 6},
-        {6, 7},
-    };
-    // 路径列表数量
-    int iLuJingShu = 12;
-    // 有向图邻接表
-    LJBJD *parrWuXiangTu[DING_DIAN_SHU] = {NULL};
+    // 边数
+    int iBianShu = 12;
+    // 边列表
+    int iarr2Bian[][2] = {{0, 1}, {0, 5}, {1, 2}, {1, 6}, {2, 3}, {3, 6}, {3, 7}, {4, 5}, {4, 7}, {5, 1}, {5, 6}, {6, 7}};
+    // 邻接表
+    LJBJD *parrYouXiangTu[DING_DIAN_SHU] = {NULL};
 
-    // 构造有向图邻接矩阵
-    for (int i = 0; i < iLuJingShu; i++) {
-        tianJiaJieDian(parrWuXiangTu, iarr2LuJing[i][0], iarr2LuJing[i][1]);
+    // 构造有向图邻接表，有向图有方向
+    for (int i = 0; i < iBianShu; i++) {
+        tianJiaJieDian(parrYouXiangTu, iarr2Bian[i][0], iarr2Bian[i][1]);
     }
 
-    printf("wu2xiang4tu2-lin2jie1biao3:\n");
-    shuChuWuXiangTu(parrWuXiangTu, DING_DIAN_SHU);
+    printf("lin2jie1biao3:\n");
+    shuChuYouXiangTu(parrYouXiangTu, DING_DIAN_SHU);
 
-    printf("tuo4pu3pai2xu4\n");
-    tuoPuPaiXu(parrWuXiangTu, DING_DIAN_SHU);
+    printf("tuo4pu3pai2xu4:\n");
+    tuoPuPaiXu(parrYouXiangTu, DING_DIAN_SHU);
 
     return 0;
 }
 
-void tianJiaJieDian(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iDingDian1, int iDingDian2) {
+void tianJiaJieDian(LJBJD *parrYouXiangTu[DING_DIAN_SHU], int iDingDianChu, int iDingDianRu) {
     // 构造邻接表结点
-    LJBJD *tpLJBJDNew = (LJBJD *)malloc(sizeof(LJBJD));
-    LJBJD *tpLJBJD = NULL;
+    LJBJD *tpLJBJDNew = NULL, *tpLJBJD = NULL;
 
-    tpLJBJDNew->iDingDian = iDingDian2;
+    tpLJBJDNew = (LJBJD *)malloc(sizeof(LJBJD));
+    tpLJBJDNew->iDingDian = iDingDianRu;
     tpLJBJDNew->pLJBJDNext = NULL;
-    // 插入节点到顶点邻接表的末尾
-    if (parrWuXiangTu[iDingDian1] == NULL) {
-        parrWuXiangTu[iDingDian1] = tpLJBJDNew;
+    // 插入结点到顶点的邻接表的末尾
+    if (parrYouXiangTu[iDingDianChu] == NULL) {
+        parrYouXiangTu[iDingDianChu] = tpLJBJDNew;
     } else {
-        tpLJBJD = parrWuXiangTu[iDingDian1];
+        tpLJBJD = parrYouXiangTu[iDingDianChu];
         while (tpLJBJD->pLJBJDNext != NULL) {
             tpLJBJD = tpLJBJD->pLJBJDNext;
         }
@@ -78,11 +65,11 @@ void tianJiaJieDian(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iDingDian1, int iDi
     }
 }
 
-void shuChuWuXiangTu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen) {
+void shuChuYouXiangTu(LJBJD *parrYouXiangTu[DING_DIAN_SHU], int iArrLen) {
     LJBJD *tpLJBJD = NULL;
 
     for (int i = 0; i < iArrLen; i++) {
-        tpLJBJD = parrWuXiangTu[i];
+        tpLJBJD = parrYouXiangTu[i];
         printf("%d:", i);
         while (tpLJBJD != NULL) {
             printf("%d,", tpLJBJD->iDingDian);
@@ -92,17 +79,20 @@ void shuChuWuXiangTu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen) {
     }
 }
 
-void tuoPuPaiXu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen) {
+void tuoPuPaiXu(LJBJD *parrYouXiangTu[DING_DIAN_SHU], int iArrLen) {
     LJBJD *tpLJBJD = NULL;
+    // 入度统计
     int iarrRuDuTongJi[DING_DIAN_SHU] = {0};
 
+    // 统计所有顶点的入度
     for (int i = 0; i < iArrLen; i++) {
-        tpLJBJD = parrWuXiangTu[i];
+        tpLJBJD = parrYouXiangTu[i];
         while (tpLJBJD != NULL) {
             iarrRuDuTongJi[tpLJBJD->iDingDian]++;
             tpLJBJD = tpLJBJD->pLJBJDNext;
         }
     }
+    // 拓扑排序就是不断地寻找入读为0的顶点
     while (1) {
         int ibDone = 1;
         for (int i = 0; i < iArrLen; i++) {
@@ -111,7 +101,7 @@ void tuoPuPaiXu(LJBJD *parrWuXiangTu[DING_DIAN_SHU], int iArrLen) {
                 ibDone = 0;
             } else if (iarrRuDuTongJi[i] == 0) {
                 // 入度为0的顶点，移除所有从这个顶点出发的弧（弧头顶点入度-1）
-                tpLJBJD = parrWuXiangTu[i];
+                tpLJBJD = parrYouXiangTu[i];
                 while (tpLJBJD != NULL) {
                     iarrRuDuTongJi[tpLJBJD->iDingDian]--;
                     tpLJBJD = tpLJBJD->pLJBJDNext;
