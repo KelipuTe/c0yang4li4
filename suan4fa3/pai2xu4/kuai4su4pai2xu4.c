@@ -11,7 +11,7 @@ void arrToString(int *iarr, int iArrLen) {
     printf("\n");
 }
 
-// 快速排序分组
+// 快速排序-递归
 void kuaiSuPaiXu(int *iarr, int iStart, int iEnd) {
     int ii = iStart, ij = iEnd, tiNum = 0;
     // 设定第一个元素作为基准元素
@@ -44,7 +44,50 @@ void kuaiSuPaiXu(int *iarr, int iStart, int iEnd) {
     kuaiSuPaiXu(iarr, ii + 1, iEnd);
 }
 
-// 快速排序寻找第k大的元素
+// 快速排序-非递归
+void kuaiSuPaiXu2(int *iarr, int iStart, int iEnd) {
+    int arrZhan[100] = {0}, iZhanDing = 0;
+    int ii = 0, ij = 0, iMidNum = 0;
+    int tiStart = 0, tiEnd = 0, tiNum = 0;
+
+    // 用栈替代递归的操作，这里简化操作，直接把区间的两端入栈
+    arrZhan[iZhanDing++] = iStart;
+    arrZhan[iZhanDing++] = iEnd;
+    while (iZhanDing > 0) {
+        // 出栈的时候要反过来
+        tiEnd = ij = arrZhan[--iZhanDing];
+        tiStart = ii = arrZhan[--iZhanDing];
+        iMidNum = iarr[tiStart];
+
+        if (tiStart >= tiEnd) {
+            return;
+        }
+        while (ij > ii) {
+            if (iarr[ij] < iMidNum) {
+                tiNum = iarr[ii];
+                iarr[ii] = iarr[ij];
+                iarr[ij] = tiNum;
+                for (ii = ii + 1; ii < ij; ii++) {
+                    if (iarr[ii] > iMidNum) {
+                        tiNum = iarr[ij];
+                        iarr[ij] = iarr[ii];
+                        iarr[ii] = tiNum;
+                        break;
+                    }
+                }
+            }
+            ij--;
+        }
+        // 分别入栈前半部分和后半部分
+        arrZhan[iZhanDing++] = tiStart;
+        arrZhan[iZhanDing++] = ii;
+        arrZhan[iZhanDing++] = ii + 1;
+        arrZhan[iZhanDing++] = tiEnd;
+    }
+}
+
+// 快速排序-寻找第k大的元素
+// iK，第k大的元素，在调用的时候要转换成数组下标k-1
 int kuaiSuPaiXuK(int *iarr, int iStart, int iEnd, int iK) {
     int ii = iStart, ij = iEnd, tiNum = 0;
     int iMidNum = iarr[iStart];
@@ -68,7 +111,8 @@ int kuaiSuPaiXuK(int *iarr, int iStart, int iEnd, int iK) {
         }
         ij--;
     }
-    // 比较一下，确定k在那个区间内
+    // 前半部分和快排一样，不一样的地方是最后这里，只需要处理一部分数据
+    // 比较一下，确定k在哪个区间内，另外一边就不需要处理了
     if (ii < iK) {
         return kuaiSuPaiXuK(iarr, ii + 1, iEnd, iK);
     } else if (ii > iK) {
@@ -95,6 +139,19 @@ int main() {
     arrToString(&iarr, iArrLen);
 
     kuaiSuPaiXu(&iarr, 0, iArrLen - 1);
+
+    printf("pai2xu4hou4:");
+    arrToString(&iarr, iArrLen);
+
+    srand(time(NULL));
+    for (int ii = 0; ii < iArrLen; ii++) {
+        iarr[ii] = (rand() % 99) + 1;
+    }
+
+    printf("pai2xu4qian2:");
+    arrToString(&iarr, iArrLen);
+
+    kuaiSuPaiXu2(&iarr, 0, iArrLen - 1);
 
     printf("pai2xu4hou4:");
     arrToString(&iarr, iArrLen);
