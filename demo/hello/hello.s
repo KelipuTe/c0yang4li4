@@ -1,7 +1,7 @@
 	.file	"hello.c"
 	.section	.rodata
 .LC0:
-	.string	"hello world"
+	.string	"hello, world\r"
 	.text
 	.globl	main
 	.type	main, @function
@@ -15,6 +15,7 @@ main:
 	.cfi_def_cfa_register 6
 	movl	$.LC0, %edi
 	call	puts
+	movl	$0, %eax
 	popq	%rbp
 	.cfi_def_cfa 7, 8
 	ret

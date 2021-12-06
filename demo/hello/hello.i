@@ -836,6 +836,7 @@ extern void funlockfile (FILE *__stream) __attribute__ ((__nothrow__ , __leaf__)
 
 # 2 "hello.c" 2
 
-void main() {
-  printf("hello world\n");
+int main() {
+  printf("hello, world\r\n");
+  return 0;
 }
