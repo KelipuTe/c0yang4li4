@@ -11,6 +11,7 @@ struct msgbuf {
   char mtext[1024]; /* message data */
 };
 
+// 消息队列，接收消息
 int main() {
   int msqid = msgget(0x1000, 0);
   printf("msqid=%d\r\n", msqid);

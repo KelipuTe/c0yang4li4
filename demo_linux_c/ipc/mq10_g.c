@@ -6,7 +6,7 @@
 #include <sys/msg.h>
 #include <sys/types.h>
 
-// 消息队列，创建消息队列
+// 消息队列，消息队列创建
 int main() {
   // A new message queue is created if key has the value IPC_PRIVATE
   // or key isn't IPC_PRIVATE, no message queue with the given key key exists, and IPC_CREAT is specified in msgflg.
