@@ -1,5 +1,7 @@
 #include "service.h"
+#include "connection.h"
 #include "epoll.h"
+#include "reactor.h"
 #include "thread.h"
 
 void my_init_socket() {
@@ -44,8 +46,24 @@ void my_accept() {
   socklen_t clientAddrLen = sizeof(clientAddr);
   int connfd = accept(service1.sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen);
   printf("client linked,connfd=%d\r\n", connfd);
+  if (connfd > 0) {
+    service1.call_num++;
+    reactor *cell = &service1.cell[service1.call_num % service1.thread_num];
 
-  event_set(EPOLLIN, connfd);
+    struct connection client;
+    client.sockfd = connfd;
+    client.port = ntohs(clientAddr.sin_port);
+    strcpy(client.ip, inet_ntoa(clientAddr.sin_addr));
+    client.recv_buffer = (char *)malloc(sizeof(char) * 1024);
+    client.recv_max_bytes = 1024;
+    client.recv_last = 0;
+    client.send_buffer = (char *)malloc(sizeof(char) * 1024);
+    client.send_max_bytes = 1024;
+    client.send_last = 0;
+
+    add_connection(cell, client);
+    // event_set(service1.epoll_fd, EPOLLIN, connfd);
+  }
 }
 
 void *event_loop() {
@@ -59,7 +77,7 @@ void *event_loop() {
   }
 
   service1.epoll_fd = epoll_fd;
-  event_set(EPOLLIN, service1.sockfd);
+  event_set(service1.epoll_fd, EPOLLIN, service1.sockfd);
 
   struct epoll_event events[1024];
 
@@ -84,20 +102,6 @@ void *event_loop() {
         if (events[i].events == EPOLLIN) {
           if (fd == service1.sockfd) {
             my_accept();
-          } else {
-            char msg[1024] = {0};
-            ssize_t recvBytes = recv(fd, msg, sizeof(msg), 0);
-            printf("receive bytes=%d,msg=%s\r\n", recvBytes, msg);
-
-            if (recvBytes > 0) {
-
-              char resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
-              ssize_t sendBytes = send(fd, resp, sizeof(resp), 0);
-              printf("send bytes=%d\r\n", sendBytes);
-            } else {
-              close(fd);
-              event_del(EPOLLIN, fd);
-            }
           }
         }
       }
@@ -110,4 +114,15 @@ void my_run() {
   // 启动thread_num个线程lianjiesocket
 
   create_thread(event_loop, NULL);
+
+  service1.cell = (reactor *)malloc(sizeof(reactor) * service1.thread_num);
+
+  for (int i = 0; i < service1.thread_num; i++) {
+    service1.cell[i].cell_no = i;
+    service1.cell[i].current_client_num = 0;
+    service1.cell[i].max_client_num = 1024;
+    service1.cell[i].clients = (connection *)malloc(sizeof(connection) * 1024);
+    service1.cell[i].clientsBuffer = (connection *)malloc(sizeof(connection) * 1024);
+    create_thread(cell_event_loop, &service1.cell[i].cell_no);
+  }
 }

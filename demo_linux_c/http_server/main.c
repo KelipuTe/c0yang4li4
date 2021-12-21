@@ -5,6 +5,7 @@ service service1 = {
     .port = 9501,
     .backlog = 1024,
     .thread_num = 2,
+    .call_num = 0,
     .my_init_socket = my_init_socket,
     .my_bind = my_bind,
     .my_listen = my_listen,

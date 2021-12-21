@@ -12,13 +12,18 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+#include "connection.h"
+#include "reactor.h"
+
 typedef struct service {
+  int call_num;
   int sockfd;
   int port;
   char ip[INET_ADDRSTRLEN];
   int backlog;
   int thread_num;
   int epoll_fd;
+  reactor *cell;
 
   void (*my_init_socket)(void);
   void (*my_bind)(void);
