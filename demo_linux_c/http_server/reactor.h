@@ -15,5 +15,7 @@ typedef struct reactor {
 
 extern void *cell_event_loop(void *arg);
 extern void add_connection(reactor *cell, connection client);
+extern connection *find_connection(reactor *cell, int fd);
+extern void remove_client(reactor *cell, connection *client);
 
 #endif

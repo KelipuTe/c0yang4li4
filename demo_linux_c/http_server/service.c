@@ -60,6 +60,8 @@ void my_accept() {
     client.send_buffer = (char *)malloc(sizeof(char) * 1024);
     client.send_max_bytes = 1024;
     client.send_last = 0;
+    client.recv_buffer_full = 0;
+    client.send_buffer_full = 0;
 
     add_connection(cell, client);
     // event_set(service1.epoll_fd, EPOLLIN, connfd);

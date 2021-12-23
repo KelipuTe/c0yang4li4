@@ -22,3 +22,14 @@ void event_del(int epoll_fd, int event, int sockfd) {
     perror("event_del fail");
   }
 }
+
+void event_set2(int epoll_fd, int event, int sockfd) {
+  struct epoll_event events;
+  events.events = event;
+  events.data.fd = sockfd;
+
+  int ret = epoll_ctl(epoll_fd, EPOLL_CTL_MOD, sockfd, &events);
+  if (ret != 0) {
+    perror("epoll_ctl EPOLL_CTL_ADD fail");
+  }
+}

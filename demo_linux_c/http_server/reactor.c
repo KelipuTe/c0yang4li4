@@ -56,25 +56,70 @@ void *cell_event_loop(void *arg) {
         int fd = events[i].data.fd;
 
         if (events[i].events == EPOLLIN) {
-
-          char msg[1024] = {0};
-          ssize_t recvBytes = recv(fd, msg, sizeof(msg), 0);
-          printf("receive bytes=%d,msg=%s\r\n", recvBytes, msg);
-
-          if (recvBytes > 0) {
-
-            char resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
-            ssize_t sendBytes = send(fd, resp, sizeof(resp), 0);
-            printf("send bytes=%d\r\n", sendBytes);
+          connection *client = find_connection(cell, fd);
+          printf("find_connection=%p\r\n", client);
+          int recvBytes = recv_data(client);
+          /**收到数据，要处理，并且要清理一下接收缓冲区的内容***/
+          printf("recv msg=%s\r\n", client->recv_buffer);
+          memset(client->recv_buffer, 0, sizeof(client->recv_buffer));
+          client->recv_last = 0;
+          /**收到数据，要处理，并且要清理一下接收缓冲区的内容***/
+          if (recvBytes == -1) {
+            remove_client(cell, client);
           } else {
+            char resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
+            push_data(client, resp, strlen(resp));
 
-            event_del(cell->epoll_fd, EPOLLIN, fd);
-            close(fd);
+            int writeRet = write_data(client);
+            if (writeRet == -1) {
+              remove_client(cell, client);
+
+            } else if (writeRet > 0) {
+              write_data(client);
+              event_set2(cell->epoll_fd, EPOLLOUT | EPOLLIN, client->sockfd);
+            }
+          }
+        }
+        if (events[i].events == EPOLLOUT) {
+          connection *client = find_connection(cell, fd);
+          int writeRet = write_data(client);
+
+          if (writeRet == -1) {
+            remove_client(cell, client);
+          } else if (writeRet == 0) {
+            event_set2(cell->epoll_fd, EPOLLIN, client->sockfd);
           }
         }
       }
     }
   }
+}
+
+void remove_client(reactor *cell, connection *client) {
+  client->recv_last = 0;
+  client->send_last = 0;
+  client->recv_buffer_full = 0;
+  client->send_buffer_full = 0;
+  client->recv_max_bytes = 0;
+  client->send_max_bytes = 0;
+  memset(client->recv_buffer, 0, sizeof(client->recv_buffer));
+  memset(client->send_buffer, 0, sizeof(client->recv_buffer));
+  event_del(cell->epoll_fd, EPOLLIN, client->sockfd);
+  close(client->sockfd);
+  printf("client closed=%d", client->sockfd);
+  client->sockfd = 0;
+}
+
+connection *find_connection(reactor *cell, int fd) {
+  if (0 == fd) {
+    return NULL;
+  }
+  for (int i = 0; i < 1024; i++) {
+    if (cell->clients[i].sockfd == fd) {
+      return &cell->clients[i];
+    }
+  }
+  return NULL;
 }
 
 void add_connection(reactor *cell, connection client) {
@@ -85,7 +130,7 @@ void add_connection(reactor *cell, connection client) {
       break;
     }
   }
-  printf("add_connection,i=%d", i);
+  // printf("add_connection,i=%d", i);
   cell->clientsBuffer[i] = client;
   cell->current_client_num++;
   pthread_mutex_unlock(&mutex);
