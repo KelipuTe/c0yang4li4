@@ -11,6 +11,7 @@ int main() {
   printf("tcp server start,pid=%d\r\n", getpid());
 
   // socket(2)，创建socket
+  // socket初始化，AF_INET=ipv4，SOCK_STREAM=tcp，0=tcp
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
   printf("errno=%d,%s\r\n", errno, strerror(errno));
 
@@ -30,6 +31,7 @@ int main() {
   printf("errno=%d,%s\r\n", errno, strerror(errno));
 
   // listen(2)，监听
+  // backlog参数定义sockfd的挂起连接队列的最大长度
   returnValue = listen(sockfd, 4);
   printf("listen returnValue=%d\r\n", returnValue);
   printf("errno=%d,%s\r\n", errno, strerror(errno));

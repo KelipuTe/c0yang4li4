@@ -29,7 +29,6 @@ int main() {
 
   returnValue = listen(sockfd, 4);
   printf("listen returnValue=%d\r\n", returnValue);
-
   // epoll_create(2)，创建一个epoll文件描述符，关联内核事件表，红黑树实现
   int epoll_fd = epoll_create(1024);
 
@@ -56,6 +55,7 @@ int main() {
     if (ret_val < 0) {
       if (errno == EINTR) {
         //   这种情况不应该退出
+        // 这里需要判断错误是不是EINTR中断信号，这是预料之内的错误，所以应该继续epoll_wait
         // epoll_wait(4, 0x7ffe9e5feda0, 1024, -1) = -1 EINTR (Interrupted system call)
         continue;
       } else {
@@ -85,7 +85,7 @@ int main() {
 
             if (recvBytes > 0) {
 
-              char resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
+              char resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\nConnection: keep-alive\r\n\r\nhello, world";
               ssize_t sendBytes = send(fd, resp, sizeof(resp), 0);
               printf("send bytes=%d\r\n", sendBytes);
             } else {
