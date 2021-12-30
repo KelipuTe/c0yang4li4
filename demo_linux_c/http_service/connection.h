@@ -3,8 +3,11 @@
 
 #include <netinet/in.h>
 
-#define RECV_BUFFER_MAX 1048576 //接收缓冲区最大长度，1024*1024
-#define SEND_BUFFER_MAX 1048576 //发送缓冲区最大长度，1024*1024
+//接收缓冲区最大长度，1024*1024
+#define RECV_BUFFER_MAX 1048576
+
+//发送缓冲区最大长度，1024*1024
+#define SEND_BUFFER_MAX 1048576
 
 typedef struct connection {
   int connfd;               //client的socket句柄，accept()返回的那个socket

@@ -18,25 +18,27 @@ int recv_data(connection *conn) {
     char *temp_index = conn->recv_buffer + conn->recv_buffer_last;
     ssize_t recv_bytes = -1;
     recv_bytes = recv(conn->connfd, temp_index, remain_len, 0);
-    if (-1 == recv_bytes) {
-      printf("recv_data,recv_bytes,failed,errno=%d,%s\r\n", errno, strerror(errno));
-      return -1;
-    }
     if (is_debug() == 1) {
-      printf("[debug]:recv_data,recv_bytes=%d\r\n", recv_bytes);
+      printf("[debug]:recv_data(),recv_bytes=%d\r\n", recv_bytes);
+    }
+    if (-1 == recv_bytes) {
+      printf("[error]:recv_data(),-1==recv_bytes");
+      printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
+      return -1;
     }
     if (0 == recv_bytes) {
       // 测试一下对端是不是已关闭
       ssize_t send_bytes = -1;
-      send_bytes = send(conn->connfd, "hello", 5, 0);
+      send_bytes = send(conn->connfd, "", 0, 0);
       if (-1 == send_bytes || 0 == send_bytes) {
         // 对端已关闭，返回异常
-        printf("recv_data,send_bytes,failed,errno=%d,%s\r\n", errno, strerror(errno));
+        printf("[error]:recv_data(),-1==recv_bytes");
+        printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
         return -1;
       } else {
         // 真的没接收到数据
         if (is_debug() == 1) {
-          printf("[debug]:send_bytes,send_bytes=%d\r\n", send_bytes);
+          printf("[debug]:recv_data(),send(),send_bytes=%d\r\n", send_bytes);
         }
         return -1;
       }
@@ -82,16 +84,24 @@ int write_data(connection *conn) {
     return -1;
   }
 
+  if (is_debug() == 1) {
+    printf("[debug]:write_data(),conn->connfd=%d\r\n", conn->connfd);
+  }
   if (conn->send_buffer_last > 0) {
     // 发送缓冲区有数据才发
     int send_bytes = -1;
-    send_bytes = send(conn->connfd, conn->send_buffer, conn->send_buffer_last, 0);
-    if (-1 == send_bytes || 0 == send_bytes) {
-      printf("write_data,send_bytes,failed,errno=%d,%s\r\n", errno, strerror(errno));
-      return -1;
-    }
     if (is_debug() == 1) {
-      printf("[debug]:write_data,send_bytes=%d,send_buffer=%s\r\n", send_bytes, conn->send_buffer);
+      printf("[debug]:write_data(),conn->send_buffer_last=%d\r\n", conn->send_buffer_last);
+      printf("[debug]:write_data(),send(),conn->send_buffer=\r\n%s\r\n", conn->send_buffer);
+    }
+    send_bytes = send(conn->connfd, conn->send_buffer, conn->send_buffer_last, 0);
+    if (is_debug() == 1) {
+      printf("[debug]:write_data(),send(),send_bytes=%d\r\n", send_bytes);
+    }
+    if (-1 == send_bytes || 0 == send_bytes) {
+      printf("[error]:write_data(),-1==send_bytes,0==send_bytes");
+      printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
+      return -1;
     }
     if (send_bytes == conn->send_buffer_last) {
       //一次性发送完，直接重置发送缓冲区
@@ -111,4 +121,6 @@ int write_data(connection *conn) {
       return 1;
     }
   }
+
+  return 0;
 };

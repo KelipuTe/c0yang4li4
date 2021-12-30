@@ -51,7 +51,7 @@ int main() {
   while (1) {
     //   -1=阻塞调用，0=非阻塞，>0=等待几秒返回
     ret_val = epoll_wait(epoll_fd, events, 1024, -1);
-
+    printf("ret_val=%d\r\n", ret_val);
     if (ret_val < 0) {
       if (errno == EINTR) {
         //   这种情况不应该退出

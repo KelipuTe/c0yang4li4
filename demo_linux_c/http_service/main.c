@@ -2,9 +2,9 @@
 
 http_service service = {
     .app_debug = 1,
-    .ip = "0.0.0.0",
-    .port = 9501,
-    .backlog = 1024,
+    .ip = SERVICE_IP,
+    .port = SERVICE_PORT,
+    .backlog = CLIENT_MAX_NUM,
     .thread_num = 2,
     .call_num = 0,
     .socket_init = socket_init,
@@ -18,7 +18,7 @@ http_service service = {
 // 简单的http服务
 // 实现了表单解析
 int main() {
-  printf("http service start,pid=%d\r\n", getpid());
+  printf("[info]:http service start,pid=%d\r\n", getpid());
   // 启动服务
   service.socket_init();
   service.socket_bind_addr();

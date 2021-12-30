@@ -14,6 +14,18 @@
 #include <sys/socket.h>
 #include <unistd.h>
 
+// 服务ip
+#define SERVICE_IP "0.0.0.0"
+
+// 服务端口
+#define SERVICE_PORT 9501
+
+// client最大连接数
+#define CLIENT_MAX_NUM 1024
+
+// epoll_wait()的等待时间，-1=阻塞调用，0=非阻塞，>0=等待几秒返回
+#define EPOLL_WAIT_TIME 1
+
 typedef struct http_service {
   int app_debug; //debug模式，1=开启
 
@@ -39,12 +51,16 @@ extern http_service service;
 
 // 是不是debug模式，1=开启
 extern int is_debug();
+
 // socket初始化
 extern void socket_init();
+
 // 将地址分配给socket
 extern void socket_bind_addr();
+
 // socket开启监听
 extern void socket_listen();
+
 // 启动1个线程监听socket，启动thread_num个线程连接socket
 extern void service_start();
 

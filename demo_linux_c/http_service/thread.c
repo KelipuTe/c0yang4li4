@@ -9,8 +9,12 @@ void create_thread(void *(*func)(void *), void *arg) {
   pthread_t tid;
   int rtvl = -1;
   rtvl = pthread_create(&tid, NULL, func, arg);
+  if (is_debug() == 1) {
+    printf("[debug]:create_thread,tid=%p\r\n", tid);
+  }
   if (rtvl != 0) {
-    printf("pthread_create failed,rtvl=%d,errno=%d,%s\r\n", rtvl, errno, strerror(errno));
+    printf("[error]:create_thread(),pthread_create(),rtvl!=0");
+    printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
     exit(0);
   }
   pthread_detach(tid);

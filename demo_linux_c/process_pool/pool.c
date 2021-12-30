@@ -82,6 +82,7 @@ int main() {
       close(p1pool->arr1process_item[i].pipefd[1]);
       // 设置read()非阻塞
       int pipefd = p1pool->arr1process_item[i].pipefd[0];
+      // 把文件设置为非阻塞模式，非阻塞的文件描述符称为非阻塞IO
       // fcntl(2)，F_GETFL表示获取文件描述符
       int option = fcntl(pipefd, F_GETFL);
       // O_NONBLOCK会让read()在没有数据时，直接返回EAGAIN错误，而不是阻塞
