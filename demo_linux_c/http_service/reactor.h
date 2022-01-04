@@ -2,7 +2,6 @@
 #define REACTOR_H
 
 #include "connection.h"
-#include <fcntl.h>
 
 // reactor设计模式是event-driven architecture（事件驱动的体系架构）的一种实现方式
 // 用于处理多个客户端并发的向服务端请求服务的场景，每种服务在服务端可能由多个方法组成。

@@ -1,7 +1,6 @@
 #include "reactor.h"
 #include "epoll.h"
 #include "service.h"
-#include <pthread.h>
 
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
@@ -119,14 +118,22 @@ void *conn_thread(void *arg) {
           }
           if (recv_bytes > 0) {
             // 收到数据，开始处理，这里直接输出
-            printf("[info]:conn_thread:recv_data=\r\n%s\r\n", conn->recv_buffer);
+            // printf("[info]:conn_thread:recv_data=\r\n%s\r\n", conn->recv_buffer);
 
             // 清理接收缓冲区的内容
-            memset(conn->recv_buffer, 0, sizeof(conn->recv_buffer));
-            conn->recv_buffer_last = 0;
+            // memset(conn->recv_buffer, 0, sizeof(conn->recv_buffer));
+            // conn->recv_buffer_last = 0;
+
+            if (is_debug() == 1) {
+              printf("[debug]:conn_thread(),conn->recv_buffer=\r\n%s\r\n", conn->recv_buffer);
+            }
+
+            if (get_http_req_complete(conn) != -1) {
+              parse_http_req(conn);
+            }
 
             // 直接返回数据
-            char res_data[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, china";
+            char res_data[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, world";
             push_data(conn, res_data, strlen(res_data));
 
             int rtvl = -1;
