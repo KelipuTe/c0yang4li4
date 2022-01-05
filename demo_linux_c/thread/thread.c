@@ -13,7 +13,6 @@ void *mythread(void *arg){
 
     printf("i am child thread\r\n");
 
-
     int *j =  (int*)arg;
     printf("arg=%d\r\n",*j);
     *j=200;

@@ -130,11 +130,12 @@ void *conn_thread(void *arg) {
 
             if (get_http_req_complete(conn) != -1) {
               parse_http_req(conn);
+              service.on_request(conn);
             }
 
             // 直接返回数据
-            char res_data[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, world";
-            push_data(conn, res_data, strlen(res_data));
+            // char res_data[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, world";
+            // push_data(conn, res_data, strlen(res_data));
 
             int rtvl = -1;
             rtvl = write_data(conn);

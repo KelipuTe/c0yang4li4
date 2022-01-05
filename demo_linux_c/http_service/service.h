@@ -48,6 +48,7 @@ typedef struct http_service {
   void (*socket_bind_addr)(void);
   void (*socket_listen)(void);
   void (*service_start)(void);
+  void (*on_request)(connection *p1conn);
 } http_service;
 
 extern http_service service;
@@ -66,5 +67,8 @@ extern void socket_listen();
 
 // 启动1个线程监听socket，启动thread_num个线程连接socket
 extern void service_start();
+
+// 处理业务逻辑
+extern void on_request(connection *p1conn);
 
 #endif

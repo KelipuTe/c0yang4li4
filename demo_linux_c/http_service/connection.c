@@ -220,9 +220,18 @@ int parse_http_req(connection *p1conn) {
     printf("[debug]:parse_http_req(),arr1method=%s,arr1uri=%s,arr1version=%s\r\n", arr1method, arr1uri, arr1version);
   }
 
+  p1conn->p1http_data->p1method = (char *)malloc(sizeof(char) * sizeof(arr1method));
+  strcpy(p1conn->p1http_data->p1method, arr1method);
+  p1conn->p1http_data->p1uri = (char *)malloc(sizeof(char) * sizeof(arr1uri));
+  strcpy(p1conn->p1http_data->p1uri, arr1uri);
+  p1conn->p1http_data->p1version = (char *)malloc(sizeof(char) * sizeof(arr1version));
+  strcpy(p1conn->p1http_data->p1version, arr1version);
+
   // 解析查询字符串
   char *p1query;
   p1query = str_split(arr1uri, "?", arr1uri);
+  // 更新uri字段
+  strcpy(p1conn->p1http_data->p1uri, arr1uri);
   if (is_debug() == 1) {
     printf("[debug]:parse_http_req(),arr1uri=%s,arr1query=%s\r\n", arr1uri, p1query);
   }
@@ -267,7 +276,6 @@ int parse_http_req(connection *p1conn) {
       char arr1key[128];
       char *p1value;
       p1value = str_split(arr1header, ": ", arr1key);
-      memset(arr1header, 0, sizeof(arr1header));
       if (is_debug() == 1) {
         printf("[debug]:parse_http_req(),header_key=%s,header_value=%s\r\n", arr1key, p1value);
       }
@@ -276,6 +284,8 @@ int parse_http_req(connection *p1conn) {
       temp_data_kv.p1value = (char *)malloc(sizeof(char) * strlen(p1value));
       strcpy(temp_data_kv.p1key, arr1key);
       strcpy(temp_data_kv.p1value, p1value);
+      // 解析过的位置，设置无效
+      memset(arr1header, 0, sizeof(arr1header));
       p1conn->p1http_data->p1header_data[header_data_index] = temp_data_kv;
       header_data_index++;
       if (16 == header_data_index) {
@@ -286,6 +296,7 @@ int parse_http_req(connection *p1conn) {
       break;
     }
   }
+
   // 解析请求体
   if (p1conn->p1http_data->body_len > 0) {
     char *p1body_str = p1conn->recv_buffer + p1conn->p1http_data->header_len;
@@ -341,4 +352,58 @@ char *str_split(char *p1data_str, char *p1split_str, char *p1front_str) {
     // 移动p1data_str的位置到p1split_str后面
     return p1temp_index + strlen(p1split_str);
   }
+}
+
+char *get_header(connection *p1conn, char *p1key) {
+  if (NULL == p1conn->p1http_data->p1header_data) {
+    return "";
+  }
+  int i = 0;
+  int key_len = strlen(p1key);
+  while (p1conn->p1http_data->p1header_data[i].p1key != '\0') {
+    if (strcmp(p1conn->p1http_data->p1header_data[i].p1key, p1key) == 0) {
+      return p1conn->p1http_data->p1header_data[i].p1value;
+    }
+    if (i > key_len) {
+      break;
+    }
+    i++;
+  }
+  return "";
+}
+
+char *get_query(connection *p1conn, char *p1key) {
+  if (NULL == p1conn->p1http_data->p1get_data) {
+    return "";
+  }
+  int i = 0;
+  int key_len = strlen(p1key);
+  while (p1conn->p1http_data->p1get_data[i].p1key != '\0') {
+    if (strcmp(p1conn->p1http_data->p1get_data[i].p1key, p1key) == 0) {
+      return p1conn->p1http_data->p1get_data[i].p1value;
+    }
+    if (i > key_len) {
+      break;
+    }
+    i++;
+  }
+  return "";
+}
+
+char *get_post(connection *p1conn, char *p1key) {
+  if (NULL == p1conn->p1http_data->p1post_data) {
+    return "";
+  }
+  int i = 0;
+  int key_len = strlen(p1key);
+  while (p1conn->p1http_data->p1post_data[i].p1key != '\0') {
+    if (strcmp(p1conn->p1http_data->p1post_data[i].p1key, p1key) == 0) {
+      return p1conn->p1http_data->p1post_data[i].p1value;
+    }
+    if (i > key_len) {
+      break;
+    }
+    i++;
+  }
+  return "";
 }

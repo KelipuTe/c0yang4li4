@@ -171,3 +171,134 @@ void socket_accept() {
   // 然后丢给这个连接线程处理
   connection_add(cell, conn);
 }
+
+void on_request(connection *p1conn) {
+  printf("[debug]:method=%s\r\n", p1conn->p1http_data->p1method);
+  printf("[debug]:uri=%s\r\n", p1conn->p1http_data->p1uri);
+  printf("[debug]:version=%s\r\n", p1conn->p1http_data->p1version);
+  printf("[debug]:header-name=%s\r\n", get_header(p1conn, "header-name"));
+  printf("[debug]:header-name2=%s\r\n", get_header(p1conn, "header-name2"));
+  printf("[debug]:query_name=%s\r\n", get_query(p1conn, "query_name"));
+  printf("[debug]:query_name2=%s\r\n", get_query(p1conn, "query_name2"));
+  printf("[debug]:form_name=%s\r\n", get_post(p1conn, "form_name"));
+  printf("[debug]:form_name2=%s\r\n", get_post(p1conn, "form_name2"));
+
+  if (strcmp("/hello", p1conn->p1http_data->p1uri) == 0) {
+    // 路由解析示例
+    char res_body[] = "[on_request]:hello, world";
+
+    char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
+
+    strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+    strcat(p1res_data, "Content-Type: text/html\r\n");
+
+    char *p1content_length = (char *)malloc(sizeof(char) * 128);
+    sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
+    strcat(p1res_data, p1content_length);
+    strcat(p1res_data, "\r\n");
+
+    strcat(p1res_data, res_body);
+
+    push_data(p1conn, p1res_data, strlen(p1res_data));
+  } else if (strcmp("/hello.html", p1conn->p1http_data->p1uri) == 0) {
+    // html文件示例
+    printf("[debug]:get hello.html\r\n");
+
+    struct stat statbuf;
+    int file_fd = open("./hello.html", O_RDONLY);
+    if (fstat(file_fd, &statbuf)) {
+      //打开文件失败
+      char res_body[] = "[on_request]:get hello.html failed";
+
+      char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
+
+      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+      strcat(p1res_data, "Content-Type: text/html\r\n");
+
+      char *p1content_length = (char *)malloc(sizeof(char) * 128);
+      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
+      strcat(p1res_data, p1content_length);
+      strcat(p1res_data, "\r\n");
+
+      strcat(p1res_data, res_body);
+
+      push_data(p1conn, p1res_data, strlen(p1res_data));
+    } else {
+      // 打开成功，读取文件
+      printf("[debug]:file_size=%d\r\n", statbuf.st_size);
+
+      char *file_content = (char *)malloc(sizeof(char) * statbuf.st_size);
+      read(file_fd, file_content, statbuf.st_size);
+
+      printf("[debug]:img_content=%s\r\n", file_content);
+
+      char *p1res_data = (char *)malloc(sizeof(char) * strlen(file_content) + 1024);
+
+      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+      strcat(p1res_data, "Content-Type: text/html\r\n");
+
+      char *p1content_length = (char *)malloc(sizeof(char) * 128);
+      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(file_content));
+      strcat(p1res_data, p1content_length);
+      strcat(p1res_data, "\r\n");
+
+      strcat(p1res_data, file_content);
+
+      push_data(p1conn, p1res_data, strlen(p1res_data));
+
+      close(file_fd);
+    }
+
+  } else if (strcmp("/pid49256268.jpg", p1conn->p1http_data->p1uri) == 0) {
+    // 图片资源示例
+    printf("[debug]:get img pid49256268.jpg\r\n");
+
+    struct stat statbuf;
+    int img_fd = open("./pid49256268.jpg", O_RDONLY);
+    if (fstat(img_fd, &statbuf)) {
+      //打开文件失败
+      char res_body[] = "[on_request]:get image failed";
+
+      char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
+
+      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+      strcat(p1res_data, "Content-Type: text/html\r\n");
+
+      char *p1content_length = (char *)malloc(sizeof(char) * 128);
+      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
+      strcat(p1res_data, p1content_length);
+      strcat(p1res_data, "\r\n");
+
+      strcat(p1res_data, res_body);
+
+      push_data(p1conn, p1res_data, strlen(p1res_data));
+    } else {
+      // 打开成功，读取文件
+      printf("[debug]:img_size=%d\r\n", statbuf.st_size);
+
+      // 这里的处理方式和上面不一样
+      // strcat()，在拼装数据时，遇到'\0'就会截断
+      // 图片字节流数据里可能含有'\0'，所以要把请求头和图片数据分开处理
+      // 复制图片数据时不要用判断长度的函数，而直接是用获取到的文件大小
+
+      char *img_content = (char *)malloc(sizeof(char) * statbuf.st_size);
+      int rtvl = read(img_fd, img_content, statbuf.st_size);
+      printf("[debug]:read img,rtvl=%d\r\n", rtvl);
+
+      char *p1res_data = (char *)malloc(sizeof(char) * 1024);
+
+      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+      strcat(p1res_data, "Content-Type: image/jpeg\r\n");
+
+      char *p1content_length = (char *)malloc(sizeof(char) * 128);
+      sprintf(p1content_length, "Content-Length: %d\r\n", statbuf.st_size);
+      strcat(p1res_data, p1content_length);
+      strcat(p1res_data, "\r\n");
+
+      push_data(p1conn, p1res_data, strlen(p1res_data));
+      push_data(p1conn, img_content, statbuf.st_size);
+
+      close(img_fd);
+    }
+  }
+}

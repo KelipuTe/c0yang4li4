@@ -65,4 +65,13 @@ extern int get_http_req_complete(connection *p1conn);
 // 解析http报文
 extern int parse_http_req(connection *p1conn);
 
+// 获取请求头字段
+extern char *get_header(connection *p1conn, char *p1key);
+
+// 获取查询参数字段
+extern char *get_query(connection *p1conn, char *p1key);
+
+// 获取请求体字段
+extern char *get_post(connection *p1conn, char *p1key);
+
 #endif

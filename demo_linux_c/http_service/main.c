@@ -11,6 +11,7 @@ http_service service = {
     .socket_bind_addr = socket_bind_addr,
     .socket_listen = socket_listen,
     .service_start = service_start,
+    .on_request = on_request,
 };
 
 // gcc -std=c99 main.c service.c thread.c reactor.c epoll.c connection.c -o main -lpthread
@@ -25,7 +26,7 @@ int main() {
   service.socket_listen();
   service.service_start();
 
-  // 无限循环
+  // 无限循环，阻止主进程退出
   while (1) {
     sleep(1);
   }
