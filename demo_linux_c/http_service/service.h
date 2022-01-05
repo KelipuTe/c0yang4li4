@@ -30,7 +30,8 @@
 #define EPOLL_WAIT_TIME 1
 
 typedef struct http_service {
-  int app_debug; //debug模式，1=开启
+  int app_debug;       //debug模式，1=开启
+  int service_running; //服务运行状态，1=运行，0=停止
 
   int sockfd;               //service的socket句柄
   char ip[INET_ADDRSTRLEN]; //ip，bind()的sockaddr参数
@@ -49,6 +50,7 @@ typedef struct http_service {
   void (*socket_listen)(void);
   void (*service_start)(void);
   void (*on_request)(connection *p1conn);
+  void (*service_stop)(void);
 } http_service;
 
 extern http_service service;
@@ -70,5 +72,8 @@ extern void service_start();
 
 // 处理业务逻辑
 extern void on_request(connection *p1conn);
+
+// 停止服务
+extern void service_stop();
 
 #endif

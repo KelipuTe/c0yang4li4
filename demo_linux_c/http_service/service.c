@@ -10,6 +10,9 @@ void *listen_thread();
 // 处理socket连接
 void socket_accept();
 
+// http响应返回文本
+void http_response_text(connection *p1conn, char *p1res_body);
+
 int is_debug() {
   if (1 == service.app_debug) {
     return 1;
@@ -77,10 +80,11 @@ void service_start() {
   // 启动连接线程
   for (int i = 0; i < service.thread_num; i++) {
     service.arr1cell[i].cell_index = i;
+    service.arr1cell[i].cell_running = 1;
     service.arr1cell[i].client_num_current = 0;
     service.arr1cell[i].client_num_max = CLIENT_MAX_NUM;
-    service.arr1cell[i].clients = (connection *)malloc(sizeof(connection) * CLIENT_MAX_NUM);
-    service.arr1cell[i].clientsBuffer = (connection *)malloc(sizeof(connection) * CLIENT_MAX_NUM);
+    service.arr1cell[i].arr1clients = (connection *)malloc(sizeof(connection) * CLIENT_MAX_NUM);
+    service.arr1cell[i].arr1clientsBuffer = (connection *)malloc(sizeof(connection) * CLIENT_MAX_NUM);
     create_thread(conn_thread, &service.arr1cell[i].cell_index);
   }
 }
@@ -98,7 +102,7 @@ void *listen_thread() {
   epoll_add(service.epfd, EPOLLIN, service.sockfd);
 
   struct epoll_event arr1event[CLIENT_MAX_NUM];
-  while (1) {
+  while (1 == service.service_running) {
     // 等待epoll事件
     int rtvl = -1;
     rtvl = epoll_wait(epfd, arr1event, CLIENT_MAX_NUM, EPOLL_WAIT_TIME);
@@ -126,6 +130,8 @@ void *listen_thread() {
       }
     }
   }
+  printf("[debug]:listen_thread(),service_running!=1,thread stop\r\n");
+  notify_thread();
 }
 
 void socket_accept() {
@@ -154,22 +160,22 @@ void socket_accept() {
   if (is_debug() == 1) {
     printf("[debug]:socket_accept(),temp_thread_index=%d\r\n", temp_thread_index);
   }
-  reactor *cell = &service.arr1cell[temp_thread_index];
+  reactor *p1cell = &service.arr1cell[temp_thread_index];
   // 把这个client连接封装一下
   struct connection conn;
   conn.connfd = connfd;
   strcpy(conn.ip, inet_ntoa(client_addr.sin_addr));
   conn.port = ntohs(client_addr.sin_port);
-  conn.recv_buffer = (char *)malloc(sizeof(char) * RECV_BUFFER_MAX);
+  conn.p1recv_buffer = (char *)malloc(sizeof(char) * RECV_BUFFER_MAX);
   conn.recv_buffer_max = RECV_BUFFER_MAX;
   conn.recv_buffer_last = 0;
   conn.recv_buffer_full = 0;
-  conn.send_buffer = (char *)malloc(sizeof(char) * SEND_BUFFER_MAX);
+  conn.p1send_buffer = (char *)malloc(sizeof(char) * SEND_BUFFER_MAX);
   conn.send_buffer_max = SEND_BUFFER_MAX;
   conn.send_buffer_last = 0;
   conn.send_buffer_full = 0;
   // 然后丢给这个连接线程处理
-  connection_add(cell, conn);
+  connection_add(p1cell, conn);
 }
 
 void on_request(connection *p1conn) {
@@ -185,21 +191,7 @@ void on_request(connection *p1conn) {
 
   if (strcmp("/hello", p1conn->p1http_data->p1uri) == 0) {
     // 路由解析示例
-    char res_body[] = "[on_request]:hello, world";
-
-    char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
-
-    strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
-    strcat(p1res_data, "Content-Type: text/html\r\n");
-
-    char *p1content_length = (char *)malloc(sizeof(char) * 128);
-    sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
-    strcat(p1res_data, p1content_length);
-    strcat(p1res_data, "\r\n");
-
-    strcat(p1res_data, res_body);
-
-    push_data(p1conn, p1res_data, strlen(p1res_data));
+    http_response_text(p1conn, "[on_request]:hello, world");
   } else if (strcmp("/hello.html", p1conn->p1http_data->p1uri) == 0) {
     // html文件示例
     printf("[debug]:get hello.html\r\n");
@@ -208,43 +200,17 @@ void on_request(connection *p1conn) {
     int file_fd = open("./hello.html", O_RDONLY);
     if (fstat(file_fd, &statbuf)) {
       //打开文件失败
-      char res_body[] = "[on_request]:get hello.html failed";
-
-      char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
-
-      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
-      strcat(p1res_data, "Content-Type: text/html\r\n");
-
-      char *p1content_length = (char *)malloc(sizeof(char) * 128);
-      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
-      strcat(p1res_data, p1content_length);
-      strcat(p1res_data, "\r\n");
-
-      strcat(p1res_data, res_body);
-
-      push_data(p1conn, p1res_data, strlen(p1res_data));
+      http_response_text(p1conn, "[on_request]:hello.html,open(),failed");
     } else {
       // 打开成功，读取文件
-      printf("[debug]:file_size=%d\r\n", statbuf.st_size);
+      printf("[debug]:html_size=%d\r\n", statbuf.st_size);
 
       char *file_content = (char *)malloc(sizeof(char) * statbuf.st_size);
       read(file_fd, file_content, statbuf.st_size);
 
-      printf("[debug]:img_content=%s\r\n", file_content);
+      printf("[debug]:html_content=%s\r\n", file_content);
 
-      char *p1res_data = (char *)malloc(sizeof(char) * strlen(file_content) + 1024);
-
-      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
-      strcat(p1res_data, "Content-Type: text/html\r\n");
-
-      char *p1content_length = (char *)malloc(sizeof(char) * 128);
-      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(file_content));
-      strcat(p1res_data, p1content_length);
-      strcat(p1res_data, "\r\n");
-
-      strcat(p1res_data, file_content);
-
-      push_data(p1conn, p1res_data, strlen(p1res_data));
+      http_response_text(p1conn, file_content);
 
       close(file_fd);
     }
@@ -257,21 +223,7 @@ void on_request(connection *p1conn) {
     int img_fd = open("./pid49256268.jpg", O_RDONLY);
     if (fstat(img_fd, &statbuf)) {
       //打开文件失败
-      char res_body[] = "[on_request]:get image failed";
-
-      char *p1res_data = (char *)malloc(sizeof(char) * strlen(res_body) + 1024);
-
-      strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
-      strcat(p1res_data, "Content-Type: text/html\r\n");
-
-      char *p1content_length = (char *)malloc(sizeof(char) * 128);
-      sprintf(p1content_length, "Content-Length: %d\r\n", strlen(res_body));
-      strcat(p1res_data, p1content_length);
-      strcat(p1res_data, "\r\n");
-
-      strcat(p1res_data, res_body);
-
-      push_data(p1conn, p1res_data, strlen(p1res_data));
+      http_response_text(p1conn, "[on_request]:img,open(),failed");
     } else {
       // 打开成功，读取文件
       printf("[debug]:img_size=%d\r\n", statbuf.st_size);
@@ -301,4 +253,31 @@ void on_request(connection *p1conn) {
       close(img_fd);
     }
   }
+}
+
+void http_response_text(connection *p1conn, char *p1res_body) {
+  // 响应头报文的大小=响应头的大小（假定1024个字节）+响应数据的大小
+  char *p1res_data = (char *)malloc(sizeof(char) * (1024 + strlen(p1res_body)));
+
+  strcat(p1res_data, "HTTP/1.1 200 OK\r\n");
+  strcat(p1res_data, "Content-Type: text/html\r\n");
+
+  char *p1content_length = (char *)malloc(sizeof(char) * 128);
+  sprintf(p1content_length, "Content-Length: %d\r\n", strlen(p1res_body));
+  strcat(p1res_data, p1content_length);
+  strcat(p1res_data, "\r\n");
+
+  strcat(p1res_data, p1res_body);
+
+  push_data(p1conn, p1res_data, strlen(p1res_data));
+}
+
+void service_stop() {
+  stop_listen_thread(&service);
+  for (int i = 0; i < service.thread_num; i++) {
+    stop_conn_thread(&service.arr1cell[i]);
+  }
+  free(service.arr1cell);
+  close(service.epfd);
+  close(service.sockfd);
 }

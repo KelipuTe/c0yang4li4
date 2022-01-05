@@ -5,23 +5,23 @@
 // 前半部分放入p1front_str，剩余部分放入p1data_str
 char *str_split(char *p1data_str, char *p1split_str, char *p1front_str);
 
-int recv_data(connection *conn) {
-  if (0 == conn->connfd) {
+int recv_data(connection *p1conn) {
+  if (0 == p1conn->connfd) {
     // 无效的client的socket句柄
     return -1;
   }
-  if (1 == conn->recv_buffer_full) {
+  if (1 == p1conn->recv_buffer_full) {
     // 接收缓冲区满了，则直接返回0
     return 0;
   }
   // 计算剩余空间长度
-  int remain_len = conn->recv_buffer_max - conn->recv_buffer_last;
+  int remain_len = p1conn->recv_buffer_max - p1conn->recv_buffer_last;
   if (remain_len > 0) {
     // 接收缓冲区还有空间，接收数据
     // 计算剩余空间的第1个字节的内存地址
-    char *temp_index = conn->recv_buffer + conn->recv_buffer_last;
+    char *temp_index = p1conn->p1recv_buffer + p1conn->recv_buffer_last;
     ssize_t recv_bytes = -1;
-    recv_bytes = recv(conn->connfd, temp_index, remain_len, 0);
+    recv_bytes = recv(p1conn->connfd, temp_index, remain_len, 0);
     if (is_debug() == 1) {
       printf("[debug]:recv_data(),recv_bytes=%d\r\n", recv_bytes);
     }
@@ -33,7 +33,7 @@ int recv_data(connection *conn) {
     if (0 == recv_bytes) {
       // 测试一下对端是不是已关闭
       ssize_t send_bytes = -1;
-      send_bytes = send(conn->connfd, "", 0, 0);
+      send_bytes = send(p1conn->connfd, "", 0, 0);
       if (-1 == send_bytes || 0 == send_bytes) {
         // 对端已关闭，返回异常
         printf("[error]:recv_data(),-1==recv_bytes");
@@ -48,57 +48,59 @@ int recv_data(connection *conn) {
       }
     } else {
       // 收到数据，返回本次接收到的数据长度
-      conn->recv_buffer_last += recv_bytes;
+      p1conn->recv_buffer_last += recv_bytes;
       // recv_buffer末尾要加`\0`
-      conn->recv_buffer[conn->recv_buffer_last] = '\0';
+      p1conn->p1recv_buffer[p1conn->recv_buffer_last] = '\0';
 
       return recv_bytes;
     }
   } else {
     // 接收缓冲区满了，标记一下，然后返回0
-    conn->recv_buffer_full = 1;
+    p1conn->recv_buffer_full = 1;
 
     return 0;
   }
 };
 
-int push_data(connection *conn, char *res_data, int res_data_len) {
-  if (0 == conn->connfd) {
+int push_data(connection *p1conn, char *res_data, int res_data_len) {
+  if (0 == p1conn->connfd) {
     return -1;
   }
-  if (1 == conn->send_buffer_full) {
+  if (1 == p1conn->send_buffer_full) {
     return 0;
   }
-  int remain_len = conn->send_buffer_max - conn->send_buffer_last;
+  int remain_len = p1conn->send_buffer_max - p1conn->send_buffer_last;
   if (res_data_len <= remain_len) {
-    char *temp_index = conn->send_buffer + conn->send_buffer_last;
+    char *temp_index = p1conn->p1send_buffer + p1conn->send_buffer_last;
     memcpy(temp_index, res_data, res_data_len);
-    conn->send_buffer_last += res_data_len;
+    p1conn->send_buffer_last += res_data_len;
 
     return res_data_len;
   } else {
-    conn->send_buffer_full = 1;
+    p1conn->send_buffer_full = 1;
 
     return 0;
   }
 };
 
-int write_data(connection *conn) {
-  if (0 == conn->connfd) {
+int write_data(connection *p1conn) {
+  if (0 == p1conn->connfd) {
     return -1;
   }
 
   if (is_debug() == 1) {
-    printf("[debug]:write_data(),conn->connfd=%d\r\n", conn->connfd);
+    printf("[debug]:write_data(),p1conn->connfd=%d\r\n", p1conn->connfd);
   }
-  if (conn->send_buffer_last > 0) {
+  if (p1conn->send_buffer_last > 0) {
     // 发送缓冲区有数据才发
     int send_bytes = -1;
     if (is_debug() == 1) {
-      printf("[debug]:write_data(),conn->send_buffer_last=%d\r\n", conn->send_buffer_last);
-      printf("[debug]:write_data(),send(),conn->send_buffer=\r\n%s\r\n", conn->send_buffer);
+      printf("[debug]:write_data(),p1conn->send_buffer_last=%d\r\n", p1conn->send_buffer_last);
+      // 这里当第1次发送的数据比第2次多时，输出的时候会有第1次的数据
+      // 但是发送数据是按send_buffer_last发送的，所以不会出问题
+      printf("[debug]:write_data(),send(),p1conn->send_buffer=\r\n%s\r\n", p1conn->p1send_buffer);
     }
-    send_bytes = send(conn->connfd, conn->send_buffer, conn->send_buffer_last, 0);
+    send_bytes = send(p1conn->connfd, p1conn->p1send_buffer, p1conn->send_buffer_last, 0);
     if (is_debug() == 1) {
       printf("[debug]:write_data(),send(),send_bytes=%d\r\n", send_bytes);
     }
@@ -107,20 +109,20 @@ int write_data(connection *conn) {
       printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
       return -1;
     }
-    if (send_bytes == conn->send_buffer_last) {
+    if (send_bytes == p1conn->send_buffer_last) {
       //一次性发送完，直接重置发送缓冲区
-      memset(conn->send_buffer, 0, sizeof(conn->send_buffer));
-      conn->send_buffer_last = 0;
-      conn->send_buffer_full = 0;
+      memset(p1conn->p1send_buffer, 0, sizeof(p1conn->p1send_buffer));
+      p1conn->send_buffer_last = 0;
+      p1conn->send_buffer_full = 0;
 
       return 0;
     } else {
       // 只发了一半，没发送完
       // 发出去的是发送缓冲区前面的数据
       // 计算发送缓冲区还有多少数据没有发送出去
-      conn->send_buffer_last -= send_bytes;
+      p1conn->send_buffer_last -= send_bytes;
       // 把后面的数据移到前面覆盖前面已经发送过的数据
-      memcpy(conn->send_buffer, conn->send_buffer + send_bytes, conn->send_buffer_last);
+      memcpy(p1conn->p1send_buffer, p1conn->p1send_buffer + send_bytes, p1conn->send_buffer_last);
 
       return 1;
     }
@@ -143,18 +145,18 @@ int get_http_req_complete(connection *p1conn) {
   // 23 form_name=form_kelipute
 
   // 找到请求头和请求体之间的`\r\n\r\n`的位置
-  char *p1rnrn = strstr(p1conn->recv_buffer, "\r\n\r\n");
+  char *p1rnrn = strstr(p1conn->p1recv_buffer, "\r\n\r\n");
   if (NULL == p1rnrn) {
     return -1;
   }
   int header_len = 0;
   // 通过`\r\n\r\n`的位置，计算http报文请求行和请求头的长度
-  header_len = p1rnrn - p1conn->recv_buffer;
+  header_len = p1rnrn - p1conn->p1recv_buffer;
   // 再加上`\r\n\r\n`子串的长度4，就是完整的http报文请求行和请求头的长度
   header_len += 4;
   int body_len = 0;
   // 通过请求头的`Content-Length: `字段，判断有没有请求体
-  char *p1content_length_index = strstr(p1conn->recv_buffer, "Content-Length: ");
+  char *p1content_length_index = strstr(p1conn->p1recv_buffer, "Content-Length: ");
   if (p1content_length_index != NULL) {
     // 找到`Content-Length: `字段后面一个`\r\n`的位置
     char *p1content_length_rn_index = strstr(p1content_length_index, "\r\n");
@@ -200,7 +202,7 @@ int parse_http_req(connection *p1conn) {
     return -1;
   }
 
-  char *p1http_data_str = p1conn->recv_buffer;
+  char *p1http_data_str = p1conn->p1recv_buffer;
 
   // 把`\r\n\r\n`改成`\r\n\r\0`
   p1http_data_str[p1conn->p1http_data->header_len - 1] = '\0';
@@ -299,7 +301,7 @@ int parse_http_req(connection *p1conn) {
 
   // 解析请求体
   if (p1conn->p1http_data->body_len > 0) {
-    char *p1body_str = p1conn->recv_buffer + p1conn->p1http_data->header_len;
+    char *p1body_str = p1conn->p1recv_buffer + p1conn->p1http_data->header_len;
     p1conn->p1http_data->p1post_data = (data_kv *)malloc(sizeof(data_kv) * 16);
     int post_data_index = 0;
     while (1) {
@@ -406,4 +408,20 @@ char *get_post(connection *p1conn, char *p1key) {
     i++;
   }
   return "";
+}
+
+void clear_recv_buffer(connection *p1conn) {
+  if (p1conn->recv_buffer_last > 0) {
+    // 计算这次处理的报文长度和接收缓冲区剩下的数据的长度
+    int content_len = p1conn->p1http_data->header_len + p1conn->p1http_data->body_len;
+    int remain_len = p1conn->recv_buffer_last - content_len;
+    if (remain_len > 0) {
+      memcpy(p1conn->p1recv_buffer, p1conn->p1recv_buffer + content_len, remain_len);
+    }
+    p1conn->recv_buffer_last = remain_len;
+
+    if (1 == p1conn->recv_buffer_full) {
+      p1conn->recv_buffer_full = 0;
+    }
+  }
 }

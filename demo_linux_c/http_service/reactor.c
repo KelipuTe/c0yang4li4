@@ -1,25 +1,26 @@
 #include "reactor.h"
 #include "epoll.h"
 #include "service.h"
+#include "thread.h"
 
 static pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
 
-void connection_add(reactor *cell, connection conn) {
+void connection_add(reactor *p1cell, connection conn) {
   pthread_mutex_lock(&mutex);
 
   // 找到连接线程client连接缓冲区中的空位，把这个client连接存下来
   int i = 0;
   while (i < CLIENT_MAX_NUM) {
-    if (0 == cell->clientsBuffer[i].connfd) {
+    if (0 == p1cell->arr1clientsBuffer[i].connfd) {
       break;
     }
     i++;
   }
   if (is_debug() == 1) {
-    printf("[debug]:connection_add(),cell->cclientsBuffer[i],i=%d\r\n", i);
+    printf("[debug]:connection_add(),p1cell->cclientsBuffer[i],i=%d\r\n", i);
   }
-  cell->clientsBuffer[i] = conn;
-  cell->client_num_current++;
+  p1cell->arr1clientsBuffer[i] = conn;
+  p1cell->client_num_current++;
 
   pthread_mutex_unlock(&mutex);
 }
@@ -40,54 +41,54 @@ void *conn_thread(void *arg) {
   }
 
   // 通过连接线程池的index把线程拿出来
-  reactor *cell = &service.arr1cell[cell_index];
+  reactor *p1cell = &service.arr1cell[cell_index];
 
-  cell->epfd = epfd;
+  p1cell->epfd = epfd;
 
   struct epoll_event arr1event[CLIENT_MAX_NUM];
-  while (1) {
+  while (1 == p1cell->cell_running) {
     pthread_mutex_lock(&mutex);
 
-    if (cell->client_num_current > 0) {
+    if (p1cell->client_num_current > 0) {
       if (is_debug() == 1) {
-        printf("[debug]:conn_thread(),client_num_current=%d\r\n", cell->client_num_current);
+        printf("[debug]:conn_thread(),client_num_current=%d\r\n", p1cell->client_num_current);
       }
       // 找到client连接缓冲区中未处理的client连接
       for (int i = 0; i < CLIENT_MAX_NUM; i++) {
-        if (cell->clientsBuffer[i].connfd > 0) {
+        if (p1cell->arr1clientsBuffer[i].connfd > 0) {
           // 将未处理的client连接转移到client连接区中的空位
           if (is_debug() == 1) {
-            printf("[debug]:conn_thread(),cell->clientsBuffer[i],i=%d\r\n", i);
+            printf("[debug]:conn_thread(),p1cell->clientsBuffer[i],i=%d\r\n", i);
           }
           for (int j = 0; j < CLIENT_MAX_NUM; j++) {
-            if (cell->clients[j].connfd == 0) {
+            if (p1cell->arr1clients[j].connfd == 0) {
               if (is_debug() == 1) {
-                printf("[debug]:conn_thread(),cell->clients[j],j=%d\r\n", j);
+                printf("[debug]:conn_thread(),p1cell->clients[j],j=%d\r\n", j);
               }
-              cell->clients[j] = cell->clientsBuffer[i];
+              p1cell->arr1clients[j] = p1cell->arr1clientsBuffer[i];
 
               // 设置非阻塞模式
-              int option = fcntl(cell->clients[j].connfd, F_GETFL);
+              int option = fcntl(p1cell->arr1clients[j].connfd, F_GETFL);
               option = option | O_NONBLOCK;
-              fcntl(cell->clients[j].connfd, F_SETFL, option);
+              fcntl(p1cell->arr1clients[j].connfd, F_SETFL, option);
 
-              epoll_add(cell->epfd, EPOLLIN, cell->clients[j].connfd);
+              epoll_add(p1cell->epfd, EPOLLIN, p1cell->arr1clients[j].connfd);
               break;
             }
           }
           // 重置client连接缓冲区中的对应位置
-          cell->clientsBuffer[i].connfd = 0;
-          cell->client_num_current--;
+          p1cell->arr1clientsBuffer[i].connfd = 0;
+          p1cell->client_num_current--;
         }
       }
       // 理论上到这里client_num_current应该正好是0
-      cell->client_num_current = 0;
+      p1cell->client_num_current = 0;
     }
     pthread_mutex_unlock(&mutex);
 
     // 等待epoll事件
     int rtvl = -1;
-    rtvl = epoll_wait(cell->epfd, arr1event, CLIENT_MAX_NUM, EPOLL_WAIT_TIME);
+    rtvl = epoll_wait(p1cell->epfd, arr1event, CLIENT_MAX_NUM, EPOLL_WAIT_TIME);
     if (-1 == rtvl) {
       if (errno == EINTR) {
         continue;
@@ -108,104 +109,119 @@ void *conn_thread(void *arg) {
 
         if (EPOLLIN == arr1event[i].events) {
           // 触发EPOLLIN事件，表示有client发送数据过来了
-          connection *conn = connection_find(cell, temp_fd);
+          connection *p1conn = connection_find(p1cell, temp_fd);
           if (is_debug() == 1) {
-            printf("[debug]:conn_thread(),connection_find(),connfd=%d\r\n", conn->connfd);
+            printf("[debug]:conn_thread(),connection_find(),connfd=%d\r\n", p1conn->connfd);
           }
-          int recv_bytes = recv_data(conn);
+          int recv_bytes = recv_data(p1conn);
           if (-1 == recv_bytes) {
-            connection_del(cell, conn);
+            connection_del(p1cell, p1conn);
           }
           if (recv_bytes > 0) {
             // 收到数据，开始处理，这里直接输出
-            // printf("[info]:conn_thread:recv_data=\r\n%s\r\n", conn->recv_buffer);
+            // printf("[info]:conn_thread:recv_data=\r\n%s\r\n", p1conn->p1recv_buffer);
 
             // 清理接收缓冲区的内容
-            // memset(conn->recv_buffer, 0, sizeof(conn->recv_buffer));
-            // conn->recv_buffer_last = 0;
+            // memset(p1conn->p1recv_buffer, 0, sizeof(p1conn->p1recv_buffer));
+            // p1conn->recv_buffer_last = 0;
 
             if (is_debug() == 1) {
-              printf("[debug]:conn_thread(),conn->recv_buffer=\r\n%s\r\n", conn->recv_buffer);
+              printf("[debug]:conn_thread(),p1conn->p1recv_buffer=\r\n%s\r\n", p1conn->p1recv_buffer);
             }
 
-            if (get_http_req_complete(conn) != -1) {
-              parse_http_req(conn);
-              service.on_request(conn);
+            if (get_http_req_complete(p1conn) != -1) {
+              parse_http_req(p1conn);
+              service.on_request(p1conn);
+              clear_recv_buffer(p1conn);
             }
 
             // 直接返回数据
             // char res_data[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, world";
-            // push_data(conn, res_data, strlen(res_data));
+            // push_data(p1conn, res_data, strlen(res_data));
 
             int rtvl = -1;
-            rtvl = write_data(conn);
+            rtvl = write_data(p1conn);
             if (is_debug() == 1) {
               printf("[debug]:conn_thread(),EPOLLIN,write_data(),rtvl=%d\r\n", rtvl);
             }
             if (-1 == rtvl) {
-              connection_del(cell, conn);
+              connection_del(p1cell, p1conn);
             } else if (1 == rtvl) {
               // 只发了一半的时候需要触发一次EPOLLOUT
-              epoll_set(cell->epfd, EPOLLIN | EPOLLOUT, conn->connfd);
+              epoll_set(p1cell->epfd, EPOLLIN | EPOLLOUT, p1conn->connfd);
             }
           }
         }
 
         if (EPOLLOUT == arr1event[i].events) {
           // EPOLLOUT一般是手动触发的
-          connection *conn = connection_find(cell, temp_fd);
+          connection *p1conn = connection_find(p1cell, temp_fd);
           int rtvl = -1;
-          rtvl = write_data(conn);
+          rtvl = write_data(p1conn);
           if (is_debug() == 1) {
             printf("[debug]:conn_thread(),EPOLLOUT,write_data(),rtvl=%d\r\n", rtvl);
           }
           if (-1 == rtvl) {
-            connection_del(cell, conn);
+            connection_del(p1cell, p1conn);
           } else if (1 == rtvl) {
             // 只发了一半的时候需要触发一次EPOLLOUT
-            epoll_set(cell->epfd, EPOLLIN | EPOLLOUT, conn->connfd);
+            epoll_set(p1cell->epfd, EPOLLIN | EPOLLOUT, p1conn->connfd);
           } else if (0 == rtvl) {
             // 一次发完了，设置回EPOLLIN
-            epoll_set(cell->epfd, EPOLLIN, conn->connfd);
+            epoll_set(p1cell->epfd, EPOLLIN, p1conn->connfd);
           }
         }
       }
     }
   }
+  // 连接线程结束，释放资源
+  printf("[debug]:conn_thread(),cell_running!=1,thread stop\r\n");
+  close(p1cell->epfd);
+  for (int i = 0; i < CLIENT_MAX_NUM; i++) {
+    if (p1cell->arr1clientsBuffer[i].connfd > 0) {
+      close(p1cell->arr1clientsBuffer[i].connfd);
+    }
+    if (p1cell->arr1clients[i].connfd > 0) {
+      close(p1cell->arr1clients[i].connfd);
+    }
+  }
+  free(p1cell->arr1clientsBuffer);
+  free(p1cell->arr1clients);
+  notify_thread();
 }
 
-connection *connection_find(reactor *cell, int connfd) {
+connection *connection_find(reactor *p1cell, int connfd) {
   if (0 == connfd) {
     return NULL;
   }
   for (int i = 0; i < 1024; i++) {
-    if (connfd == cell->clients[i].connfd) {
-      return &cell->clients[i];
+    if (connfd == p1cell->arr1clients[i].connfd) {
+      return &p1cell->arr1clients[i];
     }
   }
   return NULL;
 }
 
-void connection_del(reactor *cell, connection *conn) {
+void connection_del(reactor *p1cell, connection *p1conn) {
   if (is_debug() == 1) {
-    printf("[debug]:connection_del,connfd=%d\r\n", conn->connfd);
+    printf("[debug]:connection_del,connfd=%d\r\n", p1conn->connfd);
   }
 
-  memset(conn->recv_buffer, 0, sizeof(conn->recv_buffer));
-  conn->recv_buffer_max = 0;
-  conn->recv_buffer_last = 0;
-  conn->recv_buffer_full = 0;
+  memset(p1conn->p1recv_buffer, 0, sizeof(p1conn->p1recv_buffer));
+  p1conn->recv_buffer_max = 0;
+  p1conn->recv_buffer_last = 0;
+  p1conn->recv_buffer_full = 0;
 
-  memset(conn->send_buffer, 0, sizeof(conn->recv_buffer));
-  conn->send_buffer_max = 0;
-  conn->send_buffer_last = 0;
-  conn->send_buffer_full = 0;
+  memset(p1conn->p1send_buffer, 0, sizeof(p1conn->p1recv_buffer));
+  p1conn->send_buffer_max = 0;
+  p1conn->send_buffer_last = 0;
+  p1conn->send_buffer_full = 0;
 
   // 理论上到这里应该只有EPOLLIN，理论上EPOLLOUT应该在循环里就被移除
-  epoll_del(cell->epfd, EPOLLIN, conn->connfd);
+  epoll_del(p1cell->epfd, EPOLLIN, p1conn->connfd);
 
   // 关闭client的socket句柄
-  close(conn->connfd);
+  close(p1conn->connfd);
   // 重置client连接区中的对应位置
-  conn->connfd = 0;
+  p1conn->connfd = 0;
 }
