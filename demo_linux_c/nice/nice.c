@@ -6,28 +6,29 @@
 
 int main() {
   pid_t pid = fork();
-
-  // setpriority用于设置进程nice值
-  // getpriority可以获取进程nice值
-  // 当两个进程优先级不同的时候就可以手动调整
+  // getpriority(2)、setpriority(2)
+  // get/set program scheduling priority，获取、设置进程nice值
+  // 当两个进程优先级不同的时候，就可以手动调整
   if (pid == 0) {
-    int ret = setpriority(PRIO_PROCESS, getpid(), -10);
-    int n = getpriority(PRIO_PROCESS, getpid());
-    printf("child,nice=%d\r\n", n);
+    int rtvl1 = setpriority(PRIO_PROCESS, getpid(), -10);
+    printf("child,setpriority()=%d\r\n", rtvl1);
+    int rtvl2 = getpriority(PRIO_PROCESS, getpid());
+    printf("child,getpriority()=%d\r\n", rtvl2);
     while (1) {
       sleep(1);
-      printf("child,pid=%d\r\n", getpid());
+      printf("child,getpid()=%d\r\n", getpid());
     }
 
     return 0;
   }
 
-  int ret = setpriority(PRIO_PROCESS, getpid(), 10);
-  int n = getpriority(PRIO_PROCESS, getpid());
-  printf("parent,nice=%d\r\n", n);
+  int rtvl1 = setpriority(PRIO_PROCESS, getpid(), 10);
+  printf("parent,setpriority()=%d\r\n", rtvl1);
+  int rtvl2 = getpriority(PRIO_PROCESS, getpid());
+  printf("parent,getpriority()=%d\r\n", rtvl2);
   while (1) {
     sleep(5);
-    printf("parent,pid=%d\r\n", getpid());
+    printf("parent,getpid()=%d\r\n", getpid());
   }
 
   return 0;

@@ -8,10 +8,5 @@ int main(int argc, char *argv[], char *envp[]) {
     argv++;
   }
 
-  while (*envp) {
-    printf("envp=%s\r\n", *envp);
-    envp++;
-  }
-
   return 0;
 }
