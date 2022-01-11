@@ -7,6 +7,9 @@
 #include <unistd.h>
 
 int main() {
+  // umask(2)
+  // #include <sys/stat.h>
+  // set file mode creation mask
   umask(0);
 
   pid_t pid;

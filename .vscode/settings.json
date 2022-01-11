@@ -7,7 +7,11 @@
         "string.h": "c",
         "time.h": "c",
         "math.h": "c",
-        "unistd.h": "c"
+        "unistd.h": "c",
+        "msg.h": "c",
+        "sem.h": "c",
+        "ipc.h": "c",
+        "socket.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
