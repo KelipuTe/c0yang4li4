@@ -1,56 +1,64 @@
-//
-// Created by Administrator on 2021/8/7 0007.
-//
-
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 #include <errno.h>
 #include <pthread.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 
-void *mythread(void *arg){
+void *mythread(void *arg) {
+  printf("child pthread running\r\n");
 
-    printf("i am child thread\r\n");
+  int *j = (int *)arg;
+  printf("child pthread,arg=%d\r\n", *j);
+  *j = 200;
 
-    int *j =  (int*)arg;
-    printf("arg=%d\r\n",*j);
-    *j=200;
-
-    //return (void*)2;
-    pthread_exit((void*)3);
+  // #include <pthread.h>
+  // 线程退出，并返回返回值
+  pthread_exit((void *)3);
+  // 直接return也是可以的
+  // return (void *)3;
 }
-int main()
-{
 
-    pthread_t tid,tid2;
+// 多线程编译的时候要加 -lpthread
+int main() {
+  pthread_t tid1, tid2;
 
-    //1 执行完这个语句，主线程执行return结束 整个，新子线程都没有来得急执行就被强制退出了
-    //2 子线程根本没有来得急执行，整个进程已经结束
-    //pthread_create(&tid,NULL,mythread,(void*)("china"));
-    int x = 100;
-    pthread_create(&tid,NULL,mythread,(void*)&x);
-    pthread_create(&tid2,NULL,mythread,(void*)&x);
+  int x = 100;
 
-    //此时主线程会等待2秒钟，此时cpu会切换到子线程执行【因为我的cpu核数就1核】
-    //并行
-    //当线程数量<=cpu核心数时，此时是并行执行
-    //执行时，可以做到每个核心数运行一个线程
+  // pthread_create(3)
+  // #include <pthread.h>
+  // 创建一个线程
+  int rtvl1 = pthread_create(&tid1, NULL, mythread, (void *)&x);
+  printf("pthread_create(),rtvl1=%d\r\n", rtvl1);
+  printf("errno=%d,%s\r\n", errno, strerror(errno));
 
-    //并发
-    //当线程数量超出核心数量时，此时线程的执行就是并发【每个线程执行一个时间片，然后再切换到其它线程执行】
+  int rtvl2 = pthread_create(&tid2, NULL, mythread, (void *)&x);
+  printf("pthread_create(),rtvl2=%d\r\n", rtvl2);
+  printf("errno=%d,%s\r\n", errno, strerror(errno));
 
-    //sleep(2);
+  // pthread_join(3)
+  // #include <pthread.h>
+  // 子线程合入主线程
+  // 主线程调用pthread_join()后，会一直阻塞到子线程结束退出为止
+  // 当子线程退出结束后，主线程会继续往后执行
+  //   int *status;
+  //   pthread_join(tid1, &status);
+  //   printf("pthread_join(),tid1=%d,status=%d\r\n", tid1, status);
+  //   pthread_join(tid2, &status);
+  //   printf("pthread_join(),tid2=%d,status=%d\r\n", tid2, status);
 
-    //主线程调用 它，会一直阻塞到子线程结束退出为止，否则会一等阻塞
-    //当子线程退出结束后，主线程会继续往后执行
-    int *status;
-    pthread_join(tid,&status);
-    pthread_join(tid2,&status);
-    //pthread_detach(tid);
-    //pthread_detach(tid2);
-    printf("x=%d\r\n",x);
-    printf("exit child pthread,exit\r\n");
+  // pthread_detach(3)
+  // #include <pthread.h>
+  // 主线程与子线程分离
+  // 子线程结束后，资源自动回收
+  pthread_detach(tid1);
+  pthread_detach(tid2);
 
-    return 0;
+  // 如果没有sleep()、pthread_join()、pthread_detach()这些相当于等待的代码结构
+  // 主线程执行完pthread_create()后就会结束，子线程没有来得急执行就强制退出了
+
+  printf("x=%d\r\n", x);
+  printf("child pthread done\r\n");
+
+  return 0;
 }

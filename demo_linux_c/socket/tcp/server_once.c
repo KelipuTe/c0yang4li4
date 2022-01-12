@@ -13,8 +13,13 @@ int main() {
 
   // socket(2)
   // #include <sys/socket.h>
-  // socket初始化，AF_INET表示ipv4，SOCK_STREAM表示tcp，protocol参数一般给0
+  // socket初始化
+  // __family参数，AF_INET表示ipv4
+  // __type参数，SOCK_STREAM表示tcp
+  // __protocol参数一般给0
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
+  // __type参数，可以有多个选项，SOCK_NONBLOCK=非阻塞模式，调用recv()时不会阻塞
+  // int sockfd = socket(AF_INET, SOCK_STREAM | SOCK_NONBLOCK, 0);
   printf("errno=%d,%s\r\n", errno, strerror(errno));
 
   // ip(7)
@@ -25,8 +30,6 @@ int main() {
   serverAddr.sin_family = AF_INET;
   serverAddr.sin_port = 0x1d25;
   serverAddr.sin_addr.s_addr = INADDR_ANY;
-
-  int returnValue;
 
   // bind(2)
   // #include <sys/socket.h>

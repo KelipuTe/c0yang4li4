@@ -16,25 +16,28 @@ int main() {
   unlink(socketFileNameClient);
 
   int sockfd = socket(AF_LOCAL, SOCK_DGRAM, 0);
+  printf("socket(),sockfd=%d\r\n", sockfd);
+  printf("errno=%d,%s\r\n", errno, strerror(errno));
 
-  struct sockaddr_un addressAddr, clientAddr;
+  struct sockaddr_un addressAddr;
   addressAddr.sun_family = AF_UNIX;
   strcpy(addressAddr.sun_path, socketFileNameServer);
 
+  struct sockaddr_un clientAddr;
   clientAddr.sun_family = AF_LOCAL;
   strcpy(clientAddr.sun_path, socketFileNameClient);
 
-  int returnValue = bind(sockfd, (struct sockaddr *)&clientAddr, sizeof(clientAddr));
-  printf("bind returnValue=%d\r\n", returnValue);
+  int rtvl1 = bind(sockfd, (struct sockaddr *)&clientAddr, sizeof(clientAddr));
+  printf("bind(),rtvl1=%d\r\n", rtvl1);
   printf("errno=%d,%s\r\n", errno, strerror(errno));
 
   char msg[1024] = {0};
-  ssize_t sendBytes = sendto(sockfd, "clientAddr", 6, 0, (struct sockaddr *)&addressAddr, sizeof(addressAddr));
-  printf("send bytes=%d\r\n", sendBytes);
+  ssize_t rtvl2 = sendto(sockfd, "clientAddr", 6, 0, (struct sockaddr *)&addressAddr, sizeof(addressAddr));
+  printf("sendto(),rtvl2=%d\r\n", rtvl2);
 
   socklen_t addressAddrLen = sizeof(addressAddr);
-  ssize_t recvValue = recvfrom(sockfd, msg, sizeof(msg), 0, (struct sockaddr *)&addressAddr, &addressAddrLen);
-  printf("recv bytes=%d,msg=%s\r\n", recvValue, msg);
+  ssize_t rtvl3 = recvfrom(sockfd, msg, sizeof(msg), 0, (struct sockaddr *)&addressAddr, &addressAddrLen);
+  printf("recvfrom(),rtvl3=%d,msg=%s\r\n", rtvl3, msg);
 
   close(sockfd);
 }

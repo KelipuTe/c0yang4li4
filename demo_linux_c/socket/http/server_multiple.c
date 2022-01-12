@@ -23,10 +23,10 @@ int main() {
   // setsockopt(2)
   // #include <sys/socket.h>
   // 设置socket选项
-  // int report = 1;
-  // returnValue = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &report, sizeof(report));
-  // printf("setsockopt returnValue=%d\r\n", returnValue);
-  // printf("errno=%d,%s\r\n", errno, strerror(errno));
+  int report = 1;
+  int rtvl5 = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &report, sizeof(report));
+  printf("setsockopt(),rtvl5=%d\r\n", rtvl5);
+  printf("errno=%d,%s\r\n", errno, strerror(errno));
 
   int rtvl1 = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
   printf("bind(),rtvl1=%d\r\n", rtvl1);
@@ -37,16 +37,16 @@ int main() {
   while (1) {
     socklen_t clientAddrLen = sizeof(clientAddr);
     int connfd = accept(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen);
-    printf("client linked,connfd=%d\r\n", connfd);
+    printf("accept(),connfd=%d\r\n", connfd);
 
     char msg[1024] = {0};
     ssize_t rtvl3 = 0;
     rtvl3 = recv(connfd, msg, sizeof(msg), 0);
+    printf("recv()=%d,msg=%s\r\n", rtvl3, msg);
     if (rtvl3 <= 0) {
       close(connfd);
-      printf("client close,connfd=%d\r\n", connfd);
+      printf("close(),connfd=%d\r\n", connfd);
     }
-    printf("recv()=%d,msg=%s\r\n", rtvl3, msg);
 
     // 返回http格式的数据
     char arr1resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";

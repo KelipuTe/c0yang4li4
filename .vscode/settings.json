@@ -11,7 +11,8 @@
         "msg.h": "c",
         "sem.h": "c",
         "ipc.h": "c",
-        "socket.h": "c"
+        "socket.h": "c",
+        "in.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
