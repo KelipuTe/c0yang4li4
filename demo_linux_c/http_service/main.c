@@ -17,7 +17,7 @@ http_service service = {
 };
 
 // 简单的http服务，实现了表单解析
-// 在看这玩意之前，建议先依次看一下下面那几个，下面那几个是这个程序使用到的模块的单体示例代码。
+// 在看这玩意之前，建议先依次看一下，下面那几个和http_service目录同级的目录，内容是这个程序使用到的模块的单体示例代码。
 // fork（重要），signal（次要），ipc（次要），process_poll（次要），socket（重要），epoll（重要），thread（重要）
 // 编译命令：gcc -std=c99 main.c service.c thread.c reactor.c epoll.c connection.c -o main -lpthread
 int main() {
