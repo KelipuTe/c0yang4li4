@@ -56,7 +56,7 @@ void socket_bind_addr() {
   int rtvl2 = -1;
   rtvl2 = bind(service.sockfd, (struct sockaddr *)&service_addr, sizeof(service_addr));
   if (-1 == rtvl2) {
-    printf("[error]:socket_bind_addr(),bind(),-1==rtvl2");
+    printf("[error]:socket_bind_addr(),bind(),-1==rtvl2\r\n");
     printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
     exit(0);
   }
@@ -66,7 +66,7 @@ void socket_listen() {
   int rtvl1 = -1;
   rtvl1 = listen(service.sockfd, service.backlog);
   if (-1 == rtvl1) {
-    printf("[error]:socket_listen(),listen(),-1==rtvl1");
+    printf("[error]:socket_listen(),listen(),-1==rtvl1\r\n");
     printf("[error]:errno=%d,errstr%s\r\n", errno, strerror(errno));
     exit(0);
   }

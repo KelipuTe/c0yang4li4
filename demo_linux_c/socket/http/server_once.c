@@ -38,7 +38,7 @@ int main() {
   printf("recv()=%d,msg=%s\r\n", rtvl3, msg);
 
   // 返回http格式的数据
-  char arr1resp[] = "HTTP/1.1 OK 200\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
+  char arr1resp[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nContent-Length: 12\r\n\r\nhello, world";
   ssize_t rtvl4 = send(connfd, arr1resp, sizeof(arr1resp), 0);
   printf("send(),rtvl4=%d\r\n", rtvl4);
 
