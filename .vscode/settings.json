@@ -12,7 +12,8 @@
         "sem.h": "c",
         "ipc.h": "c",
         "socket.h": "c",
-        "in.h": "c"
+        "in.h": "c",
+        "cstdlib": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }
