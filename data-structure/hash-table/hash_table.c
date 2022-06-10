@@ -1,0 +1,86 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+/* ## 哈希表 ## */
+
+#include "../linked-list/singly_linked_list.c"
+
+// 哈希表最大长度
+#define HASH_TABLE_MAX_LENGTH 10
+
+typedef struct HashTable {
+  // 内部链表头结点数组
+  SinglyLinkedListHead *arr1p1Table[HASH_TABLE_MAX_LENGTH];
+  // 哈希表结点总数
+  int totalNum;
+} HashTable; // 哈希表
+
+// 哈希函数
+extern int hashFunc(int num);
+// 初始化哈希表
+extern HashTable *hashTableInit();
+// 输出哈希表
+extern void hashTablePrint(HashTable *);
+// 添加结点
+extern void hashTableAddNode(HashTable *, int);
+// 移除结点
+extern void hashTableDeleteNode(HashTable *, int);
+// 单元测试
+extern void hashTableUnitTesting();
+
+int main() {
+  hashTableUnitTesting();
+  return 0;
+}
+
+int hashFunc(int num) {
+  return num % HASH_TABLE_MAX_LENGTH;
+}
+
+HashTable *hashTableInit() {
+  HashTable *p1 = (HashTable *)malloc(sizeof(HashTable));
+  for (int i = 0; i < HASH_TABLE_MAX_LENGTH; i++) {
+    p1->arr1p1Table[i] = singlyLinkedListInit();
+  }
+  p1->totalNum = 0;
+  return p1;
+}
+
+void hashTablePrint(HashTable *p1table){
+  printf("hashTablePrint:\r\n");
+  for (int i=0;i<HASH_TABLE_MAX_LENGTH;i++){
+    printf("mod=%d, ",i);
+    singlyLinkedListPrint(p1table->arr1p1Table[i]);
+  }
+}
+
+void hashTableAddNode(HashTable *p1table, int num) {
+  singlyLinkedListAddNode(p1table->arr1p1Table[hashFunc(num)], num);
+}
+
+void hashTableDeleteNode(HashTable *p1table, int num) {
+  singlyLinkedListDeleteNode(p1table->arr1p1Table[hashFunc(num)], num);
+}
+
+void hashTableUnitTesting() {
+  HashTable *p1hashTable = hashTableInit();
+
+  hashTableDeleteNode(p1hashTable, 2);
+
+  hashTableAddNode(p1hashTable, 2);
+  hashTableAddNode(p1hashTable, 4);
+  hashTableAddNode(p1hashTable, 6);
+  hashTableAddNode(p1hashTable, 4);
+  hashTableAddNode(p1hashTable, 6);
+
+  hashTablePrint(p1hashTable);
+
+  hashTableDeleteNode(p1hashTable, 4);
+
+  hashTableAddNode(p1hashTable, 8);
+
+  hashTableDeleteNode(p1hashTable, 2);
+
+  hashTablePrint(p1hashTable);
+}

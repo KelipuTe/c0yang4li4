@@ -3,70 +3,50 @@
 
 /* ## 单链表 ## */
 
-typedef struct ListHead {
+typedef struct SinglyLinkedListHead {
   // 头指针
-  struct ListNode *p1head;
+  struct SinglyLinkedListNode *p1head;
   // 尾指针
-  struct ListNode *p1tail;
-  // 结点数量
-  int totalNum;
-} ListHead; // 头结点
+  struct SinglyLinkedListNode *p1tail;
+  // 链表长度
+  int length;
+} SinglyLinkedListHead; // 头结点
 
-typedef struct ListNode {
+typedef struct SinglyLinkedListNode {
   // 数值
   int num;
   // 指向下一个结点的指针
-  struct ListNode *p1next;
-} ListNode; // 链表结点
+  struct SinglyLinkedListNode *p1next;
+} SinglyLinkedListNode; // 链表结点
 
-// 初始化头结点
-extern ListHead *initList();
+// 初始化单链表
+extern SinglyLinkedListHead *singlyLinkedListInit();
 // 输出链表
-extern void printList(ListHead *);
+extern void singlyLinkedListPrint(SinglyLinkedListHead *);
 // 添加结点
-extern void addNode(ListHead *, int);
+extern void singlyLinkedListAddNode(SinglyLinkedListHead *, int);
 // 移除结点
-extern void deleteNode(ListHead *, int);
+extern void singlyLinkedListDeleteNode(SinglyLinkedListHead *, int);
+// 单元测试
+extern void singlyLinkedListUnitTesting();
 
-int main() {
-  ListHead *p1listHead = initList();
+// int main() {
+//  singlyLinkedListUnitTesting();
+//  return 0;
+// }
 
-  printList(p1listHead);
-
-  deleteNode(p1listHead, 2);
-  printList(p1listHead);
-
-  addNode(p1listHead, 2);
-  addNode(p1listHead, 4);
-  addNode(p1listHead, 6);
-  addNode(p1listHead, 4);
-  addNode(p1listHead, 6);
-  printList(p1listHead);
-
-  deleteNode(p1listHead, 4);
-  printList(p1listHead);
-
-  addNode(p1listHead, 8);
-  printList(p1listHead);
-
-  deleteNode(p1listHead, 2);
-  printList(p1listHead);
-
-  return 0;
-}
-
-ListHead *initList() {
-  ListHead *p1 = (ListHead *)malloc(sizeof(ListHead));
+SinglyLinkedListHead *singlyLinkedListInit() {
+  SinglyLinkedListHead *p1 = (SinglyLinkedListHead *)malloc(sizeof(SinglyLinkedListHead));
   p1->p1head = NULL;
   p1->p1tail = NULL;
-  p1->totalNum = 0;
+  p1->length = 0;
   return p1;
 }
 
-void printList(ListHead *p1head) {
-  ListNode *p1node;
-  printf("list:");
-  if (p1head->totalNum > 0) {
+void singlyLinkedListPrint(SinglyLinkedListHead *p1head) {
+  SinglyLinkedListNode *p1node;
+  printf("singlyLinkedListPrint: length=%d, list=", p1head->length);
+  if (p1head->length > 0) {
     // 注意空表
     p1node = p1head->p1head;
     while (p1node != NULL) {
@@ -77,12 +57,12 @@ void printList(ListHead *p1head) {
   printf("\r\n");
 }
 
-void addNode(ListHead *p1head, int num) {
-  ListNode *p1node = (ListNode *)malloc(sizeof(ListNode));
+void singlyLinkedListAddNode(SinglyLinkedListHead *p1head, int num) {
+  SinglyLinkedListNode *p1node = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
 
   p1node->num = num;
   p1node->p1next = NULL;
-  if (p1head->totalNum == 0) {
+  if (p1head->length == 0) {
     // 链表为空
     p1head->p1head = p1node;
     p1head->p1tail = p1node;
@@ -91,13 +71,13 @@ void addNode(ListHead *p1head, int num) {
     p1head->p1tail->p1next = p1node;
     p1head->p1tail = p1node;
   }
-  p1head->totalNum++;
+  p1head->length++;
 }
 
-void deleteNode(ListHead *p1head, int num) {
+void singlyLinkedListDeleteNode(SinglyLinkedListHead *p1head, int num) {
   // 当前结点，上一个结点
-  ListNode *p1now = p1head->p1head;
-  ListNode *p1prev = NULL;
+  SinglyLinkedListNode *p1now = p1head->p1head;
+  SinglyLinkedListNode *p1prev = NULL;
 
   if (p1now != NULL) {
     while (p1now != NULL) {
@@ -120,7 +100,7 @@ void deleteNode(ListHead *p1head, int num) {
           free(p1now);
           p1now = p1prev->p1next;
         }
-        p1head->totalNum--;
+        p1head->length--;
       } else {
         // 指针后移继续寻找
         p1prev = p1now;
@@ -128,4 +108,29 @@ void deleteNode(ListHead *p1head, int num) {
       }
     }
   }
+}
+
+void singlyLinkedListUnitTesting() {
+  SinglyLinkedListHead *p1listHead = singlyLinkedListInit();
+
+  singlyLinkedListPrint(p1listHead);
+
+  singlyLinkedListDeleteNode(p1listHead, 2);
+  singlyLinkedListPrint(p1listHead);
+
+  singlyLinkedListAddNode(p1listHead, 2);
+  singlyLinkedListAddNode(p1listHead, 4);
+  singlyLinkedListAddNode(p1listHead, 6);
+  singlyLinkedListAddNode(p1listHead, 4);
+  singlyLinkedListAddNode(p1listHead, 6);
+  singlyLinkedListPrint(p1listHead);
+
+  singlyLinkedListDeleteNode(p1listHead, 4);
+  singlyLinkedListPrint(p1listHead);
+
+  singlyLinkedListAddNode(p1listHead, 8);
+  singlyLinkedListPrint(p1listHead);
+
+  singlyLinkedListDeleteNode(p1listHead, 2);
+  singlyLinkedListPrint(p1listHead);
 }

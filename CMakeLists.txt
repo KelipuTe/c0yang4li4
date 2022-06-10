@@ -1,4 +1,3 @@
 
-add_executable(dui4lie4_lian4biao3 shu4ju4jie2gou4/dui4lie4_lian4biao3.c)
-add_executable(hou4zhui4biao3da2shi4 shu4ju4jie2gou4/hou4zhui4biao3da2shi4.c)
 add_executable(singly_linked_list data-structure/linked-list/singly_linked_list.c)
+add_executable(hash_table data-structure/hash-table/hash_table.c)
