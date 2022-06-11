@@ -3,6 +3,13 @@
 
 /* ## 单链表 ## */
 
+typedef struct SinglyLinkedListNode {
+  // 数值
+  int num;
+  // 指向下一个结点的指针
+  struct SinglyLinkedListNode *p1next;
+} SinglyLinkedListNode; // 链表结点
+
 typedef struct SinglyLinkedListHead {
   // 头指针
   struct SinglyLinkedListNode *p1head;
@@ -12,13 +19,6 @@ typedef struct SinglyLinkedListHead {
   int length;
 } SinglyLinkedListHead; // 头结点
 
-typedef struct SinglyLinkedListNode {
-  // 数值
-  int num;
-  // 指向下一个结点的指针
-  struct SinglyLinkedListNode *p1next;
-} SinglyLinkedListNode; // 链表结点
-
 // 初始化单链表
 extern SinglyLinkedListHead *singlyLinkedListInit();
 // 输出链表
@@ -26,7 +26,7 @@ extern void singlyLinkedListPrint(SinglyLinkedListHead *);
 // 添加结点
 extern void singlyLinkedListAddNode(SinglyLinkedListHead *, int);
 // 移除结点
-extern void singlyLinkedListDeleteNode(SinglyLinkedListHead *, int);
+extern int singlyLinkedListDeleteNode(SinglyLinkedListHead *, int);
 // 单元测试
 extern void singlyLinkedListUnitTesting();
 
@@ -59,7 +59,6 @@ void singlyLinkedListPrint(SinglyLinkedListHead *p1head) {
 
 void singlyLinkedListAddNode(SinglyLinkedListHead *p1head, int num) {
   SinglyLinkedListNode *p1node = (SinglyLinkedListNode *)malloc(sizeof(SinglyLinkedListNode));
-
   p1node->num = num;
   p1node->p1next = NULL;
   if (p1head->length == 0) {
@@ -74,11 +73,12 @@ void singlyLinkedListAddNode(SinglyLinkedListHead *p1head, int num) {
   p1head->length++;
 }
 
-void singlyLinkedListDeleteNode(SinglyLinkedListHead *p1head, int num) {
+int singlyLinkedListDeleteNode(SinglyLinkedListHead *p1head, int num) {
   // 当前结点，上一个结点
   SinglyLinkedListNode *p1now = p1head->p1head;
   SinglyLinkedListNode *p1prev = NULL;
-
+  // 删除结点的个数
+  int deleteNum = 0;
   if (p1now != NULL) {
     while (p1now != NULL) {
       if (p1now->num == num) {
@@ -101,6 +101,7 @@ void singlyLinkedListDeleteNode(SinglyLinkedListHead *p1head, int num) {
           p1now = p1prev->p1next;
         }
         p1head->length--;
+        deleteNum++;
       } else {
         // 指针后移继续寻找
         p1prev = p1now;
@@ -108,6 +109,7 @@ void singlyLinkedListDeleteNode(SinglyLinkedListHead *p1head, int num) {
       }
     }
   }
+  return deleteNum;
 }
 
 void singlyLinkedListUnitTesting() {

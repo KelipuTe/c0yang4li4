@@ -47,20 +47,21 @@ HashTable *hashTableInit() {
   return p1;
 }
 
-void hashTablePrint(HashTable *p1table){
-  printf("hashTablePrint:\r\n");
-  for (int i=0;i<HASH_TABLE_MAX_LENGTH;i++){
-    printf("mod=%d, ",i);
+void hashTablePrint(HashTable *p1table) {
+  printf("hashTablePrint: totalNum=%d, \r\n", p1table->totalNum);
+  for (int i = 0; i < HASH_TABLE_MAX_LENGTH; i++) {
+    printf("mod=%d, ", i);
     singlyLinkedListPrint(p1table->arr1p1Table[i]);
   }
 }
 
 void hashTableAddNode(HashTable *p1table, int num) {
+  p1table->totalNum++;
   singlyLinkedListAddNode(p1table->arr1p1Table[hashFunc(num)], num);
 }
 
 void hashTableDeleteNode(HashTable *p1table, int num) {
-  singlyLinkedListDeleteNode(p1table->arr1p1Table[hashFunc(num)], num);
+  p1table->totalNum -= singlyLinkedListDeleteNode(p1table->arr1p1Table[hashFunc(num)], num);
 }
 
 void hashTableUnitTesting() {
