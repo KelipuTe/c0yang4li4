@@ -13,46 +13,43 @@ typedef struct LinkedListStackNode {
   struct LinkedListStackNode *p1next;
 } LinkedListStackNode; // 链表栈结点
 
-typedef struct LinkedListStackHead {
+typedef struct LinkedListStack {
   // 栈顶
   struct LinkedListStackNode *p1top;
-  // 栈底
-  struct LinkedListStackNode *p1bottom;
   // 栈长度
   int length;
-} LinkedListStackHead; // 链表栈头结点
+} LinkedListStack; // 链表栈
 
 // 初始化链表栈
-extern LinkedListStackHead *LinkedListStackInit();
+extern LinkedListStack *LinkedListStackInit();
 // 输出栈
-extern void LinkedListStackPrint(LinkedListStackHead *);
+extern void LinkedListStackPrint(LinkedListStack *);
 // 入栈
-extern void LinkedListStackPush(LinkedListStackHead *, int);
+extern void LinkedListStackPush(LinkedListStack *, int);
 // 出栈
-extern int LinkedListStackPop(LinkedListStackHead *);
+extern int LinkedListStackPop(LinkedListStack *);
 // 单元测试
 extern void LinkedListStackUnitTesting();
 
-int main() {
-  LinkedListStackUnitTesting();
-  return 0;
-}
+// int main() {
+//   LinkedListStackUnitTesting();
+//   return 0;
+// }
 
-LinkedListStackHead *LinkedListStackInit() {
-  LinkedListStackHead *p1 = (LinkedListStackHead *)malloc(sizeof(LinkedListStackHead));
+LinkedListStack *LinkedListStackInit() {
+  LinkedListStack *p1 = (LinkedListStack *)malloc(sizeof(LinkedListStack));
   p1->p1top = NULL;
-  p1->p1bottom = NULL;
   p1->length = 0;
   return p1;
 }
 
-void LinkedListStackPrint(LinkedListStackHead *p1head) {
-  LinkedListStackNode *p1node = p1head->p1top;
-  if (p1node == NULL) {
+void LinkedListStackPrint(LinkedListStack *p1stack) {
+  LinkedListStackNode *p1node = p1stack->p1top;
+  if (NULL == p1node) {
     printf("stack: empty\r\n");
     return;
   }
-  printf("stack: ");
+  printf("length=%d, stack: ", p1stack->length);
   while (p1node != NULL) {
     printf("%d,", p1node->num);
     p1node = p1node->p1next;
@@ -60,26 +57,26 @@ void LinkedListStackPrint(LinkedListStackHead *p1head) {
   printf("\r\n");
 }
 
-void LinkedListStackPush(LinkedListStackHead *p1head, int num) {
+void LinkedListStackPush(LinkedListStack *p1stack, int num) {
   LinkedListStackNode *p1node = (LinkedListStackNode *)malloc(sizeof(LinkedListStackNode));
   p1node->num = num;
-  if (p1head->p1top == NULL) {
+  if (NULL == p1stack->p1top) {
     // 空栈
     p1node->p1next = NULL;
-    p1head->p1top = p1node;
-    p1head->p1bottom = p1node;
+    p1stack->p1top = p1node;
   } else {
     // 入栈
-    p1node->p1next = p1head->p1top;
+    p1node->p1next = p1stack->p1top;
     // 移动栈顶
-    p1head->p1top = p1node;
+    p1stack->p1top = p1node;
   }
+  p1stack->length++;
 }
 
-int LinkedListStackPop(LinkedListStackHead *p1head) {
-  LinkedListStackNode *p1node = p1head->p1top;
+int LinkedListStackPop(LinkedListStack *p1stack) {
+  LinkedListStackNode *p1node = p1stack->p1top;
   int num = UNDEFINED_STACK_NODE;
-  if (p1node == NULL) {
+  if (NULL == p1node) {
     printf("stack: empty\r\n");
     return num;
   }
@@ -87,26 +84,27 @@ int LinkedListStackPop(LinkedListStackHead *p1head) {
   num = p1node->num;
   printf("stack pop: %d\r\n", num);
   // 移动栈顶
-  p1head->p1top = p1node->p1next;
+  p1stack->p1top = p1node->p1next;
+  p1stack->length--;
   // 释放资源
   free(p1node);
   return num;
 }
 
 void LinkedListStackUnitTesting() {
-  LinkedListStackHead *p1head = LinkedListStackInit();
+  LinkedListStack *p1stack = LinkedListStackInit();
 
-  LinkedListStackPush(p1head, 1);
+  LinkedListStackPush(p1stack, 1);
 
-  LinkedListStackPop(p1head);
-  LinkedListStackPop(p1head);
+  LinkedListStackPop(p1stack);
+  LinkedListStackPop(p1stack);
 
-  LinkedListStackPush(p1head, 2);
-  LinkedListStackPush(p1head, 3);
+  LinkedListStackPush(p1stack, 2);
+  LinkedListStackPush(p1stack, 3);
 
-  LinkedListStackPrint(p1head);
+  LinkedListStackPrint(p1stack);
 
-  LinkedListStackPop(p1head);
-  LinkedListStackPop(p1head);
-  LinkedListStackPop(p1head);
+  LinkedListStackPop(p1stack);
+  LinkedListStackPop(p1stack);
+  LinkedListStackPop(p1stack);
 }

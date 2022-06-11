@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
 
 /* ## 哈希表 ## */
 
@@ -11,7 +10,7 @@
 
 typedef struct HashTable {
   // 内部链表头结点数组
-  SinglyLinkedListHead *arr1p1Table[HASH_TABLE_MAX_LENGTH];
+  SinglyLinkedList *arr1p1Table[HASH_TABLE_MAX_LENGTH];
   // 哈希表结点总数
   int totalNum;
 } HashTable; // 哈希表
