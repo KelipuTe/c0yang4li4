@@ -58,6 +58,7 @@ void circularLinkedListPrint(CircularLinkedList *p1list) {
   } while (p1node != NULL && p1node != p1list->p1head);
   printf("\r\n");
 }
+
 void circularLinkedListAddNode(CircularLinkedList *p1list, int num) {
   CircularLinkedListNode *p1node = (CircularLinkedListNode *)malloc(sizeof(CircularLinkedListNode));
   p1node->num = num;
@@ -75,6 +76,7 @@ void circularLinkedListAddNode(CircularLinkedList *p1list, int num) {
   p1list->p1tail->p1next = p1list->p1head;
   p1list->length++;
 }
+
 int circularLinkedListDeleteNode(CircularLinkedList *p1list, int num) {
   // 当前结点，上一个结点
   CircularLinkedListNode *p1now = p1list->p1head;

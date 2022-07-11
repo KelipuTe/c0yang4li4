@@ -1,7 +1,6 @@
+#include "circular_linked_list.c"
 
 /* ## 约瑟夫问题 ## */
-
-#include "circular_linked_list.c"
 
 int main() {
   int totalNum = 41;
