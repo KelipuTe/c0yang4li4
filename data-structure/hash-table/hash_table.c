@@ -25,13 +25,6 @@ extern void hashTablePrint(HashTable *);
 extern void hashTableAddNode(HashTable *, int);
 // 移除结点
 extern void hashTableDeleteNode(HashTable *, int);
-// 单元测试
-extern void hashTableUnitTesting();
-
-int main() {
-  hashTableUnitTesting();
-  return 0;
-}
 
 int hashFunc(int num) {
   return num % HASH_TABLE_MAX_LENGTH;
@@ -61,26 +54,4 @@ void hashTableAddNode(HashTable *p1table, int num) {
 
 void hashTableDeleteNode(HashTable *p1table, int num) {
   p1table->totalNum -= singlyLinkedListDeleteNode(p1table->arr1p1Table[hashFunc(num)], num);
-}
-
-void hashTableUnitTesting() {
-  HashTable *p1hashTable = hashTableInit();
-
-  hashTableDeleteNode(p1hashTable, 2);
-
-  hashTableAddNode(p1hashTable, 2);
-  hashTableAddNode(p1hashTable, 4);
-  hashTableAddNode(p1hashTable, 6);
-  hashTableAddNode(p1hashTable, 4);
-  hashTableAddNode(p1hashTable, 6);
-
-  hashTablePrint(p1hashTable);
-
-  hashTableDeleteNode(p1hashTable, 4);
-
-  hashTableAddNode(p1hashTable, 8);
-
-  hashTableDeleteNode(p1hashTable, 2);
-
-  hashTablePrint(p1hashTable);
 }

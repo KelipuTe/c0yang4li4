@@ -28,13 +28,6 @@ extern void LinkedListStackPrint(LinkedListStack *);
 extern void LinkedListStackPush(LinkedListStack *, int);
 // 出栈
 extern int LinkedListStackPop(LinkedListStack *);
-// 单元测试
-extern void LinkedListStackUnitTesting();
-
-// int main() {
-//   LinkedListStackUnitTesting();
-//   return 0;
-// }
 
 LinkedListStack *LinkedListStackInit() {
   LinkedListStack *p1 = (LinkedListStack *)malloc(sizeof(LinkedListStack));
@@ -89,22 +82,4 @@ int LinkedListStackPop(LinkedListStack *p1stack) {
   // 释放资源
   free(p1node);
   return num;
-}
-
-void LinkedListStackUnitTesting() {
-  LinkedListStack *p1stack = LinkedListStackInit();
-
-  LinkedListStackPush(p1stack, 1);
-
-  LinkedListStackPop(p1stack);
-  LinkedListStackPop(p1stack);
-
-  LinkedListStackPush(p1stack, 2);
-  LinkedListStackPush(p1stack, 3);
-
-  LinkedListStackPrint(p1stack);
-
-  LinkedListStackPop(p1stack);
-  LinkedListStackPop(p1stack);
-  LinkedListStackPop(p1stack);
 }

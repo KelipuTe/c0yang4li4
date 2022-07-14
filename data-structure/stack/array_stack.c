@@ -26,13 +26,6 @@ extern void ArrayStackPrint(ArrayStack *);
 extern void ArrayStackPush(ArrayStack *, int);
 // 出栈
 extern int ArrayStackPop(ArrayStack *);
-// 单元测试
-extern void ArrayStackUnitTesting();
-
-// int main() {
-//   ArrayStackUnitTesting();
-//   return 0;
-// }
 
 ArrayStack *ArrayStackInit() {
   ArrayStack *p1 = (ArrayStack *)malloc(sizeof(ArrayStack));
@@ -74,22 +67,4 @@ int ArrayStackPop(ArrayStack *p1stack) {
   p1stack->top--;
   p1stack->length--;
   return num;
-}
-
-void ArrayStackUnitTesting() {
-  ArrayStack *p1stack = ArrayStackInit();
-
-  ArrayStackPush(p1stack, 1);
-
-  ArrayStackPop(p1stack);
-  ArrayStackPop(p1stack);
-
-  ArrayStackPush(p1stack, 2);
-  ArrayStackPush(p1stack, 3);
-
-  ArrayStackPrint(p1stack);
-
-  ArrayStackPop(p1stack);
-  ArrayStackPop(p1stack);
-  ArrayStackPop(p1stack);
 }

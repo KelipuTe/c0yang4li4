@@ -27,13 +27,6 @@ extern void circularLinkedListPrint(CircularLinkedList *);
 extern void circularLinkedListAddNode(CircularLinkedList *, int);
 // 移除结点
 extern int circularLinkedListDeleteNode(CircularLinkedList *, int);
-// 单元测试
-extern void circularLinkedListUnitTesting();
-
-int main() {
-  circularLinkedListUnitTesting();
-  return 0;
-}
 
 CircularLinkedList *circularLinkedListInit() {
   CircularLinkedList *p1 = (CircularLinkedList *)malloc(sizeof(CircularLinkedList));
@@ -129,29 +122,4 @@ int circularLinkedListDeleteNode(CircularLinkedList *p1list, int num) {
     }
   } while (p1now != NULL && p1now != p1list->p1head);
   return deleteNum;
-}
-
-void circularLinkedListUnitTesting() {
-  CircularLinkedList *p1list = circularLinkedListInit();
-
-  circularLinkedListPrint(p1list);
-
-  circularLinkedListDeleteNode(p1list, 2);
-  circularLinkedListPrint(p1list);
-
-  circularLinkedListAddNode(p1list, 2);
-  circularLinkedListAddNode(p1list, 4);
-  circularLinkedListAddNode(p1list, 6);
-  circularLinkedListAddNode(p1list, 4);
-  circularLinkedListAddNode(p1list, 6);
-  circularLinkedListPrint(p1list);
-
-  circularLinkedListDeleteNode(p1list, 4);
-  circularLinkedListPrint(p1list);
-
-  circularLinkedListAddNode(p1list, 8);
-  circularLinkedListPrint(p1list);
-
-  circularLinkedListDeleteNode(p1list, 2);
-  circularLinkedListPrint(p1list);
 }

@@ -27,13 +27,6 @@ extern void singlyLinkedListPrint(SinglyLinkedList *);
 extern void singlyLinkedListAddNode(SinglyLinkedList *, int);
 // 移除结点
 extern int singlyLinkedListDeleteNode(SinglyLinkedList *, int);
-// 单元测试
-extern void singlyLinkedListUnitTesting();
-
-// int main() {
-//   singlyLinkedListUnitTesting();
-//   return 0;
-// }
 
 SinglyLinkedList *singlyLinkedListInit() {
   SinglyLinkedList *p1 = (SinglyLinkedList *)malloc(sizeof(SinglyLinkedList));
@@ -115,29 +108,4 @@ int singlyLinkedListDeleteNode(SinglyLinkedList *p1list, int num) {
     }
   }
   return deleteNum;
-}
-
-void singlyLinkedListUnitTesting() {
-  SinglyLinkedList *p1list = singlyLinkedListInit();
-
-  singlyLinkedListPrint(p1list);
-
-  singlyLinkedListDeleteNode(p1list, 2);
-  singlyLinkedListPrint(p1list);
-
-  singlyLinkedListAddNode(p1list, 2);
-  singlyLinkedListAddNode(p1list, 4);
-  singlyLinkedListAddNode(p1list, 6);
-  singlyLinkedListAddNode(p1list, 4);
-  singlyLinkedListAddNode(p1list, 6);
-  singlyLinkedListPrint(p1list);
-
-  singlyLinkedListDeleteNode(p1list, 4);
-  singlyLinkedListPrint(p1list);
-
-  singlyLinkedListAddNode(p1list, 8);
-  singlyLinkedListPrint(p1list);
-
-  singlyLinkedListDeleteNode(p1list, 2);
-  singlyLinkedListPrint(p1list);
 }
