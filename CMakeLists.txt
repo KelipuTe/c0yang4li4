@@ -7,3 +7,5 @@ add_executable(linked_list_queue_unit_test data-structure/queue/linked_list_queu
 add_executable(circular_linked_list_unit_test data-structure/linked-list/circular_linked_list_unit_test.c)
 add_executable(singly_linked_list_unit_list data-structure/linked-list/singly_linked_list_unit_list.c)
 add_executable(skip_list_unit_list data-structure/linked-list/skip_list_unit_list.c)
+add_executable(binary_tree_unit_test data-structure/tree/binary_tree_unit_test.c)
+add_executable(binary_tree data-structure/tree/binary_tree.c)

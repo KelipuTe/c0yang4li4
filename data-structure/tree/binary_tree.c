@@ -2,6 +2,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#include "../queue/linked_list_queue.c"
+
 /* ## 二叉树 ## */
 
 // 用于标记无效的结点 2147483648 = $2^{31}$
@@ -27,31 +29,10 @@ extern void InorderTraversal(BinaryTreeNode *);
 extern void SubsequentTraversal(BinaryTreeNode *);
 // 计算二叉树深度
 extern int GetDepth(BinaryTreeNode *);
-
-int main() {
-  // 用数组保存的二叉树结构
-  int arr1Num[] = {1, 2, 3, 4, 5, 6, 7, UNDEFINED_NODE_VALUE, UNDEFINED_NODE_VALUE, 10, 11};
-  int arr1NumLen = sizeof(arr1Num) / sizeof(int);
-  // 根结点指针
-  BinaryTreeNode *p1Root = NULL;
-  BuildBinaryTreeFromArray(&p1Root, arr1Num, arr1NumLen, 1);
-
-  printf("PreorderTraversal: ");
-  PreorderTraversal(p1Root);
-  printf("\r\n");
-
-  printf("InorderTraversal: ");
-  InorderTraversal(p1Root);
-  printf("\r\n");
-
-  printf("SubsequentTraversal: ");
-  SubsequentTraversal(p1Root);
-  printf("\r\n");
-
-  printf("GetDepth: %d\r\n", GetDepth(p1Root));
-
-  return 0;
-}
+// 广度优先遍历
+extern void BreadthFirstSearch(BinaryTreeNode *);
+// 深度优先遍历
+extern void DepthFirstSearch(BinaryTreeNode *);
 
 void BuildBinaryTreeFromArray(BinaryTreeNode **p2Root, int *p1arr1Num, int arr1NumLen, int index) {
   if (index <= arr1NumLen) {
@@ -116,4 +97,69 @@ int GetDepth(BinaryTreeNode *p1Root) {
   leftDepth = GetDepth(p1Root->p1Left);
   rightDepth = GetDepth(p1Root->p1Right);
   return (int)fmax(leftDepth, rightDepth) + 1;
+}
+
+void BreadthFirstSearch(BinaryTreeNode *p1Root) {
+  // 队列
+  BinaryTreeNode *arr1Queue[100];
+  // 队列头尾
+  int queueHead = 0, queueTail = 0;
+  // 当前遍历的层，当前层的最后一个结点在队列中的下标
+  int tierNum = 1, tierTail = 0;
+  BinaryTreeNode *t1Node;
+
+  arr1Queue[queueTail++] = p1Root;
+  t1Node = arr1Queue[queueHead++];
+  // 持续遍历，直到队列为空
+  while (queueHead <= queueTail && t1Node != NULL) {
+    // 遍历当前遍历的层中的结点
+    tierTail = queueTail;
+    while (queueHead <= tierTail) {
+      printf("%d-%d,", tierNum, t1Node->num);
+      // 左结点先入队，先遍历
+      if (t1Node->p1Left != NULL) {
+        arr1Queue[queueTail++] = t1Node->p1Left;
+      }
+      // 右结点后入队，后遍历
+      if (t1Node->p1Right != NULL) {
+        arr1Queue[queueTail++] = t1Node->p1Right;
+      }
+      if (queueHead < queueTail) {
+        t1Node = arr1Queue[queueHead++];
+      } else {
+        // 控制外层遍历结束条件
+        queueHead = queueTail + 1;
+        t1Node = NULL;
+      }
+    }
+    tierNum++;
+  }
+}
+
+void DepthFirstSearch(BinaryTreeNode *p1Root) {
+  // 栈
+  BinaryTreeNode *arr1Stark[100];
+  // 栈顶
+  int top = 0;
+  BinaryTreeNode *t1Node;
+
+  arr1Stark[top++] = p1Root;
+  t1Node = arr1Stark[--top];
+  // 持续遍历，直到栈为空
+  while (top >= 0 && t1Node != NULL) {
+    printf("%d,", t1Node->num);
+    if (t1Node->p1Right != NULL) {
+      // 右结点先入栈，后遍历
+      arr1Stark[top++] = t1Node->p1Right;
+    }
+    if (t1Node->p1Left != NULL) {
+      // 左结点后入栈，先遍历
+      arr1Stark[top++] = t1Node->p1Left;
+    }
+    if (top > 0) {
+      t1Node = arr1Stark[--top];
+    } else {
+      t1Node = NULL;
+    }
+  }
 }
