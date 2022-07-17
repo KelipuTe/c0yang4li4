@@ -11,29 +11,36 @@
 typedef struct BinaryTreeNode {
   // 结点值
   int num;
-  // 左子树的根结点
+  // 指针，指向左子树的根结点
   struct BinaryTreeNode *p1Left;
-  // 右子树的根结点
+  // 指针，指向右子树的根结点
   struct BinaryTreeNode *p1Right;
 } BinaryTreeNode;
 
 // 从数组构造二叉树
+// BinaryTreeNode **，二级指针，指向二叉树的指向左子树的根结点的指针或者指向右子树的根结点的指针
 extern void BuildBinaryTreeFromArray(BinaryTreeNode **, int *, int, int);
 // 前序遍历，根左右
+// BinaryTreeNode *，指针，指向根结点
 extern void PreorderTraversal(BinaryTreeNode *);
 void doPreorderTraversal(BinaryTreeNode *);
 // 中序遍历，左根右
+// BinaryTreeNode *，指针，指向根结点
 extern void InorderTraversal(BinaryTreeNode *);
 void doInorderTraversal(BinaryTreeNode *);
 // 后序遍历，左右根
+// BinaryTreeNode *，指针，指向根结点
 extern void SubsequentTraversal(BinaryTreeNode *);
 void doSubsequentTraversal(BinaryTreeNode *);
 // 计算二叉树深度
+// BinaryTreeNode *，指针，指向根结点
 extern int GetDepth(BinaryTreeNode *);
 // 广度优先遍历
+// BinaryTreeNode *，指针，指向根结点
 extern void BreadthFirstSearch(BinaryTreeNode *);
 void doBreadthFirstSearch(BinaryTreeNode *);
 // 深度优先遍历
+// BinaryTreeNode *，指针，指向根结点
 extern void DepthFirstSearch(BinaryTreeNode *);
 void doDepthFirstSearch(BinaryTreeNode *);
 
@@ -42,22 +49,23 @@ void BuildBinaryTreeFromArray(BinaryTreeNode **p2Root, int *p1arr1Num, int arr1N
   // 先用无效结点把二叉树补成完全二叉树。深度为 n 的二叉树需要的数组大小为 2^(n)-1。
   // 从数组下标为 1 的位置开始存放二叉树的结点（下标为 0 的位置可以放二叉树的总结点数），顺序是从上到下从左到右。
   // 这样，下标为 n 的结点的，左子树的根结点下标为 2*n，右子树的根结点下标为 2*n+1，父结点的下标是 i/2 向下取整。
-  if (index < arr1NumLen) {
-    if (p1arr1Num[index] == UNDEFINED_NODE_VALUE) {
-      // 如果数组中这个位置是无效值，则不构造这个结点
-      *p2Root = NULL;
-    } else {
-      // 如果数组中这个位置是有效值，则构造这个结点
-      *p2Root = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
-      (*p2Root)->num = p1arr1Num[index];
-      (*p2Root)->p1Left = NULL;
-      (*p2Root)->p1Right = NULL;
+  if (index >= arr1NumLen) {
+    return;
+  }
+  if (p1arr1Num[index] == UNDEFINED_NODE_VALUE) {
+    // 如果数组中这个位置是无效值，则不构造这个结点
+    *p2Root = NULL;
+  } else {
+    // 如果数组中这个位置是有效值，则构造这个结点
+    *p2Root = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
+    (*p2Root)->num = p1arr1Num[index];
+    (*p2Root)->p1Left = NULL;
+    (*p2Root)->p1Right = NULL;
 
-      // 用数组保存二叉树结构时，二叉树结点与子结点的关系可以通过数组下标体现
-      // 这里把这次构造的结点的左右结点传递下去，用递归的方式分别构造左右子树
-      BuildBinaryTreeFromArray(&((*p2Root)->p1Left), p1arr1Num, arr1NumLen, index * 2);
-      BuildBinaryTreeFromArray(&((*p2Root)->p1Right), p1arr1Num, arr1NumLen, index * 2 + 1);
-    }
+    // 用数组保存二叉树结构时，二叉树结点与子结点的关系可以通过数组下标体现
+    // 这里把这次构造的结点的左右结点传递下去，用递归的方式分别构造左右子树
+    BuildBinaryTreeFromArray(&((*p2Root)->p1Left), p1arr1Num, arr1NumLen, index * 2);
+    BuildBinaryTreeFromArray(&((*p2Root)->p1Right), p1arr1Num, arr1NumLen, index * 2 + 1);
   }
 }
 
