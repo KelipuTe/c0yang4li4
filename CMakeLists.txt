@@ -1,2 +1,4 @@
 add_executable(array_unit_test data-structure/helper/array_unit_test.c)
 add_executable(balanced_binary_tree_unit_test data-structure/tree/balanced_binary_tree_unit_test.c)
+
+add_executable(huffman_tree_unit_test data-structure/tree/huffman_tree_unit_test.c)

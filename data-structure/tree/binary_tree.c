@@ -11,36 +11,36 @@
 typedef struct BinaryTreeNode {
   // 结点值
   int num;
-  // 指针，指向左子树的根结点
+  // 指向左子树的根结点
   struct BinaryTreeNode *p1Left;
-  // 指针，指向右子树的根结点
+  // 指向右子树的根结点
   struct BinaryTreeNode *p1Right;
 } BinaryTreeNode;
 
 // 从数组构造二叉树
-// BinaryTreeNode **，二级指针，指向二叉树的指向左子树的根结点的指针或者指向右子树的根结点的指针
+// BinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
 extern void BuildBinaryTreeFromArray(BinaryTreeNode **, int *, int, int);
 // 前序遍历，根左右
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void PreorderTraversal(BinaryTreeNode *);
 void doPreorderTraversal(BinaryTreeNode *);
 // 中序遍历，左根右
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void InorderTraversal(BinaryTreeNode *);
 void doInorderTraversal(BinaryTreeNode *);
 // 后序遍历，左右根
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void SubsequentTraversal(BinaryTreeNode *);
 void doSubsequentTraversal(BinaryTreeNode *);
 // 计算二叉树深度
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern int GetDepth(BinaryTreeNode *);
 // 广度优先遍历
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void BreadthFirstSearch(BinaryTreeNode *);
 void doBreadthFirstSearch(BinaryTreeNode *);
 // 深度优先遍历
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void DepthFirstSearch(BinaryTreeNode *);
 void doDepthFirstSearch(BinaryTreeNode *);
 

@@ -9,19 +9,19 @@
 typedef struct BalancedBinaryTreeNode {
   // 结点值
   int num;
-  // 指针，指向左子树的根结点
+  // 指向左子树的根结点
   struct BalancedBinaryTreeNode *p1Left;
-  // 指针，指向右子树的根结点
+  // 指向右子树的根结点
   struct BalancedBinaryTreeNode *p1Right;
-  // 指针，指向父结点
+  // 指向父结点
   struct BalancedBinaryTreeNode *p1Prev;
   // 结点深度，最下层叶子结点的深度约定为 1，从下层往上层，每层依次 +1。
   // 结点平衡值，左右子树根结点深度的差值，如果算出来是 -1、0、1，则结点是平衡的。
   int depth;
 } BalancedBinaryTreeNode;
 
-// BalancedBinaryTreeNode **，二级指针，指向二叉树的指向左子树的根结点的指针或者指向右子树的根结点的指针
-// BalancedBinaryTreeNode **，二级指针，指向根结点
+// BalancedBinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
+// BalancedBinaryTreeNode **，指向，指向根结点的指针，的指针
 extern void AddNode(BalancedBinaryTreeNode **, int, BalancedBinaryTreeNode **);
 // 计算结点深度
 int getDepth(BalancedBinaryTreeNode *);
@@ -32,7 +32,7 @@ void leftRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
 // 右旋
 void rightRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
 // 中序遍历，左根右
-// BalancedBinaryTreeNode *，指针，指向根结点
+// BalancedBinaryTreeNode *，指向根结点
 extern void InorderTraversal(BalancedBinaryTreeNode *);
 void doInorderTraversal(BalancedBinaryTreeNode *);
 

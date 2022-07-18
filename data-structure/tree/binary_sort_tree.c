@@ -5,10 +5,10 @@
 // ## 二叉排序树 ##
 
 // 插入结点
-// BinaryTreeNode **，二级指针，指向二叉树的指向左子树的根结点的指针或者指向右子树的根结点的指针
+// BinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
 extern void AddNode(BinaryTreeNode **, int);
 // 删除结点
-// BinaryTreeNode *，指针，指向根结点
+// BinaryTreeNode *，指向根结点
 extern void DeleteNode(BinaryTreeNode *, int);
 
 void AddNode(BinaryTreeNode **p2Node, int num) {

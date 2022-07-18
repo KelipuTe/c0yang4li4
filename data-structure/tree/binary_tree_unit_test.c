@@ -9,7 +9,7 @@ int main() {
 }
 
 int BinaryTreeUnitTesting() {
-  // 根结点指针
+  // 指向根结点
   BinaryTreeNode *p1Root = NULL;
 
   int arr1Num[] = {UNDEFINED_NODE_VALUE, 1, 2, 3, 4, 5, 6, 7, UNDEFINED_NODE_VALUE, UNDEFINED_NODE_VALUE, 10, 11};
