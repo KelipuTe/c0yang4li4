@@ -1,14 +1,14 @@
 #include "binary_tree.c"
 
 // 单元测试
-extern int BinaryTreeUnitTesting();
+void BinaryTreeUnitTesting();
 
 int main() {
   BinaryTreeUnitTesting();
   return 0;
 }
 
-int BinaryTreeUnitTesting() {
+void BinaryTreeUnitTesting() {
   // 指向根结点
   BinaryTreeNode *p1Root = NULL;
 
@@ -25,6 +25,4 @@ int BinaryTreeUnitTesting() {
 
   BreadthFirstSearch(p1Root);
   DepthFirstSearch(p1Root);
-
-  return 0;
 }

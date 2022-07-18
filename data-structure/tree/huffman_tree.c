@@ -1,6 +1,8 @@
 #include <stdlib.h>
 #include <string.h>
 
+// ## 哈夫曼树 ##
+
 // 字符表最大数量
 // ASICC 码一共 128 个
 #define MAX_CHAR_NUM 128

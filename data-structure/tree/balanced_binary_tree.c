@@ -37,7 +37,7 @@ extern void InorderTraversal(BalancedBinaryTreeNode *);
 void doInorderTraversal(BalancedBinaryTreeNode *);
 
 void AddNode(BalancedBinaryTreeNode **p2Node, int num, BalancedBinaryTreeNode **p2Root) {
-  // 临时变量，存储结点平衡值
+  // 临时，存储结点平衡值
   int t1Balance = 0;
 
   // 没有结点时，初始化结点

@@ -2,7 +2,15 @@
 
 #include "huffman_tree.c"
 
+// 单元测试
+void HuffmanTreeUnitTesting();
+
 int main() {
+  HuffmanTreeUnitTesting();
+  return 0;
+}
+
+void HuffmanTreeUnitTesting() {
   // 待处理字符串
   char str[] = "hello, world";
   // 字符数组，初始化全为 '\0'，下标和 ASICC 码一一对应
@@ -14,7 +22,7 @@ int main() {
   HuffmanTreeNode *p1Root = NULL;
   // 哈夫曼编码表，指针数组，每个指针存储一个字符的编码
   char *arr1p1Code[MAX_CHAR_NUM];
-  // 临时数组，用于编码
+  // 临时，用于编码的字符串
   char arr1t1Coding[MAX_ENCODE_LEN];
   // 编码后的字符串
   char strEncode[MAX_CHAR_NUM * MAX_ENCODE_LEN + 1];
@@ -48,6 +56,4 @@ int main() {
 
   HuffmanDecode(p1Root, strEncode, strDecode);
   printf("decode: %s\r\n", strDecode);
-
-  return 0;
 }

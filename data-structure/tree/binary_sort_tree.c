@@ -14,7 +14,7 @@ extern void DeleteNode(BinaryTreeNode *, int);
 void AddNode(BinaryTreeNode **p2Node, int num) {
   // 记录要插入的结点的父结点
   BinaryTreeNode *p1Prev = NULL;
-  // 临时变量，用于遍历
+  // 临时，用于遍历
   BinaryTreeNode *p1t1Node = NULL;
   // 是否需要插入新结点，默认需要插入
   int isNeedAdd = 1;
@@ -72,7 +72,7 @@ void DeleteNode(BinaryTreeNode *p1Root, int num) {
   BinaryTreeNode *p1Prev = NULL;
   // 要删除的结点
   BinaryTreeNode *p1Delete = NULL;
-  // 临时变量，用于遍历
+  // 临时，用于遍历
   BinaryTreeNode *p1t1Node = NULL;
 
   // 查询的逻辑

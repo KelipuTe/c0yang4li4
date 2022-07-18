@@ -1,6 +1,14 @@
 #include "balanced_binary_tree.c"
 
+// 单元测试
+void BalancedSortTreeUnitTesting();
+
 int main() {
+  BalancedSortTreeUnitTesting();
+  return 0;
+}
+
+void BalancedSortTreeUnitTesting() {
   // 指向根结点
   BalancedBinaryTreeNode *p1Root = NULL;
 

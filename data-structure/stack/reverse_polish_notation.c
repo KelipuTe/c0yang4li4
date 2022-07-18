@@ -25,10 +25,10 @@ int main() {
   memset(arr1operatorStack, 0, sizeof(arr1operatorStack));
   int arr1operatorTop = -1;
 
-  // 临时操作数
+  // 临时，操作数
   float t1operatingNum = UNDEFINED_OPERATING_NUM;
   float t1a, t1b;
-  // 临时操作符
+  // 临时，操作符
   char t1operator;
 
   // 开始处理
