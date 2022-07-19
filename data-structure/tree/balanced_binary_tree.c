@@ -20,6 +20,7 @@ typedef struct BalancedBinaryTreeNode {
   int depth;
 } BalancedBinaryTreeNode;
 
+// 添加结点
 // BalancedBinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
 // BalancedBinaryTreeNode **，指向，指向根结点的指针，的指针
 extern void AddNode(BalancedBinaryTreeNode **, int, BalancedBinaryTreeNode **);
@@ -28,8 +29,12 @@ int getDepth(BalancedBinaryTreeNode *);
 // 计算结点平衡值
 int getBalance(BalancedBinaryTreeNode *);
 // 左旋
+// BalancedBinaryTreeNode *，指向要旋转的那个结点
+// BalancedBinaryTreeNode **，指向，指向根结点的指针，的指针
 void leftRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
 // 右旋
+// BalancedBinaryTreeNode *，指向要旋转的那个结点
+// BalancedBinaryTreeNode **，指向，指向根结点的指针，的指针
 void rightRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
 // 中序遍历，左根右
 // BalancedBinaryTreeNode *，指向根结点
@@ -40,7 +45,7 @@ void AddNode(BalancedBinaryTreeNode **p2Node, int num, BalancedBinaryTreeNode **
   // 临时，存储结点平衡值
   int t1Balance = 0;
 
-  // 没有结点时，初始化结点
+  // 没有根结点时，初始化结点
   if (NULL == *p2Node) {
     *p2Node = (BalancedBinaryTreeNode *)malloc(sizeof(BalancedBinaryTreeNode));
     (*p2Node)->num = num;
@@ -69,6 +74,7 @@ void AddNode(BalancedBinaryTreeNode **p2Node, int num, BalancedBinaryTreeNode **
   } else if (num > (*p2Node)->num) {
     // 插入值大于结点值，去右子树继续查询
     if (NULL == (*p2Node)->p1Right) {
+      // 如果右子树不存在，则插入值就插到这个位置
       (*p2Node)->p1Right = (BalancedBinaryTreeNode *)malloc(sizeof(BalancedBinaryTreeNode));
       (*p2Node)->p1Right->num = num;
       (*p2Node)->p1Right->p1Left = NULL;

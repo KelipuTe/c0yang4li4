@@ -19,9 +19,9 @@ typedef struct ThreadedBinaryTreeNode {
   // 指向右子树的根结点
   struct ThreadedBinaryTreeNode *p1Right;
   // 左标记，TAG_UNDEFINED=未设置；TAG_CHILD=左子树根结点；TAG_THREAD=前驱线索
-  int leftTag;
+  int8_t leftTag;
   // 右标记，TAG_UNDEFINED=未设置；TAG_CHILD=右子树根结点；TAG_THREAD=后继线索
-  int rightTag;
+  int8_t rightTag;
 } ThreadedBinaryTreeNode;
 
 // 从数组构造二叉树

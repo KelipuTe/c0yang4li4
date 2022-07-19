@@ -4,7 +4,7 @@
 
 // ## 二叉排序树 ##
 
-// 插入结点
+// 添加结点
 // BinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
 extern void AddNode(BinaryTreeNode **, int);
 // 删除结点
@@ -28,7 +28,7 @@ void AddNode(BinaryTreeNode **p2Node, int num) {
     return;
   }
 
-  // 有根结点时，寻找插入插入值的位置
+  // 有结点时，寻找插入插入值的位置
 
   // 查询的逻辑
   p1Prev = *p2Node;
