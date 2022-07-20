@@ -1,11 +1,18 @@
 #include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
+#include <windows.h>
 
 // ## 二叉树 ##
 
-// 用于标记无效的结点 2147483648 = $2^{31}$
-#define UNDEFINED_NODE_VALUE (-2147483648)
+// 用极值标记无效的结点
+#define INT_MIN (1<<31)
+#define INT_MAX (-((1<<31)+1))
+
+#define TIER_NUM_MAX 8
+#define TIER_NODE_NUM_MAX (1<<(TIER_NUM_MAX-1))
+#define TREE_NODE_NUM_MAX ((1<<TIER_NUM_MAX)-1)
 
 // 二叉树结点
 typedef struct BinaryTreeNode {
@@ -41,7 +48,7 @@ extern void BreadthFirstSearch(BinaryTreeNode *);
 // 深度优先遍历
 // BinaryTreeNode *，指向根结点
 extern void DepthFirstSearch(BinaryTreeNode *);
-
+void setColor(int m);
 void BuildBinaryTreeFromArray(BinaryTreeNode **p2Node, int *p1arr1Num, int arr1NumLen, int index) {
   // 用数组保存的二叉树结构。
   // 先用无效结点把二叉树补成完全二叉树。深度为 n 的二叉树需要的数组大小为 2^(n)-1。
@@ -50,7 +57,7 @@ void BuildBinaryTreeFromArray(BinaryTreeNode **p2Node, int *p1arr1Num, int arr1N
   if (index >= arr1NumLen) {
     return;
   }
-  if (p1arr1Num[index] == UNDEFINED_NODE_VALUE) {
+  if (p1arr1Num[index] == INT_MIN) {
     // 如果数组中这个位置是无效值，则不构造这个结点
     *p2Node = NULL;
   } else {
@@ -130,37 +137,39 @@ int GetDepth(BinaryTreeNode *p1Node) {
 void BreadthFirstSearch(BinaryTreeNode *p1Root) {
   printf("BreadthFirstSearch: ");
 
-  // 广度优先遍历需要借助队列存储结构
+  // 广度优先遍历需要借助队列结构
   // 队列
-  BinaryTreeNode *arr1Queue[100];
+  BinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
+  memset(arr1Queue,0,sizeof(BinaryTreeNode*)*TREE_NODE_NUM_MAX);
   // 队列头，队列尾
   int queueHead = 0, queueTail = 0;
   // 当前遍历的层；当前层的最后一个结点在队列中的下标
   int tierNum = 1, tierTail = 0;
   BinaryTreeNode *t1Node;
 
-  arr1Queue[queueTail++] = p1Root;
-  t1Node = arr1Queue[queueHead++];
+  arr1Queue[queueTail] = p1Root;
+  queueTail++;
+
   // 持续遍历，直到队列为空
-  while (queueHead <= queueTail && t1Node != NULL) {
+  while (queueHead < queueTail) {
     // 遍历当前遍历的层中的结点
     tierTail = queueTail;
-    while (queueHead <= tierTail) {
+    while (queueHead < tierTail) {
+      t1Node = arr1Queue[queueHead];
+      queueHead++;
+      if (NULL==t1Node){
+        continue;
+      }
       printf("%d-%d,", tierNum, t1Node->num);
       if (t1Node->p1Left != NULL) {
         // 左结点先入队，先遍历
-        arr1Queue[queueTail++] = t1Node->p1Left;
+        arr1Queue[queueTail] = t1Node->p1Left;
+        queueTail++;
       }
       if (t1Node->p1Right != NULL) {
         // 右结点后入队，后遍历
-        arr1Queue[queueTail++] = t1Node->p1Right;
-      }
-      if (queueHead < queueTail) {
-        t1Node = arr1Queue[queueHead++];
-      } else {
-        // 控制外层遍历结束条件
-        queueHead = queueTail + 1;
-        t1Node = NULL;
+        arr1Queue[queueTail] = t1Node->p1Right;
+        queueTail++;
       }
     }
     // 层数 + 1
@@ -201,4 +210,104 @@ void DepthFirstSearch(BinaryTreeNode *p1Root) {
   }
 
   printf("\r\n");
+}
+
+void DrawInConsole(BinaryTreeNode *p1Root){
+  int depth = GetDepth(p1Root);
+  int abscissa = (1<<depth)-1;
+
+  BinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
+  memset(arr1Queue,0,sizeof(BinaryTreeNode*)*TREE_NODE_NUM_MAX);
+
+  int arr1locate[TREE_NODE_NUM_MAX][3];
+  memset(arr1locate,0,sizeof(int)*TREE_NODE_NUM_MAX*3);
+  int arr1res[TREE_NODE_NUM_MAX][4];
+  memset(arr1res,0,sizeof(int)*TREE_NODE_NUM_MAX*4);
+
+  int arr1resLen = 0;
+
+  int queueHead = 0, queueTail = 0;
+  int tierNum = 1, tierTail = 0;
+  BinaryTreeNode *t1Node;
+
+  arr1Queue[queueTail] = p1Root;
+  arr1locate[queueTail][0] = 0;
+  arr1locate[queueTail][1] = abscissa;
+  queueTail++;
+
+  while (queueHead < queueTail) {
+    // 遍历当前遍历的层中的结点
+    tierTail = queueTail;
+    while (queueHead < tierTail) {
+      int locate = (arr1locate[queueHead][0]+arr1locate[queueHead][1])/2;
+      t1Node = arr1Queue[queueHead];
+
+      arr1res[arr1resLen][0]=t1Node->num;
+      arr1res[arr1resLen][1]=tierNum;
+      arr1res[arr1resLen][2]=locate;
+      arr1res[arr1resLen][3]=arr1locate[queueHead][2];
+
+      if (NULL==t1Node){
+        queueHead++;
+        continue;
+      }
+      printf("%d-%d,", tierNum, t1Node->num);
+      if (t1Node->p1Left != NULL) {
+        // 左结点先入队，先遍历
+        arr1Queue[queueTail] = t1Node->p1Left;
+        arr1locate[queueTail][0] = arr1locate[queueHead][0];
+        arr1locate[queueTail][1] = locate-1;
+        arr1locate[queueTail][2] = locate;
+        queueTail++;
+      }
+      if (t1Node->p1Right != NULL) {
+        // 右结点后入队，后遍历
+        arr1Queue[queueTail] = t1Node->p1Right;
+        arr1locate[queueTail][0] = locate+1;
+        arr1locate[queueTail][1] = arr1locate[queueHead][1];
+        arr1locate[queueTail][2] = locate;
+        queueTail++;
+      }
+      queueHead++;
+      arr1resLen++;
+    }
+    // 层数 + 1
+    tierNum++;
+  }
+  int print[TIER_NUM_MAX][TIER_NODE_NUM_MAX];
+  memset(print,0,sizeof(int)*TIER_NUM_MAX*TIER_NODE_NUM_MAX);
+  for (int i=0;i<arr1resLen;i++){
+    print[arr1res[i][1]-1][arr1res[i][2]]=arr1res[i][0];
+    if(arr1res[i][2]<arr1res[i][3]){
+      for(int a=arr1res[i][2];a<arr1res[i][3];a++){
+        print[arr1res[i][1]-2][a]=-1;
+      }
+    }
+    if(arr1res[i][2]>arr1res[i][3]){
+      for(int a=arr1res[i][2];a>arr1res[i][3];a--){
+        print[arr1res[i][1]-2][a]=-1;
+      }
+    }
+  }
+
+  printf("\r\n");
+  for (int i=0;i<TIER_NUM_MAX;i++){
+    for (int j=0;j<TIER_NODE_NUM_MAX;j++){
+      if (print[i][j]==0){
+        printf("     ");
+      }else if (print[i][j]==-1){
+        printf(" --- ");
+      }else {
+        setColor(4);
+        printf("[%3d]", print[i][j]);
+      }
+    }
+    printf("\r\n");
+  }
+}
+
+void setColor(int m){
+  HANDLE consolehend;
+  consolehend= GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(consolehend,m);
 }

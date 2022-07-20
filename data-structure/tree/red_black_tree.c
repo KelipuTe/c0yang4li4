@@ -7,6 +7,7 @@
 #define RED 'r'
 #define BLACK 'b'
 
+// 红黑树结点
 typedef struct RedBlackTreeNode {
   // 结点值
   int num;
@@ -36,6 +37,10 @@ void rightRotate(RedBlackTreeNode *, RedBlackTreeNode **);
 // RedBlackTreeNode *，指向要修正的那个结点
 // RedBlackTreeNode **，指向，指向根结点的指针，的指针
 void addNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **);
+// 删除结点
+void deleteNode(RedBlackTreeNode *, int, RedBlackTreeNode **);
+// 删除结点时的修正
+void deleteNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **);
 // 中序遍历，左根右
 // BinaryTreeNode *，指向根结点
 extern void InorderTraversal(RedBlackTreeNode *);
@@ -207,6 +212,35 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   }
   // 根结点调整为黑色
   (*p2Root)->color = BLACK;
+}
+
+void deleteNode(RedBlackTreeNode *p1Root,int num,RedBlackTreeNode **p2Root){
+  // 要删除的结点
+  RedBlackTreeNode *p1Delete = NULL;
+  // 临时，用于遍历
+  RedBlackTreeNode *p1t1Node = NULL;
+
+  // 查询的逻辑
+  p1t1Node = p1Root;
+  while (p1t1Node != NULL) {
+    if (num < p1t1Node->num) {
+      // 删除值小于结点值，去左子树继续查询
+      p1t1Node = p1t1Node->p1Left;
+    } else if (num > p1t1Node->num) {
+      // 删除值大于结点值，去右子树继续查询
+      p1t1Node = p1t1Node->p1Right;
+    } else {
+      // 删除值等于结点值，要删除的结点（DEL）
+      p1Delete = p1t1Node;
+      break;
+    }
+  }
+
+
+}
+
+void deleteNodeFixUp(){
+
 }
 
 void InorderTraversal(RedBlackTreeNode *p1Root) {
