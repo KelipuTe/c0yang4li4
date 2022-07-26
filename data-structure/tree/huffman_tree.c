@@ -21,20 +21,18 @@ typedef struct HuffmanTreeNode {
   struct HuffmanTreeNode *p1Right;
 } HuffmanTreeNode;
 
-// 构造哈夫曼树
-// HuffmanTreeNode **，指向，指向根结点指针，的指针
-// char *，字符数组
-// int *，字符权重数组
 extern void BuildHuffmanTree(HuffmanTreeNode **, char *, int *);
-// 构造哈夫曼编码
-// char *[MAX_CHAR_NUM]，
 extern void MakeHuffmanCode(HuffmanTreeNode *, char *[MAX_CHAR_NUM], char *, int);
-// 把字符串进行哈夫曼编码
 extern void HuffmanEncode(char *, char *[MAX_CHAR_NUM], char *);
-// 把哈夫曼编码的字符串进行解码
 extern void HuffmanDecode(HuffmanTreeNode *, char *, char *);
 
-extern void BuildHuffmanTree(HuffmanTreeNode **p2Root, char *arr1Char, int *arr1Weight) {
+/**
+ * 构造哈夫曼树
+ * @param p2Root 指向，指向根结点指针，的指针
+ * @param arr1Char 字符数组
+ * @param arr1Weight 字符权重数组
+ */
+void BuildHuffmanTree(HuffmanTreeNode **p2Root, char *arr1Char, int *arr1Weight) {
   // 所有指向字符结点的指针的数组
   HuffmanTreeNode *arr1p1Node[MAX_CHAR_NUM];
   // 所有指向字符结点的指针的数组长度
@@ -115,6 +113,13 @@ extern void BuildHuffmanTree(HuffmanTreeNode **p2Root, char *arr1Char, int *arr1
   }
 }
 
+/**
+ * 构造哈夫曼编码
+ * @param p1Node
+ * @param arr1p1Code
+ * @param arr1t1Coding
+ * @param codeLen
+ */
 void MakeHuffmanCode(HuffmanTreeNode *p1Node, char *arr1p1Code[MAX_CHAR_NUM], char *arr1t1Coding, int codeLen) {
   if (NULL == p1Node) {
     return;
@@ -144,6 +149,12 @@ void MakeHuffmanCode(HuffmanTreeNode *p1Node, char *arr1p1Code[MAX_CHAR_NUM], ch
   }
 }
 
+/**
+ * 把字符串进行哈夫曼编码
+ * @param str
+ * @param arr1p1Code
+ * @param strEncode
+ */
 void HuffmanEncode(char *str, char *arr1p1Code[MAX_CHAR_NUM], char *strEncode) {
   int i = 0;
   int strEncodeLen = 0;
@@ -158,6 +169,12 @@ void HuffmanEncode(char *str, char *arr1p1Code[MAX_CHAR_NUM], char *strEncode) {
   strEncode[strEncodeLen] = '\0';
 }
 
+/**
+ * 把哈夫曼编码的字符串进行解码
+ * @param p1Root
+ * @param strEncode
+ * @param strDecode
+ */
 void HuffmanDecode(HuffmanTreeNode *p1Root, char *strEncode, char *strDecode) {
   HuffmanTreeNode *p1Node = p1Root;
 

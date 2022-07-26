@@ -24,19 +24,19 @@ typedef struct ThreadedBinaryTreeNode {
   int8_t rightTag;
 } ThreadedBinaryTreeNode;
 
-// 从数组构造二叉树
-// ThreadedBinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
-// ThreadedBinaryTreeNode *，指向前
 extern void BuildBinaryTreeFromArray(ThreadedBinaryTreeNode **, int *, int, int, ThreadedBinaryTreeNode *);
-// 中序遍历，左根右
-// ThreadedBinaryTreeNode *，指向根结点
 extern void InorderTraversal(ThreadedBinaryTreeNode *);
 void doInorderTraversal(ThreadedBinaryTreeNode *);
-// 中序遍历线索化
-// ThreadedBinaryTreeNode *，指向根结点
-// ThreadedBinaryTreeNode **，指向，指向前驱结点的指针，的指针
-void InorderThreaded(ThreadedBinaryTreeNode *, ThreadedBinaryTreeNode **);
+extern void InorderThreaded(ThreadedBinaryTreeNode *, ThreadedBinaryTreeNode **);
 
+/**
+ * 从数组构造二叉树
+ * @param p2Node 指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
+ * @param p1arr1Num
+ * @param arr1NumLen
+ * @param index
+ * @param p1Prev 指向前驱结点的指针
+ */
 void BuildBinaryTreeFromArray(ThreadedBinaryTreeNode **p2Node, int *p1arr1Num, int arr1NumLen, int index, ThreadedBinaryTreeNode *p1Prev) {
   if (index >= arr1NumLen) {
     return;
@@ -63,6 +63,10 @@ void BuildBinaryTreeFromArray(ThreadedBinaryTreeNode **p2Node, int *p1arr1Num, i
   }
 }
 
+/**
+ * 中序遍历，左根右
+ * @param p1Root 指向根结点
+ */
 void InorderTraversal(ThreadedBinaryTreeNode *p1Root) {
   printf("InorderTraversal: ");
   doInorderTraversal(p1Root);
@@ -83,6 +87,11 @@ void doInorderTraversal(ThreadedBinaryTreeNode *p1Node) {
   }
 }
 
+/**
+ * 中序遍历线索化
+ * @param p1Node 指向根结点
+ * @param p2Prev 指向，指向前驱结点的指针，的指针
+ */
 void InorderThreaded(ThreadedBinaryTreeNode *p1Node, ThreadedBinaryTreeNode **p2Prev) {
   if (NULL == p1Node) {
     return;

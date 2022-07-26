@@ -1,4 +1,3 @@
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,20 +26,15 @@ typedef struct BinaryTreeNode {
 } BinaryTreeNode;
 
 extern void PrintDefine();
-
 extern void BuildBinaryTreeFromArray(BinaryTreeNode **, int *, int, int);
-
 extern void DrawInConsole(BinaryTreeNode *);
-
 extern void PreorderTraversal(BinaryTreeNode *);
 void doPreorderTraversal(BinaryTreeNode *);
 extern void InorderTraversal(BinaryTreeNode *);
 void doInorderTraversal(BinaryTreeNode *);
 extern void SubsequentTraversal(BinaryTreeNode *);
 void doSubsequentTraversal(BinaryTreeNode *);
-
 extern int GetDepth(BinaryTreeNode *);
-
 extern void BreadthFirstSearch(BinaryTreeNode *);
 extern void DepthFirstSearch(BinaryTreeNode *);
 

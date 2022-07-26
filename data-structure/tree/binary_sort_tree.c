@@ -4,14 +4,17 @@
 
 // ## 二叉排序树 ##
 
-// 添加结点
-// BinaryTreeNode **，指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
 extern void AddNode(BinaryTreeNode **, int);
-// 删除结点
-// BinaryTreeNode *，指向根结点
 extern void DeleteNode(BinaryTreeNode *, int);
 
-void AddNode(BinaryTreeNode **p2Node, int num) {
+/**
+ * 添加结点
+ * @param p2Root 指向，指向二叉树的根结点的指针，的指针
+ * @param num
+ */
+void AddNode(BinaryTreeNode **p2Root, int num) {
+  printf("AddNode: %d\r\n", num);
+
   // 记录要插入的结点的父结点
   BinaryTreeNode *p1Prev = NULL;
   // 临时，用于遍历
@@ -20,19 +23,19 @@ void AddNode(BinaryTreeNode **p2Node, int num) {
   int isNeedAdd = 1;
 
   // 没有结点时，初始化结点
-  if (NULL == *p2Node) {
-    *p2Node = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
-    (*p2Node)->num = num;
-    (*p2Node)->p1Left = NULL;
-    (*p2Node)->p1Right = NULL;
+  if (NULL == *p2Root) {
+    *p2Root = (BinaryTreeNode *)malloc(sizeof(BinaryTreeNode));
+    (*p2Root)->num = num;
+    (*p2Root)->p1Left = NULL;
+    (*p2Root)->p1Right = NULL;
     return;
   }
 
   // 有结点时，寻找插入插入值的位置
 
   // 查询的逻辑
-  p1Prev = *p2Node;
-  p1t1Node = *p2Node;
+  p1Prev = *p2Root;
+  p1t1Node = *p2Root;
   while (p1t1Node != NULL) {
     if (num < p1t1Node->num) {
       // 插入值小于结点值，去左子树继续查询
@@ -65,9 +68,18 @@ void AddNode(BinaryTreeNode **p2Node, int num) {
   } else if (num > p1Prev->num) {
     p1Prev->p1Right = p1t1Node;
   }
+
+  DrawInConsole(*p2Root);
 }
 
+/**
+ * 删除结点
+ * @param p1Root 指向根结点
+ * @param num
+ */
 void DeleteNode(BinaryTreeNode *p1Root, int num) {
+  printf("DeleteNode: %d\r\n", num);
+
   // 要删除的结点的父结点
   BinaryTreeNode *p1Prev = NULL;
   // 要删除的结点
@@ -141,4 +153,6 @@ void DeleteNode(BinaryTreeNode *p1Root, int num) {
     // 释放掉结点值最大的结点，这个结点的值已经被记录到原先要删除的结点了
     free(p1t1Node);
   }
+
+  DrawInConsole(p1Root);
 }

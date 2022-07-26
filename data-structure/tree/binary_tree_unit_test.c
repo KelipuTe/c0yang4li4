@@ -1,6 +1,5 @@
 #include "binary_tree.c"
 
-// 单元测试
 void BinaryTreeUnitTesting();
 
 int main() {
@@ -9,6 +8,9 @@ int main() {
   return 0;
 }
 
+/**
+ * 单元测试
+ */
 void BinaryTreeUnitTesting() {
   PrintDefine();
 

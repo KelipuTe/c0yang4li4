@@ -1,6 +1,5 @@
 #include "threaded_binary_tree.c"
 
-// 单元测试
 void ThreadedBinaryTreeUnitTesting();
 
 int main() {
@@ -8,6 +7,9 @@ int main() {
   return 0;
 }
 
+/**
+ * 单元测试
+ */
 void ThreadedBinaryTreeUnitTesting() {
   // 指向根结点
   ThreadedBinaryTreeNode *p1Root = NULL;

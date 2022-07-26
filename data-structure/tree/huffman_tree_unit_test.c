@@ -2,7 +2,6 @@
 
 #include "huffman_tree.c"
 
-// 单元测试
 void HuffmanTreeUnitTesting();
 
 int main() {
@@ -10,6 +9,9 @@ int main() {
   return 0;
 }
 
+/**
+ * 单元测试
+ */
 void HuffmanTreeUnitTesting() {
   // 待处理字符串
   char str[] = "hello, world";
