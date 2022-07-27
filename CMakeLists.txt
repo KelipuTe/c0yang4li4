@@ -5,3 +5,4 @@ add_executable(skip_list_unit_list data-structure/linked-list/skip_list_unit_lis
 add_executable(binary_tree_unit_test data-structure/tree/binary_tree_unit_test.c)
 add_executable(binary_sort_tree_unit_test data-structure/tree/binary_sort_tree_unit_test.c)
 add_executable(balanced_binary_tree_unit_test data-structure/tree/balanced_binary_tree_unit_test.c)
+add_executable(huffman_tree_unit_test data-structure/tree/huffman_tree_unit_test.c)

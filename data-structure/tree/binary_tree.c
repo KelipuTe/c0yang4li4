@@ -27,7 +27,6 @@ typedef struct BinaryTreeNode {
 
 extern void PrintDefine();
 extern void BuildBinaryTreeFromArray(BinaryTreeNode **, int *, int, int);
-extern void DrawInConsole(BinaryTreeNode *);
 extern void PreorderTraversal(BinaryTreeNode *);
 void doPreorderTraversal(BinaryTreeNode *);
 extern void InorderTraversal(BinaryTreeNode *);
@@ -37,6 +36,7 @@ void doSubsequentTraversal(BinaryTreeNode *);
 extern int GetDepth(BinaryTreeNode *);
 extern void BreadthFirstSearch(BinaryTreeNode *);
 extern void DepthFirstSearch(BinaryTreeNode *);
+extern void DrawInConsole(BinaryTreeNode *);
 
 /**
  * 输出 #define 定义的数据
@@ -78,6 +78,176 @@ void BuildBinaryTreeFromArray(BinaryTreeNode **p2Node, int *p1arr1Num, int arr1N
     BuildBinaryTreeFromArray(&((*p2Node)->p1Left), p1arr1Num, arr1NumLen, index * 2);
     BuildBinaryTreeFromArray(&((*p2Node)->p1Right), p1arr1Num, arr1NumLen, index * 2 + 1);
   }
+}
+
+/**
+ * 前序遍历，根左右
+ * @param p1Root 指向根结点
+ */
+void PreorderTraversal(BinaryTreeNode *p1Root) {
+  printf("PreorderTraversal: ");
+  doPreorderTraversal(p1Root);
+  printf("\r\n");
+}
+
+void doPreorderTraversal(BinaryTreeNode *p1Node) {
+  if (NULL == p1Node) {
+    return;
+  }
+
+  printf("%d,", p1Node->num);
+  doPreorderTraversal(p1Node->p1Left);
+  doPreorderTraversal(p1Node->p1Right);
+}
+
+/**
+ * 中序遍历，左根右
+ * @param p1Root 指向根结点
+ */
+void InorderTraversal(BinaryTreeNode *p1Root) {
+  printf("InorderTraversal: ");
+  doInorderTraversal(p1Root);
+  printf("\r\n");
+}
+
+void doInorderTraversal(BinaryTreeNode *p1Node) {
+  if (NULL == p1Node) {
+    return;
+  }
+
+  doInorderTraversal(p1Node->p1Left);
+  printf("%d,", p1Node->num);
+  doInorderTraversal(p1Node->p1Right);
+}
+
+/**
+ * 后序遍历，左右根
+ * @param p1Root 指向根结点
+ */
+void SubsequentTraversal(BinaryTreeNode *p1Root) {
+  printf("SubsequentTraversal: ");
+  doSubsequentTraversal(p1Root);
+  printf("\r\n");
+}
+
+void doSubsequentTraversal(BinaryTreeNode *p1Node) {
+  if (NULL == p1Node) {
+    return;
+  }
+
+  doSubsequentTraversal(p1Node->p1Left);
+  doSubsequentTraversal(p1Node->p1Right);
+  printf("%d,", p1Node->num);
+}
+
+/**
+ * 计算二叉树深度
+ * @param p1Node 指向根结点
+ * @return
+ */
+int GetDepth(BinaryTreeNode *p1Node) {
+  int leftDepth, rightDepth;
+
+  if (NULL == p1Node) {
+    return 0;
+  }
+
+  leftDepth = GetDepth(p1Node->p1Left);
+  rightDepth = GetDepth(p1Node->p1Right);
+
+  if (leftDepth >= rightDepth) {
+    return leftDepth + 1;
+  } else {
+    return rightDepth + 1;
+  }
+}
+
+/**
+ * 广度优先遍历
+ * @param p1Root 指向根结点
+ */
+void BreadthFirstSearch(BinaryTreeNode *p1Root) {
+  printf("BreadthFirstSearch: ");
+
+  // 队列（数组结构），广度优先遍历需要借助队列结构
+  BinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
+  // 队列头；队列尾
+  int queueHead = 0, queueTail = 0;
+  // 当前遍历的层，默认从 1 开始；当前层的最后一个结点在队列中的下标
+  int tierNum = 1, tierTail = 0;
+  // 临时，用于遍历
+  BinaryTreeNode *t1Node;
+
+  // 初始化
+  memset(arr1Queue, 0, sizeof(BinaryTreeNode *) * TREE_NODE_NUM_MAX);
+
+  // 放入根结点
+  arr1Queue[queueTail] = p1Root;
+  queueTail++;
+
+  // 持续遍历，直到队列为空
+  while (queueHead < queueTail) {
+    // 持续遍历，当前遍历的层中的结点
+    tierTail = queueTail;
+    while (queueHead < tierTail) {
+      t1Node = arr1Queue[queueHead];
+      printf("%d-%d,", tierNum, t1Node->num);
+      if (t1Node->p1Left != NULL) {
+        // 左结点先入队，先遍历
+        arr1Queue[queueTail] = t1Node->p1Left;
+        queueTail++;
+      }
+      if (t1Node->p1Right != NULL) {
+        // 右结点后入队，后遍历
+        arr1Queue[queueTail] = t1Node->p1Right;
+        queueTail++;
+      }
+      queueHead++;
+    }
+    // 层数 +1
+    tierNum++;
+  }
+  printf("\r\n");
+}
+
+/**
+ * 深度优先遍历
+ * @param p1Root 指向根结点
+ */
+void DepthFirstSearch(BinaryTreeNode *p1Root) {
+  printf("DepthFirstSearch: ");
+
+  // 栈（数组结构），深度优先遍历需要借助栈存储结构
+  BinaryTreeNode *arr1Stark[TREE_NODE_NUM_MAX];
+  // 栈顶
+  int startTop = 0;
+  // 临时，用于遍历
+  BinaryTreeNode *t1Node;
+
+  // 初始化
+  memset(arr1Stark, 0, sizeof(BinaryTreeNode *) * TREE_NODE_NUM_MAX);
+
+  // 放入根结点
+  arr1Stark[startTop] = p1Root;
+  startTop++;
+
+  // 持续遍历，直到栈为空
+  while (startTop > 0) {
+    --startTop;
+    t1Node = arr1Stark[startTop];
+    printf("%d,", t1Node->num);
+    if (t1Node->p1Right != NULL) {
+      // 右结点先入栈，后遍历
+      arr1Stark[startTop] = t1Node->p1Right;
+      startTop++;
+    }
+    if (t1Node->p1Left != NULL) {
+      // 左结点后入栈，先遍历
+      arr1Stark[startTop] = t1Node->p1Left;
+      startTop++;
+    }
+  }
+  printf("\r\n");
 }
 
 /**
@@ -217,174 +387,4 @@ void DrawInConsole(BinaryTreeNode *p1Root) {
     }
     printf("\r\n");
   }
-}
-
-/**
- * 前序遍历，根左右
- * @param p1Root 指向根结点
- */
-void PreorderTraversal(BinaryTreeNode *p1Root) {
-  printf("PreorderTraversal: ");
-  doPreorderTraversal(p1Root);
-  printf("\r\n");
-}
-
-void doPreorderTraversal(BinaryTreeNode *p1Node) {
-  if (p1Node == NULL) {
-    return;
-  }
-
-  printf("%d,", p1Node->num);
-  doPreorderTraversal(p1Node->p1Left);
-  doPreorderTraversal(p1Node->p1Right);
-}
-
-/**
- * 中序遍历，左根右
- * @param p1Root 指向根结点
- */
-void InorderTraversal(BinaryTreeNode *p1Root) {
-  printf("InorderTraversal: ");
-  doInorderTraversal(p1Root);
-  printf("\r\n");
-}
-
-void doInorderTraversal(BinaryTreeNode *p1Node) {
-  if (p1Node == NULL) {
-    return;
-  }
-
-  doInorderTraversal(p1Node->p1Left);
-  printf("%d,", p1Node->num);
-  doInorderTraversal(p1Node->p1Right);
-}
-
-/**
- * 后序遍历，左右根
- * @param p1Root 指向根结点
- */
-void SubsequentTraversal(BinaryTreeNode *p1Root) {
-  printf("SubsequentTraversal: ");
-  doSubsequentTraversal(p1Root);
-  printf("\r\n");
-}
-
-void doSubsequentTraversal(BinaryTreeNode *p1Node) {
-  if (p1Node == NULL) {
-    return;
-  }
-
-  doSubsequentTraversal(p1Node->p1Left);
-  doSubsequentTraversal(p1Node->p1Right);
-  printf("%d,", p1Node->num);
-}
-
-/**
- * 计算二叉树深度
- * @param p1Node 指向根结点
- * @return
- */
-int GetDepth(BinaryTreeNode *p1Node) {
-  int leftDepth, rightDepth;
-
-  if (p1Node == NULL) {
-    return 0;
-  }
-
-  leftDepth = GetDepth(p1Node->p1Left);
-  rightDepth = GetDepth(p1Node->p1Right);
-
-  if (leftDepth >= rightDepth) {
-    return leftDepth + 1;
-  } else {
-    return rightDepth + 1;
-  }
-}
-
-/**
- * 广度优先遍历
- * @param p1Root 指向根结点
- */
-void BreadthFirstSearch(BinaryTreeNode *p1Root) {
-  printf("BreadthFirstSearch: ");
-
-  // 队列（数组结构），广度优先遍历需要借助队列结构
-  BinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
-  // 队列头；队列尾
-  int queueHead = 0, queueTail = 0;
-  // 当前遍历的层，默认从 1 开始；当前层的最后一个结点在队列中的下标
-  int tierNum = 1, tierTail = 0;
-  // 临时，用于遍历
-  BinaryTreeNode *t1Node;
-
-  // 初始化
-  memset(arr1Queue, 0, sizeof(BinaryTreeNode *) * TREE_NODE_NUM_MAX);
-
-  // 放入根结点
-  arr1Queue[queueTail] = p1Root;
-  queueTail++;
-
-  // 持续遍历，直到队列为空
-  while (queueHead < queueTail) {
-    // 持续遍历，当前遍历的层中的结点
-    tierTail = queueTail;
-    while (queueHead < tierTail) {
-      t1Node = arr1Queue[queueHead];
-      printf("%d-%d,", tierNum, t1Node->num);
-      if (t1Node->p1Left != NULL) {
-        // 左结点先入队，先遍历
-        arr1Queue[queueTail] = t1Node->p1Left;
-        queueTail++;
-      }
-      if (t1Node->p1Right != NULL) {
-        // 右结点后入队，后遍历
-        arr1Queue[queueTail] = t1Node->p1Right;
-        queueTail++;
-      }
-      queueHead++;
-    }
-    // 层数 +1
-    tierNum++;
-  }
-  printf("\r\n");
-}
-
-/**
- * 深度优先遍历
- * @param p1Root 指向根结点
- */
-void DepthFirstSearch(BinaryTreeNode *p1Root) {
-  printf("DepthFirstSearch: ");
-
-  // 栈（数组结构），深度优先遍历需要借助栈存储结构
-  BinaryTreeNode *arr1Stark[TREE_NODE_NUM_MAX];
-  // 栈顶
-  int startTop = 0;
-  // 临时，用于遍历
-  BinaryTreeNode *t1Node;
-
-  // 初始化
-  memset(arr1Stark, 0, sizeof(BinaryTreeNode *) * TREE_NODE_NUM_MAX);
-
-  // 放入根结点
-  arr1Stark[startTop] = p1Root;
-  startTop++;
-
-  // 持续遍历，直到栈为空
-  while (startTop > 0) {
-    --startTop;
-    t1Node = arr1Stark[startTop];
-    printf("%d,", t1Node->num);
-    if (t1Node->p1Right != NULL) {
-      // 右结点先入栈，后遍历
-      arr1Stark[startTop] = t1Node->p1Right;
-      startTop++;
-    }
-    if (t1Node->p1Left != NULL) {
-      // 左结点后入栈，先遍历
-      arr1Stark[startTop] = t1Node->p1Left;
-      startTop++;
-    }
-  }
-  printf("\r\n");
 }

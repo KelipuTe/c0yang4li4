@@ -28,6 +28,7 @@ void AddNode(BinaryTreeNode **p2Root, int num) {
     (*p2Root)->num = num;
     (*p2Root)->p1Left = NULL;
     (*p2Root)->p1Right = NULL;
+    DrawInConsole(*p2Root);
     return;
   }
 
@@ -86,6 +87,8 @@ void DeleteNode(BinaryTreeNode *p1Root, int num) {
   BinaryTreeNode *p1Delete = NULL;
   // 临时，用于遍历
   BinaryTreeNode *p1t1Node = NULL;
+  // 临时，用于交换
+  int t1Num = 0;
 
   // 查询的逻辑
   p1t1Node = p1Root;
@@ -139,7 +142,9 @@ void DeleteNode(BinaryTreeNode *p1Root, int num) {
     }
     // 到此 p1t1Node 就是要删除的结点的左子树中结点值最大的结点
     // 直接把左子树中结点值最大的结点的结点值赋值到要删除的结点上
+    t1Num = p1Delete->num;
     p1Delete->num = p1t1Node->num;
+    p1t1Node->num = t1Num;
     if (p1Prev != p1Delete) {
       // 如果左子树中结点值最大的结点的父结点（A），不是要删除的结点（DEL），则要删除结点的左子结点（AL）有右子结点（ALB）
       // 需要把上述右子结点（ALB）的左子树，接到左子树中结点值最大的结点的父结点（A）的右子树的位置

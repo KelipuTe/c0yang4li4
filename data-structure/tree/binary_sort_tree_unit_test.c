@@ -19,7 +19,6 @@ void BinarySortTreeUnitTesting() {
 
   for (int i = 0; i < arr1NumLen; i++) {
     AddNode(&p1Root, arr1Num[i]);
-    DrawInConsole(p1Root);
   }
 
   InorderTraversal(p1Root);

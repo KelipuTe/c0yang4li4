@@ -74,7 +74,7 @@ void InorderTraversal(ThreadedBinaryTreeNode *p1Root) {
 }
 
 void doInorderTraversal(ThreadedBinaryTreeNode *p1Node) {
-  if (p1Node == NULL) {
+  if (NULL == p1Node) {
     return;
   }
 

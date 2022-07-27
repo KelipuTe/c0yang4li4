@@ -32,7 +32,6 @@ typedef struct BalancedBinaryTreeNode {
 } BalancedBinaryTreeNode;
 
 extern void AddNode(BalancedBinaryTreeNode **, int);
-extern void DrawInConsole(BalancedBinaryTreeNode *);
 int getDepthForBalance(BalancedBinaryTreeNode *);
 int getBalance(BalancedBinaryTreeNode *);
 void leftRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
@@ -40,6 +39,7 @@ void rightRotate(BalancedBinaryTreeNode *, BalancedBinaryTreeNode **);
 extern void InorderTraversal(BalancedBinaryTreeNode *);
 void doInorderTraversal(BalancedBinaryTreeNode *);
 extern int GetDepth(BalancedBinaryTreeNode *);
+extern void DrawInConsole(BalancedBinaryTreeNode *);
 
 /**
  * 添加结点
@@ -137,127 +137,6 @@ void AddNode(BalancedBinaryTreeNode **p2Root, int num) {
     // 重新计算自己的结点深度
     p1Prev->depth = getDepthForBalance(p1Prev);
     p1Prev = p1Prev->p1Prev;
-  }
-}
-
-/**
- * 在控制台输出二叉树，需要借助层次遍历的逻辑
- * @param p1Root 指向根结点
- */
-void DrawInConsole(BalancedBinaryTreeNode *p1Root) {
-  printf("DrawInConsole: \r\n");
-
-  // 广度优先遍历的队列结构
-  BalancedBinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
-  int queueHead = 0, queueTail = 0;
-  int tierNum = 1, tierTail = 0;
-  BalancedBinaryTreeNode *t1Node;
-
-  // 横坐标数据，[0,1=自己在的那个区间的起始坐标和结束坐标，2=父结点的横坐标]
-  int arr2XCoordinate[TREE_NODE_NUM_MAX][3];
-  // 临时，用于计算横坐标
-  int t1MinX = 0;
-  // 屏幕数据，[0=自己的结点值，1=自己的纵坐标，2=自己的横坐标，3=父结点的横坐标]
-  int arr2PrintData[TREE_NODE_NUM_MAX][4];
-  int arr2PrintDataLen = 0;
-  // 屏幕缓冲区
-  int arr2PrintBuffer[TIER_NUM_MAX * 4][TIER_NODE_NUM_MAX];
-
-  // 初始化
-  memset(arr1Queue, 0, sizeof(BalancedBinaryTreeNode *) * TREE_NODE_NUM_MAX);
-  memset(arr2XCoordinate, 0, sizeof(int) * TREE_NODE_NUM_MAX * 3);
-  memset(arr2PrintData, 0, sizeof(int) * TREE_NODE_NUM_MAX * 4);
-  memset(arr2PrintBuffer, 0, sizeof(int) * TIER_NUM_MAX * 4 * TIER_NODE_NUM_MAX);
-
-  arr1Queue[queueTail] = p1Root;
-  arr2XCoordinate[queueTail][0] = 0;
-  arr2XCoordinate[queueTail][1] = (1 << GetDepth(p1Root)) - 1;
-  queueTail++;
-
-  while (queueHead < queueTail) {
-    tierTail = queueTail;
-    while (queueHead < tierTail) {
-      t1Node = arr1Queue[queueHead];
-      arr2PrintData[arr2PrintDataLen][0] = t1Node->num;
-
-      // 当前层次遍历到的层数，就是纵坐标
-      arr2PrintData[arr2PrintDataLen][1] = tierNum;
-
-      // 计算自己的横坐标（自己在的那个区间的中点坐标）
-      t1MinX = (arr2XCoordinate[queueHead][0] + arr2XCoordinate[queueHead][1]) / 2;
-      arr2PrintData[arr2PrintDataLen][2] = t1MinX;
-
-      arr2PrintData[arr2PrintDataLen][3] = arr2XCoordinate[queueHead][2];
-
-      if (t1Node->p1Left != NULL) {
-        arr1Queue[queueTail] = t1Node->p1Left;
-        arr2XCoordinate[queueTail][0] = arr2XCoordinate[queueHead][0];
-        arr2XCoordinate[queueTail][1] = t1MinX - 1;
-        arr2XCoordinate[queueTail][2] = t1MinX;
-        queueTail++;
-      }
-
-      if (t1Node->p1Right != NULL) {
-        arr1Queue[queueTail] = t1Node->p1Right;
-        arr2XCoordinate[queueTail][0] = t1MinX + 1;
-        arr2XCoordinate[queueTail][1] = arr2XCoordinate[queueHead][1];
-        arr2XCoordinate[queueTail][2] = t1MinX;
-        queueTail++;
-      }
-
-      queueHead++;
-      arr2PrintDataLen++;
-    }
-    tierNum++;
-  }
-
-  // 用屏幕数据计算屏幕缓冲区的数据
-  // 每层结点需要 4 行屏幕缓冲区。第 1 行放置结点值；第 2-4 行放置结点之间的连线。
-  for (int i = 0; i < arr2PrintDataLen; i++) {
-    // 计算结点值的坐标
-    arr2PrintBuffer[(arr2PrintData[i][1] - 1) * 4][arr2PrintData[i][2]] = arr2PrintData[i][0];
-    // 计算和父结点之间的连线怎么画
-    if (arr2PrintData[i][2] < arr2PrintData[i][3]) {
-      // 结点横坐标在父结点横坐标左边
-      // 父结点的正下方，放一个分叉
-      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 1][arr2PrintData[i][3]] = -1;
-      // 从自己的正上方向右一个位置开始，直到父结点的正下方向左一个位置，填充连线
-      for (int index = arr2PrintData[i][2] + 1; index < arr2PrintData[i][3]; index++) {
-        arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 2][index] = -2;
-      }
-      // 自己的正上方，放一个分叉
-      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 3][arr2PrintData[i][2]] = -3;
-    }
-    if (arr2PrintData[i][2] > arr2PrintData[i][3]) {
-      // 结点横坐标在父结点横坐标右边
-      // 把上面的逻辑反过来画就行
-      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 1][arr2PrintData[i][3]] = -1;
-      for (int index = arr2PrintData[i][2] - 1; index > arr2PrintData[i][3]; index--) {
-        arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 2][index] = -2;
-      }
-      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 3][arr2PrintData[i][2]] = -4;
-    }
-  }
-
-  // 在控制台输出屏幕缓冲区中的内容
-  // 屏幕缓冲区中有效的数据只有 (tierNum - 1) * 4 - 3 行,
-  for (int i = 0; i < (tierNum - 1) * 4 - 3; i++) {
-    for (int j = 0; j < TIER_NODE_NUM_MAX; j++) {
-      if (arr2PrintBuffer[i][j] == 0) {
-        printf("   ");
-      } else if (arr2PrintBuffer[i][j] == -1) {
-        printf("/ \\");
-      } else if (arr2PrintBuffer[i][j] == -2) {
-        printf("---");
-      } else if (arr2PrintBuffer[i][j] == -3) {
-        printf("  /");
-      } else if (arr2PrintBuffer[i][j] == -4) {
-        printf("\\  ");
-      } else {
-        printf("%03d", arr2PrintBuffer[i][j]);
-      }
-    }
-    printf("\r\n");
   }
 }
 
@@ -404,7 +283,7 @@ void InorderTraversal(BalancedBinaryTreeNode *p1Root) {
 
 void doInorderTraversal(BalancedBinaryTreeNode *p1Root) {
   BalancedBinaryTreeNode *p1t1Root = p1Root;
-  if (p1t1Root == NULL) {
+  if (NULL == p1t1Root) {
     return;
   }
 
@@ -421,7 +300,7 @@ void doInorderTraversal(BalancedBinaryTreeNode *p1Root) {
 int GetDepth(BalancedBinaryTreeNode *p1Node) {
   int leftDepth, rightDepth;
 
-  if (p1Node == NULL) {
+  if (NULL == p1Node) {
     return 0;
   }
 
@@ -432,5 +311,126 @@ int GetDepth(BalancedBinaryTreeNode *p1Node) {
     return leftDepth + 1;
   } else {
     return rightDepth + 1;
+  }
+}
+
+/**
+ * 在控制台输出二叉树，需要借助层次遍历的逻辑
+ * @param p1Root 指向根结点
+ */
+void DrawInConsole(BalancedBinaryTreeNode *p1Root) {
+  printf("DrawInConsole: \r\n");
+
+  // 广度优先遍历的队列结构
+  BalancedBinaryTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
+  int queueHead = 0, queueTail = 0;
+  int tierNum = 1, tierTail = 0;
+  BalancedBinaryTreeNode *t1Node;
+
+  // 横坐标数据，[0,1=自己在的那个区间的起始坐标和结束坐标，2=父结点的横坐标]
+  int arr2XCoordinate[TREE_NODE_NUM_MAX][3];
+  // 临时，用于计算横坐标
+  int t1MinX = 0;
+  // 屏幕数据，[0=自己的结点值，1=自己的纵坐标，2=自己的横坐标，3=父结点的横坐标]
+  int arr2PrintData[TREE_NODE_NUM_MAX][4];
+  int arr2PrintDataLen = 0;
+  // 屏幕缓冲区
+  int arr2PrintBuffer[TIER_NUM_MAX * 4][TIER_NODE_NUM_MAX];
+
+  // 初始化
+  memset(arr1Queue, 0, sizeof(BalancedBinaryTreeNode *) * TREE_NODE_NUM_MAX);
+  memset(arr2XCoordinate, 0, sizeof(int) * TREE_NODE_NUM_MAX * 3);
+  memset(arr2PrintData, 0, sizeof(int) * TREE_NODE_NUM_MAX * 4);
+  memset(arr2PrintBuffer, 0, sizeof(int) * TIER_NUM_MAX * 4 * TIER_NODE_NUM_MAX);
+
+  arr1Queue[queueTail] = p1Root;
+  arr2XCoordinate[queueTail][0] = 0;
+  arr2XCoordinate[queueTail][1] = (1 << GetDepth(p1Root)) - 1;
+  queueTail++;
+
+  while (queueHead < queueTail) {
+    tierTail = queueTail;
+    while (queueHead < tierTail) {
+      t1Node = arr1Queue[queueHead];
+      arr2PrintData[arr2PrintDataLen][0] = t1Node->num;
+
+      // 当前层次遍历到的层数，就是纵坐标
+      arr2PrintData[arr2PrintDataLen][1] = tierNum;
+
+      // 计算自己的横坐标（自己在的那个区间的中点坐标）
+      t1MinX = (arr2XCoordinate[queueHead][0] + arr2XCoordinate[queueHead][1]) / 2;
+      arr2PrintData[arr2PrintDataLen][2] = t1MinX;
+
+      arr2PrintData[arr2PrintDataLen][3] = arr2XCoordinate[queueHead][2];
+
+      if (t1Node->p1Left != NULL) {
+        arr1Queue[queueTail] = t1Node->p1Left;
+        arr2XCoordinate[queueTail][0] = arr2XCoordinate[queueHead][0];
+        arr2XCoordinate[queueTail][1] = t1MinX - 1;
+        arr2XCoordinate[queueTail][2] = t1MinX;
+        queueTail++;
+      }
+
+      if (t1Node->p1Right != NULL) {
+        arr1Queue[queueTail] = t1Node->p1Right;
+        arr2XCoordinate[queueTail][0] = t1MinX + 1;
+        arr2XCoordinate[queueTail][1] = arr2XCoordinate[queueHead][1];
+        arr2XCoordinate[queueTail][2] = t1MinX;
+        queueTail++;
+      }
+
+      queueHead++;
+      arr2PrintDataLen++;
+    }
+    tierNum++;
+  }
+
+  // 用屏幕数据计算屏幕缓冲区的数据
+  // 每层结点需要 4 行屏幕缓冲区。第 1 行放置结点值；第 2-4 行放置结点之间的连线。
+  for (int i = 0; i < arr2PrintDataLen; i++) {
+    // 计算结点值的坐标
+    arr2PrintBuffer[(arr2PrintData[i][1] - 1) * 4][arr2PrintData[i][2]] = arr2PrintData[i][0];
+    // 计算和父结点之间的连线怎么画
+    if (arr2PrintData[i][2] < arr2PrintData[i][3]) {
+      // 结点横坐标在父结点横坐标左边
+      // 父结点的正下方，放一个分叉
+      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 1][arr2PrintData[i][3]] = -1;
+      // 从自己的正上方向右一个位置开始，直到父结点的正下方向左一个位置，填充连线
+      for (int index = arr2PrintData[i][2] + 1; index < arr2PrintData[i][3]; index++) {
+        arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 2][index] = -2;
+      }
+      // 自己的正上方，放一个分叉
+      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 3][arr2PrintData[i][2]] = -3;
+    }
+    if (arr2PrintData[i][2] > arr2PrintData[i][3]) {
+      // 结点横坐标在父结点横坐标右边
+      // 把上面的逻辑反过来画就行
+      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 1][arr2PrintData[i][3]] = -1;
+      for (int index = arr2PrintData[i][2] - 1; index > arr2PrintData[i][3]; index--) {
+        arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 2][index] = -2;
+      }
+      arr2PrintBuffer[(arr2PrintData[i][1] - 2) * 4 + 3][arr2PrintData[i][2]] = -4;
+    }
+  }
+
+  // 在控制台输出屏幕缓冲区中的内容
+  // 屏幕缓冲区中有效的数据只有 (tierNum - 1) * 4 - 3 行,
+  for (int i = 0; i < (tierNum - 1) * 4 - 3; i++) {
+    for (int j = 0; j < TIER_NODE_NUM_MAX; j++) {
+      if (arr2PrintBuffer[i][j] == 0) {
+        printf("   ");
+      } else if (arr2PrintBuffer[i][j] == -1) {
+        printf("/ \\");
+      } else if (arr2PrintBuffer[i][j] == -2) {
+        printf("---");
+      } else if (arr2PrintBuffer[i][j] == -3) {
+        printf("  /");
+      } else if (arr2PrintBuffer[i][j] == -4) {
+        printf("\\  ");
+      } else {
+        printf("%03d", arr2PrintBuffer[i][j]);
+      }
+    }
+    printf("\r\n");
   }
 }

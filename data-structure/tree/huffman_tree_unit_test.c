@@ -44,6 +44,7 @@ void HuffmanTreeUnitTesting() {
   }
 
   BuildHuffmanTree(&p1Root, arr1Char, arr1Weight);
+  DrawInConsole(p1Root);
   MakeHuffmanCode(p1Root, arr1p1Code, arr1t1Coding, 0);
 
   for (int i = 0; i < MAX_CHAR_NUM; i++) {
