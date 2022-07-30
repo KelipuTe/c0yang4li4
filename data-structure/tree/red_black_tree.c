@@ -35,14 +35,18 @@ typedef struct RedBlackTreeNode {
   char color;
 } RedBlackTreeNode;
 
-extern void AddNode(RedBlackTreeNode **, int, RedBlackTreeNode *);
-void leftRotate(RedBlackTreeNode *, RedBlackTreeNode **, RedBlackTreeNode *);
-void rightRotate(RedBlackTreeNode *, RedBlackTreeNode **, RedBlackTreeNode *);
-void addNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **, RedBlackTreeNode *);
-extern void DeleteNode(RedBlackTreeNode **, int, RedBlackTreeNode *);
-void deleteNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **, RedBlackTreeNode *);
-extern void InorderTraversal(RedBlackTreeNode *, RedBlackTreeNode *);
-void doInorderTraversal(RedBlackTreeNode *, RedBlackTreeNode *);
+// 红黑树的 nil 结点
+RedBlackTreeNode NIL_NODE = {INT_MIN, NULL, NULL, NULL, BLACK};
+RedBlackTreeNode *P1_NIL_NODE = &NIL_NODE;
+
+extern void AddNode(RedBlackTreeNode **, int);
+void leftRotate(RedBlackTreeNode *, RedBlackTreeNode **);
+void rightRotate(RedBlackTreeNode *, RedBlackTreeNode **);
+void addNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **);
+extern void DeleteNode(RedBlackTreeNode **, int);
+void deleteNodeFixUp(RedBlackTreeNode *, RedBlackTreeNode **);
+extern void InorderTraversal(RedBlackTreeNode *);
+void doInorderTraversal(RedBlackTreeNode *);
 extern int GetDepth(RedBlackTreeNode *);
 extern void DrawInConsole(RedBlackTreeNode *);
 
@@ -51,7 +55,7 @@ extern void DrawInConsole(RedBlackTreeNode *);
  * @param p2Node 指向二叉树的，指向左子树的根结点的指针或者指向右子树的根结点的指针，的指针
  * @param num
  */
-void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
+void AddNode(RedBlackTreeNode **p2Root, int num) {
   printf("AddNode: %d\r\n", num);
 
   // 记录要插入的结点的父结点
@@ -60,15 +64,13 @@ void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
   RedBlackTreeNode *p1t1Node = NULL;
   // 是否需要插入新结点，默认需要插入
   int isNeedAdd = 1;
-  // 临时，存储结点平衡值
-  int t1Balance = 0;
 
   // 没有根结点时，初始化结点
   if (NULL == *p2Root) {
     *p2Root = (RedBlackTreeNode *)malloc(sizeof(RedBlackTreeNode));
     (*p2Root)->num = num;
-    (*p2Root)->p1Left = p1NilNode;
-    (*p2Root)->p1Right = p1NilNode;
+    (*p2Root)->p1Left = P1_NIL_NODE;
+    (*p2Root)->p1Right = P1_NIL_NODE;
     (*p2Root)->p1Prev = NULL;
     (*p2Root)->color = BLACK;
     DrawInConsole(*p2Root);
@@ -80,7 +82,7 @@ void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
   // 查询的逻辑
   p1Prev = *p2Root;
   p1t1Node = *p2Root;
-  while (p1t1Node != NULL && p1t1Node != p1NilNode) {
+  while (p1t1Node != NULL && p1t1Node != P1_NIL_NODE) {
     if (num < p1t1Node->num) {
       // 插入值小于结点值，去左子树继续查询
       p1Prev = p1t1Node;
@@ -104,8 +106,8 @@ void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
   // p1Prev 会指向将要插入的结点的父结点，p1t1Node 会指向 NULL
   p1t1Node = (RedBlackTreeNode *)malloc(sizeof(RedBlackTreeNode));
   p1t1Node->num = num;
-  p1t1Node->p1Left = p1NilNode;
-  p1t1Node->p1Right = p1NilNode;
+  p1t1Node->p1Left = P1_NIL_NODE;
+  p1t1Node->p1Right = P1_NIL_NODE;
   p1t1Node->p1Prev = p1Prev;
   p1t1Node->color = RED;
   // 比较一下结点应该插到哪一边
@@ -116,7 +118,7 @@ void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
   }
 
   DrawInConsole(*p2Root);
-  addNodeFixUp(p1t1Node, p2Root, p1NilNode);
+  addNodeFixUp(p1t1Node, p2Root);
 }
 
 /**
@@ -124,7 +126,7 @@ void AddNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
  * @param p1Node 指向要旋转的那个结点
  * @param p2Root 指向，指向根结点的指针，的指针
  */
-void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTreeNode *p1NilNode) {
+void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   printf("leftRotate: %d\r\n", p1Node->num);
 
   RedBlackTreeNode *p1Prev = p1Node->p1Prev;
@@ -135,7 +137,7 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTre
     *p2Root = p1Right;
   }
 
-  p1Node->p1Right = p1NilNode;
+  p1Node->p1Right = P1_NIL_NODE;
   p1Node->p1Prev = p1Right;
   p1Right->p1Left = p1Node;
   p1Right->p1Prev = p1Prev;
@@ -149,7 +151,7 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTre
   }
 
   p1Node->p1Right = p1RightLeft;
-  if (p1RightLeft != p1NilNode) {
+  if (p1RightLeft != P1_NIL_NODE) {
     p1RightLeft->p1Prev = p1Node;
   }
 
@@ -161,7 +163,7 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTre
  * @param p1Node 指向要旋转的那个结点
  * @param p2Root 指向，指向根结点的指针，的指针
  */
-void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTreeNode *p1NilNode) {
+void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   printf("rightRotate: %d\r\n", p1Node->num);
 
   RedBlackTreeNode *p1Prev = p1Node->p1Prev;
@@ -172,7 +174,7 @@ void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTr
     *p2Root = p1Left;
   }
 
-  p1Node->p1Left = p1NilNode;
+  p1Node->p1Left = P1_NIL_NODE;
   p1Node->p1Prev = p1Left;
   p1Left->p1Right = p1Node;
   p1Left->p1Prev = p1Prev;
@@ -186,7 +188,7 @@ void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTr
   }
 
   p1Node->p1Right = p1LeftRight;
-  if (p1LeftRight != p1NilNode) {
+  if (p1LeftRight != P1_NIL_NODE) {
     p1LeftRight->p1Prev = p1Node;
   }
 
@@ -198,7 +200,7 @@ void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTr
  * @param p1Node 指向要修正的那个结点
  * @param p2Root 指向，指向根结点的指针，的指针
  */
-void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTreeNode *p1NilNode) {
+void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   // 叔叔结点（祖父结点的另一个子结点）
   RedBlackTreeNode *p1PrevPrevOtherChild;
   // 根结点不需要调整，父结点为红色时需要调整，如果父结点是黑色的，直接插入就行
@@ -227,7 +229,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackT
           // 情况 2 通过这个操作实际上演变成了情况 3
 
           printf("addNodeFixUp %d type 2: \r\n", p1Node->num);
-          leftRotate(p1Node->p1Prev, p2Root, p1NilNode);
+          leftRotate(p1Node->p1Prev, p2Root);
           // 把指针指向自己的左子结点（左旋后，父结点变成了自己的左子结点），让场景变成情况 3
           p1Node = p1Node->p1Left;
         } else {
@@ -239,7 +241,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackT
           printf("addNodeFixUp %d type 3: \r\n", p1Node->num);
           DrawInConsole(*p2Root);
 
-          rightRotate(p1Node->p1Prev->p1Prev, p2Root, p1NilNode);
+          rightRotate(p1Node->p1Prev->p1Prev, p2Root);
         }
       }
     } else {
@@ -257,13 +259,13 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackT
         // 叔叔结点是黑色
         if (p1Node == p1Node->p1Prev->p1Left) {
           // 情况2：叔叔结点是黑色，自己是父结点的左子结点
-          rightRotate(p1Node, p2Root, p1NilNode);
+          rightRotate(p1Node, p2Root);
           p1Node = p1Node->p1Right;
         } else {
           // 情况3：叔叔结点是黑色，自己是父结点的右子结点
           p1Node->p1Prev->color = BLACK;
           p1Node->p1Prev->p1Prev->color = RED;
-          leftRotate(p1Node->p1Prev->p1Prev, p2Root, p1NilNode);
+          leftRotate(p1Node->p1Prev->p1Prev, p2Root);
         }
       }
     }
@@ -277,11 +279,11 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackT
  * @param p2Root 指向，指向根结点的指针，的指针
  * @param num
  */
-void DeleteNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode) {
+void DeleteNode(RedBlackTreeNode **p2Root, int num) {
   printf("DeleteNode: %d\r\n", num);
 
   // 要删除的结点的父结点
-  RedBlackTreeNode *p1Prev = NULL;
+  // RedBlackTreeNode *p1Prev = NULL;
   // 要删除的结点
   RedBlackTreeNode *p1Delete = NULL;
   // 临时，用于遍历
@@ -291,14 +293,14 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode)
 
   // 查询的逻辑
   p1t1Node = *p2Root;
-  while (p1t1Node != NULL && p1t1Node != p1NilNode) {
+  while (p1t1Node != NULL && p1t1Node != P1_NIL_NODE) {
     if (num < p1t1Node->num) {
       // 删除值小于结点值，去左子树继续查询
-      p1Prev = p1t1Node;
+      // p1Prev = p1t1Node;
       p1t1Node = p1t1Node->p1Left;
     } else if (num > p1t1Node->num) {
       // 删除值大于结点值，去右子树继续查询
-      p1Prev = p1t1Node;
+      // p1Prev = p1t1Node;
       p1t1Node = p1t1Node->p1Right;
     } else {
       // 删除值等于结点值，要删除的结点（DEL）
@@ -311,42 +313,52 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode)
   if (NULL == p1Delete) {
     return;
   }
-  if (p1Delete->p1Left == p1NilNode && p1Delete->p1Right == p1NilNode) {
-    //
+  if (p1Delete->p1Left == P1_NIL_NODE) {
+    // 如果要删除的结点的左子结点为空（左右子结点都为空的情况也走这个逻辑）
+    // 用要删除的结点的右子结点，顶替要删除的结点
+    if (p1Delete == *p2Root) {
+      *p2Root = p1Delete->p1Right;
+    } else {
+      if (p1Delete == p1Delete->p1Prev->p1Left) {
+        p1Delete->p1Prev->p1Left = p1Delete->p1Right;
+        p1Delete->p1Right->p1Prev = p1Delete->p1Prev;
+      } else {
+        p1Delete->p1Prev->p1Right = p1Delete->p1Right;
+        p1Delete->p1Right->p1Prev = p1Delete->p1Prev;
+      }
+    }
+    // 红色结点可以直接删除，黑色结点需要调整
     if (BLACK == p1Delete->color) {
-      deleteNodeFixUp(p1Delete, p2Root, p1NilNode);
+      deleteNodeFixUp(p1Delete->p1Right, p2Root);
     }
     free(p1Delete);
-  } else if (p1Delete->p1Left == p1NilNode) {
-    // 如果要删除的结点的左子结点为空
-    // 用要删除的结点的右子结点，顶替要删除的结点
-    // 注意，这里不需要把红黑树的颜色也复制过来，会破坏红黑树的性质
-    t1Num = p1Delete->num;
-    p1Delete->num = p1Delete->p1Right->num;
-    p1Delete->p1Right->num = t1Num;
-    if (BLACK == p1Delete->p1Right->color) {
-      deleteNodeFixUp(p1Delete->p1Right, p2Root, p1NilNode);
-    }
-    free(p1Delete->p1Right);
-  } else if (p1Delete->p1Right == p1NilNode) {
+  } else if (p1Delete->p1Right == P1_NIL_NODE) {
     // 如果要删除的结点的右子结点为空
     // 用要删除的结点的左子结点，顶替要删除的结点
-    // 注意，这里不需要把红黑树的颜色也复制过来，会破坏红黑树的性质
-    t1Num = p1Delete->num;
-    p1Delete->num = p1Delete->p1Left->num;
-    p1Delete->p1Left->num = t1Num;
-    if (BLACK == p1Delete->p1Left->color) {
-      deleteNodeFixUp(p1Delete->p1Left, p2Root, p1NilNode);
+    if (p1Delete == *p2Root) {
+      *p2Root = p1Delete->p1Left;
+    } else {
+      if (p1Delete == p1Delete->p1Prev->p1Left) {
+        p1Delete->p1Prev->p1Left = p1Delete->p1Left;
+        p1Delete->p1Left->p1Prev = p1Delete->p1Prev;
+      } else {
+        p1Delete->p1Prev->p1Right = p1Delete->p1Left;
+        p1Delete->p1Left->p1Prev = p1Delete->p1Prev;
+      }
     }
-    free(p1Delete->p1Left);
+    // 红色结点可以直接删除，黑色结点需要调整
+    if (BLACK == p1Delete->color) {
+      deleteNodeFixUp(p1Delete->p1Left, p2Root);
+    }
+    free(p1Delete);
   } else {
     // 如果要删除的结点的左子树和右子树都存在
     // 可以从左子树中找到结点值最大的结点，替代被删除的结点
     // 也可以从右子树中找到结点值最小的结点，替代被删除的结点
-    p1Prev = p1Delete;
+    // p1Prev = p1Delete;
     p1t1Node = p1Delete->p1Left;
     while (p1t1Node->p1Right != NULL) {
-      p1Prev = p1t1Node;
+      // p1Prev = p1t1Node;
       p1t1Node = p1t1Node->p1Right;
     }
     // 到此 p1t1Node 就是要删除的结点的左子树中结点值最大的结点
@@ -355,8 +367,9 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode)
     t1Num = p1Delete->num;
     p1Delete->num = p1t1Node->num;
     p1t1Node->num = t1Num;
+    // 红色结点可以直接删除，黑色结点需要调整
     if (BLACK == p1t1Node->color) {
-      deleteNodeFixUp(p1t1Node, p2Root, p1NilNode);
+      deleteNodeFixUp(p1t1Node, p2Root);
     }
     // 释放掉结点值最大的结点，这个结点的值已经被记录到原先要删除的结点了
     free(p1t1Node);
@@ -370,7 +383,7 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num, RedBlackTreeNode *p1NilNode)
  * @param p1Node 指向要删除的那个结点
  * @param p2Root 指向，指向根结点的指针，的指针
  */
-void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBlackTreeNode *p1NilNode) {
+void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   // 兄弟结点（父结点的另一个子结点）
   RedBlackTreeNode *p1PrevOtherChild;
   // 根结点不需要调整，自己是黑色时需要调整，如果自己是红色的，直接删除就行
@@ -383,7 +396,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBla
         // 兄弟结点改为黑色，父结点改为红色，父结点左旋
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
-        leftRotate(p1Node->p1Prev, p2Root, p1NilNode);
+        leftRotate(p1Node->p1Prev, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Right;
       }
@@ -398,7 +411,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBla
         // 兄弟结点改为红色，兄弟结点的左子结点改为黑色，兄弟结点右旋
         p1PrevOtherChild->p1Left->color = BLACK;
         p1PrevOtherChild->color = RED;
-        rightRotate(p1PrevOtherChild, p2Root, p1NilNode);
+        rightRotate(p1PrevOtherChild, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Right;
       }
@@ -408,7 +421,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBla
         p1PrevOtherChild->color = p1Node->p1Prev->color;
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Right->color = BLACK;
-        leftRotate(p1Node->p1Prev, p2Root, p1NilNode);
+        leftRotate(p1Node->p1Prev, p2Root);
         // 继续判断根结点
         p1Node = *p2Root;
       }
@@ -420,32 +433,32 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBla
         // 兄弟结点改为黑色，父结点改为红色，父结点右旋
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
-        rightRotate(p1Node->p1Prev, p2Root, p1NilNode);
+        rightRotate(p1Node->p1Prev, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Left;
       }
       if (BLACK == p1PrevOtherChild->p1Left->color && BLACK == p1PrevOtherChild->p1Right->color) {
-        // 情况 2：兄弟结点是黑色，其左子结点是黑色，右子结点是黑色
+        // 情况 2：兄弟结点是黑色，兄弟结点的左子结点是黑色，兄弟结点的右子结点是黑色
         // 兄弟结点改为红色，继续判断删除结点的父结点
         p1PrevOtherChild->color = RED;
         p1Node = p1Node->p1Prev;
       }
       if (BLACK == p1PrevOtherChild->p1Left->color && RED == p1PrevOtherChild->p1Right->color) {
-        // 情况 3：兄弟结点是黑色，其左子结点是黑色，右子结点是红色
+        // 情况 3：兄弟结点是黑色，兄弟结点的左子结点是黑色，兄弟结点的右子结点是红色
         // 兄弟结点改为红色，兄弟结点的右子结点改为黑色，兄弟结点左旋
         p1PrevOtherChild->p1Right->color = BLACK;
         p1PrevOtherChild->color = RED;
-        leftRotate(p1PrevOtherChild, p2Root, p1NilNode);
+        leftRotate(p1PrevOtherChild, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Left;
       }
       if (RED == p1PrevOtherChild->p1Left->color) {
-        // 情况 4：兄弟结点是黑色，其左子结点是红色，右子结点不管是什么颜色
+        // 情况 4：兄弟结点是黑色，兄弟结点的左子结点是红色，兄弟结点的右子结点不管是什么颜色
         // 把父结点的颜色赋值给兄弟结点，父结点改为黑色，兄弟结点的左子结点改为黑色，父结点右旋
         p1PrevOtherChild->color = p1Node->p1Prev->color;
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Left->color = BLACK;
-        rightRotate(p1Node->p1Prev, p2Root, p1NilNode);
+        rightRotate(p1Node->p1Prev, p2Root);
         // 继续判断根结点
         p1Node = *p2Root;
       }
@@ -458,20 +471,20 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root, RedBla
  * 中序遍历，左根右
  * @param p1Root 指向根结点
  */
-void InorderTraversal(RedBlackTreeNode *p1Root, RedBlackTreeNode *p1NilNode) {
+void InorderTraversal(RedBlackTreeNode *p1Root) {
   printf("InorderTraversal: ");
-  doInorderTraversal(p1Root, p1NilNode);
+  doInorderTraversal(p1Root);
   printf("\r\n");
 }
 
-void doInorderTraversal(RedBlackTreeNode *p1Node, RedBlackTreeNode *p1NilNode) {
-  if (NULL == p1Node || p1Node == p1NilNode) {
+void doInorderTraversal(RedBlackTreeNode *p1Node) {
+  if (NULL == p1Node || p1Node == P1_NIL_NODE) {
     return;
   }
 
-  doInorderTraversal(p1Node->p1Left, p1NilNode);
+  doInorderTraversal(p1Node->p1Left);
   printf("%d,", p1Node->num);
-  doInorderTraversal(p1Node->p1Right, p1NilNode);
+  doInorderTraversal(p1Node->p1Right);
 }
 
 /**
