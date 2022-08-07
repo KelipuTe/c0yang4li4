@@ -137,7 +137,7 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
     *p2Root = p1Right;
   }
 
-  p1Node->p1Right = P1_NIL_NODE;
+  p1Node->p1Right = p1RightLeft;
   p1Node->p1Prev = p1Right;
   p1Right->p1Left = p1Node;
   p1Right->p1Prev = p1Prev;
@@ -150,7 +150,6 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
     }
   }
 
-  p1Node->p1Right = p1RightLeft;
   if (p1RightLeft != P1_NIL_NODE) {
     p1RightLeft->p1Prev = p1Node;
   }
@@ -174,7 +173,7 @@ void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
     *p2Root = p1Left;
   }
 
-  p1Node->p1Left = P1_NIL_NODE;
+  p1Node->p1Left = p1LeftRight;
   p1Node->p1Prev = p1Left;
   p1Left->p1Right = p1Node;
   p1Left->p1Prev = p1Prev;
@@ -187,7 +186,6 @@ void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
     }
   }
 
-  p1Node->p1Right = p1LeftRight;
   if (p1LeftRight != P1_NIL_NODE) {
     p1LeftRight->p1Prev = p1Node;
   }
@@ -210,13 +208,14 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
       p1PrevPrevOtherChild = p1Node->p1Prev->p1Prev->p1Right;
       if (p1PrevPrevOtherChild != NULL && RED == p1PrevPrevOtherChild->color) {
         // 叔叔结点是红色
-        // 情况 1：父结点和叔叔结点都是红色
+        // 情况 1：父结点和叔叔结点都是红色。
+        // 类似 2-3-4 树的五结点上溢，在红黑树中只需要调色。
         // 父结点和叔叔结点改黑色，祖父结点改红色
         p1Node->p1Prev->color = BLACK;
         p1PrevPrevOtherChild->color = BLACK;
         p1Node->p1Prev->p1Prev->color = RED;
 
-        printf("addNodeFixUp %d type 1: \r\n", p1Node->num);
+        printf("addNodeFixUp %d left type 1: \r\n", p1Node->num);
         DrawInConsole(*p2Root);
 
         // 因为祖父结点改了红色，可能破坏红黑树，所以需要继续判断祖父结点是否需要调整
@@ -224,21 +223,21 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
       } else {
         // 叔叔结点是黑色（叔叔结点不存在时，就相当于是定义中的黑色叶子结点）
         if (p1Node == p1Node->p1Prev->p1Right) {
-          // 情况 2：叔叔结点是黑色，自己是父结点的右子结点
+          // 情况 2：叔叔结点是黑色，自己是父结点的右子结点。
+          // 类似平衡二叉树的 LR 型，需要调色+左旋+右旋。这里的调色逻辑可以和情况 3 合并。
           // 父结点左旋，由于左旋后父结点变成了自己的左子树，两个红色结点相连一定破坏红黑树，所以继续判断父结点（父结点在更下层）
           // 情况 2 通过这个操作实际上演变成了情况 3
-
-          printf("addNodeFixUp %d type 2: \r\n", p1Node->num);
+          printf("addNodeFixUp %d left type 2: \r\n", p1Node->num);
           leftRotate(p1Node->p1Prev, p2Root);
           // 把指针指向自己的左子结点（左旋后，父结点变成了自己的左子结点），让场景变成情况 3
           p1Node = p1Node->p1Left;
         } else {
-          // 情况 3：叔叔结点是黑色，自己是父结点的左子结点
+          // 情况 3：叔叔结点是黑色，自己是父结点的左子结点。类似平衡二叉树的 LL 型，需要调色+右旋。
           // 父结点改黑色，祖父结点改红色，祖父结点右旋
           p1Node->p1Prev->color = BLACK;
           p1Node->p1Prev->p1Prev->color = RED;
 
-          printf("addNodeFixUp %d type 3: \r\n", p1Node->num);
+          printf("addNodeFixUp %d left type 3: \r\n", p1Node->num);
           DrawInConsole(*p2Root);
 
           rightRotate(p1Node->p1Prev->p1Prev, p2Root);
@@ -251,20 +250,31 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
       if (p1PrevPrevOtherChild != NULL && RED == p1PrevPrevOtherChild->color) {
         // 叔叔结点是红色
         // 情况1：父结点和叔叔结点都是红色
+        // 类似 2-3-4 树的五结点上溢，在红黑树中只需要调色。
         p1Node->p1Prev->color = BLACK;
         p1PrevPrevOtherChild->color = BLACK;
         p1Node->p1Prev->p1Prev->color = RED;
+
+        printf("addNodeFixUp %d right type 1: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         p1Node = p1Node->p1Prev->p1Prev;
       } else {
         // 叔叔结点是黑色
         if (p1Node == p1Node->p1Prev->p1Left) {
-          // 情况2：叔叔结点是黑色，自己是父结点的左子结点
+          // 情况2：叔叔结点是黑色，自己是父结点的左子结点。
+          // 类似平衡二叉树的 RL 型，需要调色+右旋+左旋。这里的调色逻辑可以和情况 3 合并。
+          printf("addNodeFixUp %d right type 2: \r\n", p1Node->num);
           rightRotate(p1Node, p2Root);
           p1Node = p1Node->p1Right;
         } else {
-          // 情况3：叔叔结点是黑色，自己是父结点的右子结点
+          // 情况3：叔叔结点是黑色，自己是父结点的右子结点。类似平衡二叉树的 RR 型，需要调色+左旋。
           p1Node->p1Prev->color = BLACK;
           p1Node->p1Prev->p1Prev->color = RED;
+
+          printf("addNodeFixUp %d right type 3: \r\n", p1Node->num);
+          DrawInConsole(*p2Root);
+
           leftRotate(p1Node->p1Prev->p1Prev, p2Root);
         }
       }
@@ -282,8 +292,6 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
 void DeleteNode(RedBlackTreeNode **p2Root, int num) {
   printf("DeleteNode: %d\r\n", num);
 
-  // 要删除的结点的父结点
-  // RedBlackTreeNode *p1Prev = NULL;
   // 要删除的结点
   RedBlackTreeNode *p1Delete = NULL;
   // 临时，用于遍历
@@ -296,11 +304,9 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num) {
   while (p1t1Node != NULL && p1t1Node != P1_NIL_NODE) {
     if (num < p1t1Node->num) {
       // 删除值小于结点值，去左子树继续查询
-      // p1Prev = p1t1Node;
       p1t1Node = p1t1Node->p1Left;
     } else if (num > p1t1Node->num) {
       // 删除值大于结点值，去右子树继续查询
-      // p1Prev = p1t1Node;
       p1t1Node = p1t1Node->p1Right;
     } else {
       // 删除值等于结点值，要删除的结点（DEL）
@@ -313,57 +319,16 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num) {
   if (NULL == p1Delete) {
     return;
   }
-  if (p1Delete->p1Left == P1_NIL_NODE) {
-    // 如果要删除的结点的左子结点为空（左右子结点都为空的情况也走这个逻辑）
-    // 用要删除的结点的右子结点，顶替要删除的结点
-    if (p1Delete == *p2Root) {
-      *p2Root = p1Delete->p1Right;
-    } else {
-      if (p1Delete == p1Delete->p1Prev->p1Left) {
-        p1Delete->p1Prev->p1Left = p1Delete->p1Right;
-        p1Delete->p1Right->p1Prev = p1Delete->p1Prev;
-      } else {
-        p1Delete->p1Prev->p1Right = p1Delete->p1Right;
-        p1Delete->p1Right->p1Prev = p1Delete->p1Prev;
-      }
-    }
-    // 红色结点可以直接删除，黑色结点需要调整
-    if (BLACK == p1Delete->color) {
-      deleteNodeFixUp(p1Delete->p1Right, p2Root);
-    }
-    free(p1Delete);
-  } else if (p1Delete->p1Right == P1_NIL_NODE) {
-    // 如果要删除的结点的右子结点为空
-    // 用要删除的结点的左子结点，顶替要删除的结点
-    if (p1Delete == *p2Root) {
-      *p2Root = p1Delete->p1Left;
-    } else {
-      if (p1Delete == p1Delete->p1Prev->p1Left) {
-        p1Delete->p1Prev->p1Left = p1Delete->p1Left;
-        p1Delete->p1Left->p1Prev = p1Delete->p1Prev;
-      } else {
-        p1Delete->p1Prev->p1Right = p1Delete->p1Left;
-        p1Delete->p1Left->p1Prev = p1Delete->p1Prev;
-      }
-    }
-    // 红色结点可以直接删除，黑色结点需要调整
-    if (BLACK == p1Delete->color) {
-      deleteNodeFixUp(p1Delete->p1Left, p2Root);
-    }
-    free(p1Delete);
-  } else {
+  if (p1Delete->p1Left != P1_NIL_NODE && p1Delete->p1Right != P1_NIL_NODE) {
     // 如果要删除的结点的左子树和右子树都存在
-    // 可以从左子树中找到结点值最大的结点，替代被删除的结点
-    // 也可以从右子树中找到结点值最小的结点，替代被删除的结点
-    // p1Prev = p1Delete;
+    // 可以从左子树中找到结点值最大的结点，替代被删除的结点（也可以从右子树中找到结点值最小的结点，替代被删除的结点）
+    // 这时要删除的结点就变成了左子树中结点值最大的结点
     p1t1Node = p1Delete->p1Left;
-    while (p1t1Node->p1Right != NULL) {
-      // p1Prev = p1t1Node;
+    while (p1t1Node->p1Right != P1_NIL_NODE) {
       p1t1Node = p1t1Node->p1Right;
     }
     // 到此 p1t1Node 就是要删除的结点的左子树中结点值最大的结点
-    // 直接把左子树中结点值最大的结点的结点值赋值到要删除的结点上
-    // 注意，这里不需要把红黑树的颜色也复制过来，会破坏红黑树的性质
+    // 直接把左子树中结点值最大的结点的结点值赋值到要删除的结点上。注意，这里不需要把红黑树的颜色也复制过来，会破坏红黑树的性质
     t1Num = p1Delete->num;
     p1Delete->num = p1t1Node->num;
     p1t1Node->num = t1Num;
@@ -371,7 +336,64 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num) {
     if (BLACK == p1t1Node->color) {
       deleteNodeFixUp(p1t1Node, p2Root);
     }
-    // 释放掉结点值最大的结点，这个结点的值已经被记录到原先要删除的结点了
+    // 断开父结点的联系
+    if (p1t1Node->p1Prev->p1Left == p1t1Node) {
+      p1t1Node->p1Prev->p1Left = P1_NIL_NODE;
+    } else {
+      p1t1Node->p1Prev->p1Right = P1_NIL_NODE;
+    }
+    free(p1t1Node);
+  } else if (p1Delete->p1Left == P1_NIL_NODE && p1Delete->p1Right != P1_NIL_NODE) {
+    // 如果要删除的结点的左子结点为空，用要删除的结点的右子结点，顶替要删除的结点
+    // 这时要删除的结点就变成了右子结点
+    p1t1Node = p1Delete->p1Right;
+    // 直接把右子结点的结点值赋值到要删除的结点上。
+    t1Num = p1Delete->num;
+    p1Delete->num = p1t1Node->num;
+    p1t1Node->num = t1Num;
+    // 红色结点可以直接删除，黑色结点需要调整
+    if (BLACK == p1t1Node->color) {
+      deleteNodeFixUp(p1t1Node, p2Root);
+    }
+    // 断开父结点的联系
+    if (p1t1Node->p1Prev->p1Left == p1t1Node) {
+      p1t1Node->p1Prev->p1Left = P1_NIL_NODE;
+    } else {
+      p1t1Node->p1Prev->p1Right = P1_NIL_NODE;
+    }
+    free(p1t1Node);
+  } else if (p1Delete->p1Left != P1_NIL_NODE && p1Delete->p1Right == P1_NIL_NODE) {
+    // 如果要删除的结点的右子结点为空
+    // 用要删除的结点的左子结点，顶替要删除的结点
+    p1t1Node = p1Delete->p1Left;
+    // 直接把左子结点的结点值赋值到要删除的结点上。
+    t1Num = p1Delete->num;
+    p1Delete->num = p1t1Node->num;
+    p1t1Node->num = t1Num;
+    // 红色结点可以直接删除，黑色结点需要调整
+    if (BLACK == p1t1Node->color) {
+      deleteNodeFixUp(p1t1Node, p2Root);
+    }
+    // 断开父结点的联系
+    if (p1t1Node->p1Prev->p1Left == p1t1Node) {
+      p1t1Node->p1Prev->p1Left = P1_NIL_NODE;
+    } else {
+      p1t1Node->p1Prev->p1Right = P1_NIL_NODE;
+    }
+    free(p1t1Node);
+  } else {
+    // 如果要删除的结点左右子结点都为空，那就删它了
+    // 红色结点可以直接删除，黑色结点需要调整
+    if (BLACK == p1t1Node->color) {
+      deleteNodeFixUp(p1t1Node, p2Root);
+    }
+    // 断开父结点的联系
+    p1t1Node = p1Delete;
+    if (p1t1Node->p1Prev->p1Left == p1t1Node) {
+      p1t1Node->p1Prev->p1Left = P1_NIL_NODE;
+    } else {
+      p1t1Node->p1Prev->p1Right = P1_NIL_NODE;
+    }
     free(p1t1Node);
   }
 
@@ -386,81 +408,120 @@ void DeleteNode(RedBlackTreeNode **p2Root, int num) {
 void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
   // 兄弟结点（父结点的另一个子结点）
   RedBlackTreeNode *p1PrevOtherChild;
-  // 根结点不需要调整，自己是黑色时需要调整，如果自己是红色的，直接删除就行
+  // 根结点不需要调整，黑色结点需要调整
   while (p1Node != *p2Root && BLACK == p1Node->color) {
     if (p1Node == p1Node->p1Prev->p1Left) {
       // 自己是父结点的左子结点
       p1PrevOtherChild = p1Node->p1Prev->p1Right;
       if (RED == p1PrevOtherChild->color) {
         // 情况 1：兄弟结点是红色
-        // 兄弟结点改为黑色，父结点改为红色，父结点左旋
+        // 兄弟结点改为黑色，父结点改为红色，父结点左旋，变情况 2
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
+
+        printf("deleteNodeFixUp %d left type 1: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         leftRotate(p1Node->p1Prev, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Right;
       }
       if (BLACK == p1PrevOtherChild->p1Left->color && BLACK == p1PrevOtherChild->p1Right->color) {
-        // 情况 2：兄弟结点是黑色，其左子结点是黑色，右子结点是黑色
-        // 兄弟结点改为红色，继续判断删除结点的父结点
+        // 情况 2：兄弟结点是黑色，兄弟结点没有红色子结点。
+        // 兄弟结点改为红色，父结点改黑色，继续判断删除结点的父结点
         p1PrevOtherChild->color = RED;
+        p1Node->p1Prev->color = BLACK;
+
+        printf("deleteNodeFixUp %d left type 2: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         p1Node = p1Node->p1Prev;
+        continue;
+      }
+      if (p1Node->p1Left != P1_NIL_NODE || p1Node->p1Right != P1_NIL_NODE) {
+        break;
       }
       if (RED == p1PrevOtherChild->p1Left->color && BLACK == p1PrevOtherChild->p1Right->color) {
-        // 情况 3：兄弟结点是黑色，其左子结点是红色，右子结点是黑色
-        // 兄弟结点改为红色，兄弟结点的左子结点改为黑色，兄弟结点右旋
-        p1PrevOtherChild->p1Left->color = BLACK;
+        // 情况 3：兄弟结点是黑色，兄弟结点只有红色左子结点，RL 型
+        // 兄弟结点改为红色，兄弟结点的左子结点改为黑色，兄弟结点右旋，变成情况 4
         p1PrevOtherChild->color = RED;
+        p1PrevOtherChild->p1Left->color = BLACK;
+
+        printf("deleteNodeFixUp %d left type 3: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         rightRotate(p1PrevOtherChild, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Right;
       }
       if (RED == p1PrevOtherChild->p1Right->color) {
-        // 情况 4：兄弟结点是黑色，其左子结点不管是什么颜色，右子结点是红色
+        // 情况 4：兄弟结点是黑色，兄弟结点只有红色右子结点，兄弟结点有两个红色子结点。RR 型
         // 把父结点的颜色赋值给兄弟结点，父结点改为黑色，兄弟结点的右子结点改为黑色，父结点左旋
         p1PrevOtherChild->color = p1Node->p1Prev->color;
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Right->color = BLACK;
+
+        printf("deleteNodeFixUp %d left type 4: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         leftRotate(p1Node->p1Prev, p2Root);
-        // 继续判断根结点
-        p1Node = *p2Root;
+        // 走到这里就意味着，调整结束
+        break;
       }
     } else {
       // 自己是父结点的右子结点
       p1PrevOtherChild = p1Node->p1Prev->p1Left;
       if (RED == p1PrevOtherChild->color) {
         // 情况 1：兄弟结点是红色
-        // 兄弟结点改为黑色，父结点改为红色，父结点右旋
+        // 兄弟结点改为黑色，父结点改为红色，父结点右旋，变情况 2
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
+
+        printf("deleteNodeFixUp %d right type 1: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         rightRotate(p1Node->p1Prev, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Left;
       }
       if (BLACK == p1PrevOtherChild->p1Left->color && BLACK == p1PrevOtherChild->p1Right->color) {
-        // 情况 2：兄弟结点是黑色，兄弟结点的左子结点是黑色，兄弟结点的右子结点是黑色
-        // 兄弟结点改为红色，继续判断删除结点的父结点
+        // 情况 2：兄弟结点是黑色，兄弟结点没有红色子结点。
+        // 兄弟结点改为红色，父结点改黑色，继续判断删除结点的父结点
         p1PrevOtherChild->color = RED;
+        p1Node->p1Prev->color = BLACK;
+
+        printf("deleteNodeFixUp %d right type 2: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         p1Node = p1Node->p1Prev;
+        continue;
       }
       if (BLACK == p1PrevOtherChild->p1Left->color && RED == p1PrevOtherChild->p1Right->color) {
-        // 情况 3：兄弟结点是黑色，兄弟结点的左子结点是黑色，兄弟结点的右子结点是红色
-        // 兄弟结点改为红色，兄弟结点的右子结点改为黑色，兄弟结点左旋
-        p1PrevOtherChild->p1Right->color = BLACK;
+        // 情况 3：兄弟结点是黑色，兄弟结点只有红色右子结点，LR 型
+        // 兄弟结点改为红色，兄弟结点的右子结点改为黑色，兄弟结点左旋，变成情况 4
         p1PrevOtherChild->color = RED;
+        p1PrevOtherChild->p1Right->color = BLACK;
+
+        printf("deleteNodeFixUp %d right type 3: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         leftRotate(p1PrevOtherChild, p2Root);
         // 由于结构发生了变化，需要重新确定兄弟结点
         p1PrevOtherChild = p1Node->p1Prev->p1Left;
       }
       if (RED == p1PrevOtherChild->p1Left->color) {
-        // 情况 4：兄弟结点是黑色，兄弟结点的左子结点是红色，兄弟结点的右子结点不管是什么颜色
+        // 情况 4：兄弟结点是黑色，兄弟结点只有红色左子结点，兄弟结点有两个红色子结点。LL 型
         // 把父结点的颜色赋值给兄弟结点，父结点改为黑色，兄弟结点的左子结点改为黑色，父结点右旋
         p1PrevOtherChild->color = p1Node->p1Prev->color;
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Left->color = BLACK;
+
+        printf("deleteNodeFixUp %d right type 4: \r\n", p1Node->num);
+        DrawInConsole(*p2Root);
+
         rightRotate(p1Node->p1Prev, p2Root);
-        // 继续判断根结点
-        p1Node = *p2Root;
+        // 走到这里就意味着，调整结束
+        break;
       }
     }
   }

@@ -1,4 +1,4 @@
-#include "red_black_tree.c"
+#include "red-black_tree.c"
 
 void RedBlackTreeUnitTesting();
 
@@ -23,7 +23,7 @@ void RedBlackTreeUnitTesting() {
 
   InorderTraversal(p1Root);
 
-  // DeleteNode(&p1Root, arr1Num[8]);
+  DeleteNode(&p1Root, 17);
 
   InorderTraversal(p1Root);
 }

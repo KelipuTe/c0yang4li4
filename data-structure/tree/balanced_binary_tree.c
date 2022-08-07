@@ -202,7 +202,7 @@ void leftRotate(BalancedBinaryTreeNode *p1Node, BalancedBinaryTreeNode **p2Root)
   }
   // 自己的右子结点（SR）变成自己的父结点
   // 自己的变成的自己的右子结点（SR）的左子结点
-  p1Node->p1Right = NULL;
+  p1Node->p1Right = p1RightLeft;
   p1Node->p1Prev = p1Right;
   p1Right->p1Left = p1Node;
   p1Right->p1Prev = p1Prev;
@@ -215,7 +215,6 @@ void leftRotate(BalancedBinaryTreeNode *p1Node, BalancedBinaryTreeNode **p2Root)
     }
   }
   // 如果自己的右子结点（SR）有左子结点（SRL），要把自己的右子结点（SR）的左子结点（SRL）变成自己的右子结点
-  p1Node->p1Right = p1RightLeft;
   if (p1RightLeft != NULL) {
     p1RightLeft->p1Prev = p1Node;
   }
@@ -247,7 +246,7 @@ void rightRotate(BalancedBinaryTreeNode *p1Node, BalancedBinaryTreeNode **p2Root
   }
   // 自己的左子结点（SL）变成自己的父结点
   // 自己的变成的自己的左子结点（SL）的右子结点
-  p1Node->p1Left = NULL;
+  p1Node->p1Left = p1LeftRight;
   p1Node->p1Prev = p1Left;
   p1Left->p1Right = p1Node;
   p1Left->p1Prev = p1Prev;
@@ -260,7 +259,6 @@ void rightRotate(BalancedBinaryTreeNode *p1Node, BalancedBinaryTreeNode **p2Root
     }
   }
   // 如果自己的左子结点（SL）有右子结点（SLR），要把自己的左子结点（SL）的右子结点（SLR）变成自己的右子结点
-  p1Node->p1Right = p1LeftRight;
   if (p1LeftRight != NULL) {
     p1LeftRight->p1Prev = p1Node;
   }
