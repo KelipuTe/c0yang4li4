@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 链表栈 ## */
+// ## 链表栈 ##
 
 // 栈为空时输出的无效值
 #define UNDEFINED_STACK_NODE (1 << 31)

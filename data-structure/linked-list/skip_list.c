@@ -4,7 +4,7 @@
 #include <time.h>
 #include <windows.h>
 
-/* ## 跳表 ## */
+// ## 跳表 ##
 
 // 跳表为空时输出的无效值
 #define UNDEFINED_SKIP_LIST_NODE (1 << 31)

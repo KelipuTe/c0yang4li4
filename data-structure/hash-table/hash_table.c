@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 哈希表 ## */
+// ## 哈希表 ##
 
 #include "../linked-list/singly_linked_list.c"
 

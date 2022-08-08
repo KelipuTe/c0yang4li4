@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* ## 数组栈 ## */
+// ## 数组栈 ##
 
 // 栈为空时输出的无效值
 #define UNDEFINED_STACK_NODE (1 << 31)

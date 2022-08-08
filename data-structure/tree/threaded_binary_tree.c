@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 线索二叉树 ## */
+// ## 线索二叉树 ##
 
 // 用于标记无效的结点 2147483648 = $2^{31}$
 #define UNDEFINED_NODE_VALUE (-2147483648)

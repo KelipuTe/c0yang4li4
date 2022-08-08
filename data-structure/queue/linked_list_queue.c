@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 链表队列 ## */
+// ## 链表队列 ##
 
 // 队列为空时输出的无效值
 #define UNDEFINED_QUEUE_NODE (1 << 31)

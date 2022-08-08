@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 单链表 ## */
+// ## 单链表 ##
 
 typedef struct SinglyLinkedListNode {
   // 数值

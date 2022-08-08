@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-/* ## 循环链表 ## */
+// ## 循环链表
 
 typedef struct CircularLinkedListNode {
   // 数值

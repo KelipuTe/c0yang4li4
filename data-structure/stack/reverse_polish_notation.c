@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 
-/* ## 后缀表达式（逆波兰式、reverse polish notation、RPN） ## */
+// ## 后缀表达式（逆波兰式、reverse polish notation、RPN） ##
 // 使用后缀表达式处理带小括号的十进制正负两位整数的四则运算
 
 // 表达式最大长度
