@@ -1,9 +1,4 @@
 
 add_executable(hello_world hello_world.c)
-add_executable(red_black_tree_unit_test data-structure/tree/red-black_tree_unit_test.c)
-add_executable(skip_list_unit_list data-structure/linked-list/skip_list_unit_list.c)
-add_executable(binary_tree_unit_test data-structure/tree/binary_tree_unit_test.c)
-add_executable(binary_sort_tree_unit_test data-structure/tree/binary_sort_tree_unit_test.c)
-add_executable(balanced_binary_tree_unit_test data-structure/tree/balanced_binary_tree_unit_test.c)
-add_executable(huffman_tree_unit_test data-structure/tree/huffman_tree_unit_test.c)
+add_executable(oriented_graph_unit_test data-structure/graph/oriented_graph_unit_test.c)
 add_executable(undirected_graph_unit_testing data-structure/graph/undirected_graph_unit_testing.c)
