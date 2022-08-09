@@ -2,17 +2,7 @@
 
 #include "huffman_tree.c"
 
-void HuffmanTreeUnitTesting();
-
 int main() {
-  HuffmanTreeUnitTesting();
-  return 0;
-}
-
-/**
- * 单元测试
- */
-void HuffmanTreeUnitTesting() {
   // 待处理字符串
   char str[] = "hello, world";
   // 字符数组，初始化全为 '\0'，下标和 ASICC 码一一对应
@@ -59,4 +49,5 @@ void HuffmanTreeUnitTesting() {
 
   HuffmanDecode(p1Root, strEncode, strDecode);
   printf("decode: %s\r\n", strDecode);
+  return 0;
 }

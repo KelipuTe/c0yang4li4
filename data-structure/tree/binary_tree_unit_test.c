@@ -1,17 +1,6 @@
 #include "binary_tree.c"
 
-void BinaryTreeUnitTesting();
-
 int main() {
-
-  BinaryTreeUnitTesting();
-  return 0;
-}
-
-/**
- * 单元测试
- */
-void BinaryTreeUnitTesting() {
   PrintDefine();
 
   // 指向根结点
@@ -26,7 +15,6 @@ void BinaryTreeUnitTesting() {
   int arr1NumLen = (sizeof(arr1Num) / sizeof(int));
 
   BuildBinaryTreeFromArray(&p1Root, arr1Num, arr1NumLen, 1);
-
   DrawInConsole(p1Root);
 
   PreorderTraversal(p1Root);
@@ -34,7 +22,7 @@ void BinaryTreeUnitTesting() {
   SubsequentTraversal(p1Root);
 
   printf("GetDepth: %d\r\n", GetDepth(p1Root));
-
   BreadthFirstSearch(p1Root);
   DepthFirstSearch(p1Root);
+  return 0;
 }

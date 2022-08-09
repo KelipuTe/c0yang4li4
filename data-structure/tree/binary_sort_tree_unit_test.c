@@ -1,16 +1,6 @@
 #include "binary_sort_tree.c"
 
-void BinarySortTreeUnitTesting();
-
 int main() {
-  BinarySortTreeUnitTesting();
-  return 0;
-}
-
-/**
- * 单元测试
- */
-void BinarySortTreeUnitTesting() {
   // 指向根结点
   BinaryTreeNode *p1Root = NULL;
 
@@ -20,10 +10,9 @@ void BinarySortTreeUnitTesting() {
   for (int i = 0; i < arr1NumLen; i++) {
     AddNode(&p1Root, arr1Num[i]);
   }
-
   InorderTraversal(p1Root);
 
   DeleteNode(p1Root, arr1Num[4]);
-
   InorderTraversal(p1Root);
+  return 0;
 }

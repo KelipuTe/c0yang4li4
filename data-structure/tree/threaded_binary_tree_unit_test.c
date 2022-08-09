@@ -1,16 +1,6 @@
 #include "threaded_binary_tree.c"
 
-void ThreadedBinaryTreeUnitTesting();
-
 int main() {
-  ThreadedBinaryTreeUnitTesting();
-  return 0;
-}
-
-/**
- * 单元测试
- */
-void ThreadedBinaryTreeUnitTesting() {
   // 指向根结点
   ThreadedBinaryTreeNode *p1Root = NULL;
   // 临时，线索化时，指向前驱结点
@@ -23,4 +13,5 @@ void ThreadedBinaryTreeUnitTesting() {
 
   InorderTraversal(p1Root);
   InorderThreaded(p1Root, &p1t1Prev);
+  return 0;
 }

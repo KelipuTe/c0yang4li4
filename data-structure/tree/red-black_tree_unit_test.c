@@ -1,16 +1,9 @@
 #include "red-black_tree.c"
 
-void RedBlackTreeUnitTesting();
-
-int main() {
-  RedBlackTreeUnitTesting();
-  return 0;
-}
-
 const RedBlackTreeNode b = {};
 const RedBlackTreeNode *c = &b;
 
-void RedBlackTreeUnitTesting() {
+int main() {
   // 指向根结点
   RedBlackTreeNode *p1Root = NULL;
 
@@ -20,10 +13,9 @@ void RedBlackTreeUnitTesting() {
   for (int i = 0; i < arr1NumLen; i++) {
     AddNode(&p1Root, arr1Num[i]);
   }
-
   InorderTraversal(p1Root);
 
   DeleteNode(&p1Root, 17);
-
   InorderTraversal(p1Root);
+  return 0;
 }

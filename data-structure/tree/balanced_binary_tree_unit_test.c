@@ -1,16 +1,6 @@
 #include "balanced_binary_tree.c"
 
-void BalancedSortTreeUnitTesting();
-
 int main() {
-  BalancedSortTreeUnitTesting();
-  return 0;
-}
-
-/**
- * 单元测试
- */
-void BalancedSortTreeUnitTesting() {
   // 指向根结点
   BalancedBinaryTreeNode *p1Root = NULL;
 
@@ -21,6 +11,6 @@ void BalancedSortTreeUnitTesting() {
   for (int i = 0; i < arr1NumLen; i++) {
     AddNode(&p1Root, arr1Num[i]);
   }
-
   InorderTraversal(p1Root);
+  return 0;
 }
