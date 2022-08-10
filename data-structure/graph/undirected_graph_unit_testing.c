@@ -27,5 +27,6 @@ int main() {
   DepthFirstSearch(p1Graph);
 
   PrimAlgorithm(p1Graph);
+  KruskalAlgorithm(p1Graph);
   return 0;
 }

@@ -13,7 +13,7 @@
 typedef struct UndirectedGraph {
   // 边数
   int edgeNum;
-  // 二维数组，边集，int[edgeNum][3]，第二维的三个元素，前两个元素表示一条无向边的两个顶点，第三个元素表示无向边的权重。
+  // 二维数组，边（弧、路径）集，int[edgeNum][3]，第二维的三个元素，前两个元素表示一条无向边的两个顶点，第三个元素表示无向边的权重。
   // 注意括号，int (*a)[n]，表示 a 是一个指针，指向的类型是 int[n]。
   // 如果是，int *a[n]，表示 a 是一个长度为 n 的数组，数组元素是 int *。
   // 可以以数组的形式使用，p1Graph->arr1Edges[i][0]，也可以以指针的形式使用，(*(p1Graph->arr1Edges + i))[0]。
@@ -35,6 +35,7 @@ extern void PrintUndirectedGraph(UndirectedGraph *);
 extern void BreadthFirstSearch(UndirectedGraph *);
 extern void DepthFirstSearch(UndirectedGraph *);
 extern int *PrimAlgorithm(UndirectedGraph *);
+extern int *KruskalAlgorithm(UndirectedGraph *);
 
 /**
  * 初始化
@@ -47,7 +48,7 @@ UndirectedGraph *InitUndirectedGraph() {
 /**
  * 设置边集
  * @param p1Graph
- * @param arr1Edges
+ * @param arr1Edges，int (*a)[3] 也可以定义成 int a[][3]
  * @param arr1EdgesLen
  */
 void SetEdge(UndirectedGraph *p1Graph, int (*arr1Edges)[3], int arr1EdgesLen) {
@@ -253,7 +254,7 @@ void DepthFirstSearch(UndirectedGraph *p1Graph) {
 }
 
 /**
- * 普里姆算法，求最小生成树，（minimum spanning tree，MST）
+ * 普里姆算法，求最小生成树（minimum spanning tree，MST）
  * @param p1Graph
  * @return int[edgeNum][2]
  */
@@ -283,25 +284,24 @@ int *PrimAlgorithm(UndirectedGraph *p1Graph) {
     int t1MinWeight = UNREACHABLE_WEIGHT;
     int t1Vertex = 0;
 
-    // printf("t1arr1MinWeight:");
-    // for (int i = 0; i < p1Graph->vertexNum; i++) {
-    //   printf("[%d],", t1arr1MinWeight[i]);
-    // }
-    // printf("\r\n");
-    //
-    // printf("t1arr1StartVertex:");
-    // for (int i = 0; i < p1Graph->vertexNum; i++) {
-    //   printf("[%d],", t1arr1StartVertex[i]);
-    // }
-    // printf("\r\n");
+    printf("t1arr1MinWeight:");
+    for (int i = 0; i < p1Graph->vertexNum; i++) {
+      printf("[%d],", t1arr1MinWeight[i]);
+    }
+    printf("\r\n");
+
+    printf("t1arr1StartVertex:");
+    for (int i = 0; i < p1Graph->vertexNum; i++) {
+      printf("[%d],", t1arr1StartVertex[i]);
+    }
+    printf("\r\n");
 
     // 找到本轮的最小权重的边
     for (int j = 1; j < p1Graph->vertexNum; j++) {
-      if (t1arr1MinWeight[j] == 0 || t1arr1MinWeight[j] >= t1MinWeight) {
-        continue;
+      if (t1arr1MinWeight[j] != 0 && t1arr1MinWeight[j] < t1MinWeight) {
+        t1MinWeight = t1arr1MinWeight[j];
+        t1Vertex = j;
       }
-      t1MinWeight = t1arr1MinWeight[j];
-      t1Vertex = j;
     }
     // 记录最小生成树的边
     arr1Tree[t1Index * 2] = t1arr1StartVertex[t1Vertex];
@@ -311,11 +311,98 @@ int *PrimAlgorithm(UndirectedGraph *p1Graph) {
     t1arr1MinWeight[t1Vertex] = 0;
     // 加入从这个顶点出发的边，看看有没有路径更短的
     for (int j = 1; j < p1Graph->vertexNum; j++) {
-      if (p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j] >= t1arr1MinWeight[j]) {
-        continue;
+      if (p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j] < t1arr1MinWeight[j]) {
+        t1arr1MinWeight[j] = p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j];
+        t1arr1StartVertex[j] = t1Vertex;
       }
-      t1arr1MinWeight[j] = p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j];
-      t1arr1StartVertex[j] = t1Vertex;
+    }
+  }
+
+  printf("minimum spanning tree:");
+  for (int i = 0; i < p1Graph->vertexNum - 1; i++) {
+    printf("[%d,%d],", arr1Tree[i * 2], arr1Tree[i * 2 + 1]);
+  }
+  printf("\r\n");
+
+  return arr1Tree;
+}
+
+/**
+ * 克鲁斯卡尔算法，求最小生成树（minimum spanning tree，MST）
+ * @param p1Graph
+ * @return
+ */
+int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
+  // 克鲁斯卡尔算法不需要把邻接矩阵构造出来
+
+  printf("kruskal algorithm\r\n");
+  // 假设从顶点 0 开始，找最小生成树
+
+  // 临时，二维数组，边集，int[edgeNum][3]
+  int(*t1arr1Edges)[3];
+  // 一维数组，数组下标为终点，数组元素为起点。记录到终点的最短路径是从哪个起点来的，可以标记一条边。
+  int *t1arr1StartVertex;
+  // 最小生成树的边，int[p1Graph->vertexNum - 1][2]
+  int *arr1Tree;
+
+  t1arr1Edges = (int(*)[3])malloc(sizeof(int[3]) * p1Graph->edgeNum);
+  for (int i = 0; i < p1Graph->edgeNum; i++) {
+    t1arr1Edges[i][0] = p1Graph->arr1Edges[i][0];
+    t1arr1Edges[i][1] = p1Graph->arr1Edges[i][1];
+    t1arr1Edges[i][2] = p1Graph->arr1Edges[i][2];
+  }
+
+  // 初始化，到终点的最短路径初始化为从无效的起点来的
+  t1arr1StartVertex = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    t1arr1StartVertex[i] = -1;
+  }
+  arr1Tree = (int *)malloc(sizeof(int) * 2 * (p1Graph->vertexNum - 1));
+
+  // 对路径列表按照权重升序排序
+  for (int i = 0; i < p1Graph->edgeNum; i++) {
+    int t1MinWeightIndex = i;
+    for (int j = i; j < p1Graph->edgeNum; j++) {
+      if (t1arr1Edges[j][2] < t1arr1Edges[t1MinWeightIndex][2]) {
+        t1MinWeightIndex = j;
+      }
+    }
+    int t1Start = t1arr1Edges[i][0];
+    int t1End = t1arr1Edges[i][1];
+    int t1Weight = t1arr1Edges[i][2];
+    t1arr1Edges[i][0] = t1arr1Edges[t1MinWeightIndex][0];
+    t1arr1Edges[i][1] = t1arr1Edges[t1MinWeightIndex][1];
+    t1arr1Edges[i][2] = t1arr1Edges[t1MinWeightIndex][2];
+    t1arr1Edges[t1MinWeightIndex][0] = t1Start;
+    t1arr1Edges[t1MinWeightIndex][1] = t1End;
+    t1arr1Edges[t1MinWeightIndex][2] = t1Weight;
+  }
+
+  printf("t1arr1Edges:");
+  for (int i = 0; i < p1Graph->edgeNum; i++) {
+    printf("[%d,%d,%d],", t1arr1Edges[i][0], t1arr1Edges[i][1], t1arr1Edges[i][2]);
+  }
+  printf("\r\n");
+
+  // 依次遍历排序后的路径列表
+  for (int i = 0, t1Index = 0; i < p1Graph->edgeNum; i++) {
+    // 追溯路径的两个顶点，向上追溯来源顶点
+    int t1Start1 = t1arr1Edges[i][0];
+    int t1Start2 = t1arr1Edges[i][1];
+    while (t1arr1StartVertex[t1Start1] != -1) {
+      t1Start1 = t1arr1StartVertex[t1Start1];
+    }
+    while (t1arr1StartVertex[t1Start2] != -1) {
+      t1Start2 = t1arr1StartVertex[t1Start2];
+    }
+    // 如果追溯不到同一个顶点，那么这条路径就需要记录下来
+    if (t1Start1 != t1Start2) {
+      // 无向图不需要处理边的方向，这里任选一个顶点当来源
+      t1arr1StartVertex[t1arr1Edges[i][0]] = t1arr1Edges[i][1];
+      // 记录最小生成树的边
+      arr1Tree[t1Index * 2] = t1arr1Edges[i][0];
+      arr1Tree[t1Index * 2 + 1] = t1arr1Edges[i][1];
+      t1Index++;
     }
   }
 
