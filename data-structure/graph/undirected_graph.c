@@ -4,16 +4,21 @@
 
 // ## 无向图-使用邻接矩阵（adjacency matrix）实现 ##
 
+// 边的默认权重
+#define DEFAULT_WEIGHT 1
+// 边的不可达权重，看情况设置一个极大值
+#define UNREACHABLE_WEIGHT 999
+
 // 无向图
 typedef struct UndirectedGraph {
   // 边数
   int edgeNum;
-  // 二维数组，边集，int[edgeNum][2]，第二维的两个元素，表示一条无向边的两个顶点。
-  // 注意括号，int (*arr1Edges)[2]，表示 arr1Edges 是一个指针，指向的类型是 int[2]。
-  // 如果是，int *arr1Edges[2]，表示 arr1Edges 是一个长度为 2 的数组，数组元素是 int *。
+  // 二维数组，边集，int[edgeNum][3]，第二维的三个元素，前两个元素表示一条无向边的两个顶点，第三个元素表示无向边的权重。
+  // 注意括号，int (*a)[n]，表示 a 是一个指针，指向的类型是 int[n]。
+  // 如果是，int *a[n]，表示 a 是一个长度为 n 的数组，数组元素是 int *。
   // 可以以数组的形式使用，p1Graph->arr1Edges[i][0]，也可以以指针的形式使用，(*(p1Graph->arr1Edges + i))[0]。
   // 以指针的形式使用时，需要通过 *(p1Graph->arr1Edges + i) 得到数组后，才能使用数组的方式操作元素 (*(p1Graph->arr1Edges + i))[0]。
-  int (*arr1Edges)[2];
+  int (*arr1Edges)[3];
   // 顶点数
   int vertexNum;
   // 一维数组，顶点集，int[vertexNum]
@@ -24,11 +29,12 @@ typedef struct UndirectedGraph {
 } UndirectedGraph;
 
 extern UndirectedGraph *InitUndirectedGraph();
-extern void SetEdge(UndirectedGraph *, int (*)[2], int);
+extern void SetEdge(UndirectedGraph *, int (*)[3], int);
 extern void BuildMatrix(UndirectedGraph *);
 extern void PrintUndirectedGraph(UndirectedGraph *);
 extern void BreadthFirstSearch(UndirectedGraph *);
 extern void DepthFirstSearch(UndirectedGraph *);
+extern int *PrimAlgorithm(UndirectedGraph *);
 
 /**
  * 初始化
@@ -44,12 +50,13 @@ UndirectedGraph *InitUndirectedGraph() {
  * @param arr1Edges
  * @param arr1EdgesLen
  */
-void SetEdge(UndirectedGraph *p1Graph, int (*arr1Edges)[2], int arr1EdgesLen) {
+void SetEdge(UndirectedGraph *p1Graph, int (*arr1Edges)[3], int arr1EdgesLen) {
   p1Graph->edgeNum = arr1EdgesLen;
-  p1Graph->arr1Edges = (int(*)[2])malloc(sizeof(int[2]) * arr1EdgesLen);
+  p1Graph->arr1Edges = (int(*)[3])malloc(sizeof(int[3]) * arr1EdgesLen);
   for (int i = 0; i < arr1EdgesLen; i++) {
     p1Graph->arr1Edges[i][0] = arr1Edges[i][0];
     p1Graph->arr1Edges[i][1] = arr1Edges[i][1];
+    p1Graph->arr1Edges[i][2] = arr1Edges[i][2];
   }
 }
 
@@ -83,10 +90,21 @@ void BuildMatrix(UndirectedGraph *p1Graph) {
   // 构造邻接矩阵
   p1Graph->arr2Matrix = (int *)malloc(sizeof(int) * p1Graph->vertexNum * p1Graph->vertexNum);
   memset(p1Graph->arr2Matrix, 0, sizeof(int) * p1Graph->vertexNum * p1Graph->vertexNum);
+  // 初始化矩阵
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      if (i == j) {
+        p1Graph->arr2Matrix[i * p1Graph->vertexNum + j] = 0;
+      } else {
+        p1Graph->arr2Matrix[i * p1Graph->vertexNum + j] = UNREACHABLE_WEIGHT;
+      }
+    }
+  }
+  // 填入边的数据
   for (int i = 0; i < p1Graph->edgeNum; i++) {
     // 无向图是对称的
-    p1Graph->arr2Matrix[p1Graph->arr1Edges[i][0] * p1Graph->vertexNum + p1Graph->arr1Edges[i][1]] = 1;
-    p1Graph->arr2Matrix[p1Graph->arr1Edges[i][1] * p1Graph->vertexNum + p1Graph->arr1Edges[i][0]] = 1;
+    p1Graph->arr2Matrix[p1Graph->arr1Edges[i][0] * p1Graph->vertexNum + p1Graph->arr1Edges[i][1]] = p1Graph->arr1Edges[i][2];
+    p1Graph->arr2Matrix[p1Graph->arr1Edges[i][1] * p1Graph->vertexNum + p1Graph->arr1Edges[i][0]] = p1Graph->arr1Edges[i][2];
   }
 }
 
@@ -100,7 +118,7 @@ void PrintUndirectedGraph(UndirectedGraph *p1Graph) {
 
   printf("arr1Edges:");
   for (int i = 0; i < p1Graph->edgeNum; i++) {
-    printf("[%d,%d],", p1Graph->arr1Edges[i][0], p1Graph->arr1Edges[i][1]);
+    printf("[%d,%d,%d],", p1Graph->arr1Edges[i][0], p1Graph->arr1Edges[i][1], p1Graph->arr1Edges[i][2]);
   }
   printf("\r\n");
 
@@ -115,7 +133,7 @@ void PrintUndirectedGraph(UndirectedGraph *p1Graph) {
   printf("arr2Matrix:\r\n");
   for (int i = 0; i < p1Graph->vertexNum; i++) {
     for (int j = 0; j < p1Graph->vertexNum; j++) {
-      printf("%d,", p1Graph->arr2Matrix[i * p1Graph->vertexNum + j]);
+      printf("%3d,", p1Graph->arr2Matrix[i * p1Graph->vertexNum + j]);
     }
     printf("\r\n");
   }
@@ -159,7 +177,7 @@ void BreadthFirstSearch(UndirectedGraph *p1Graph) {
       queueHead++;
       // 遍历顶点在矩阵中的那一层数据，寻找有没有连通的顶点
       for (int j = 0; j < p1Graph->vertexNum; j++) {
-        if (p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j] != 1) {
+        if (UNREACHABLE_WEIGHT != p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j]) {
           continue;
         }
         if (1 == arr1Visited[j]) {
@@ -213,7 +231,7 @@ void DepthFirstSearch(UndirectedGraph *p1Graph) {
       t1Vertex = arr1Stark[startTop];
       // 遍历顶点在矩阵中的那一层数据，寻找有没有连通的顶点
       for (int j = 0; j < p1Graph->vertexNum; j++) {
-        if (p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j] != 1) {
+        if (UNREACHABLE_WEIGHT != p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j]) {
           continue;
         }
         if (1 == arr1Visited[j]) {
@@ -232,4 +250,80 @@ void DepthFirstSearch(UndirectedGraph *p1Graph) {
     }
   }
   printf("\r\n");
+}
+
+/**
+ * 普里姆算法，求最小生成树，（minimum spanning tree，MST）
+ * @param p1Graph
+ * @return int[edgeNum][2]
+ */
+int *PrimAlgorithm(UndirectedGraph *p1Graph) {
+  printf("prim algorithm\r\n");
+  // 假设从顶点 0 开始，找最小生成树
+
+  // 一维数组，记录最小生成树中的顶点到达不在最小生成树中的各个顶点的最短路径的权重。
+  // 已经在最小生成树中的顶点，最短路径的权重标为 0。如果没有路径到达对应的顶点，就设置为不可达权重。
+  int *t1arr1MinWeight;
+  // 一维数组，数组下标为终点，数组元素为起点。记录到终点的最短路径是从哪个起点来的，可以标记一条边。
+  int *t1arr1StartVertex;
+  // 最小生成树的边，int[p1Graph->vertexNum - 1][2]
+  int *arr1Tree;
+
+  t1arr1MinWeight = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
+  t1arr1StartVertex = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
+  arr1Tree = (int *)malloc(sizeof(int) * 2 * (p1Graph->vertexNum - 1));
+
+  // 因为是假设从顶点 0 开始的，所以所有的顶点，即使不可达，也都是从顶点 0 出发的。
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    t1arr1MinWeight[i] = p1Graph->arr2Matrix[i];
+    t1arr1StartVertex[i] = 0;
+  }
+  // 顶点 0 就不需要参与循环了
+  for (int i = 1, t1Index = 0; i < p1Graph->vertexNum; i++) {
+    int t1MinWeight = UNREACHABLE_WEIGHT;
+    int t1Vertex = 0;
+
+    // printf("t1arr1MinWeight:");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d],", t1arr1MinWeight[i]);
+    // }
+    // printf("\r\n");
+    //
+    // printf("t1arr1StartVertex:");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d],", t1arr1StartVertex[i]);
+    // }
+    // printf("\r\n");
+
+    // 找到本轮的最小权重的边
+    for (int j = 1; j < p1Graph->vertexNum; j++) {
+      if (t1arr1MinWeight[j] == 0 || t1arr1MinWeight[j] >= t1MinWeight) {
+        continue;
+      }
+      t1MinWeight = t1arr1MinWeight[j];
+      t1Vertex = j;
+    }
+    // 记录最小生成树的边
+    arr1Tree[t1Index * 2] = t1arr1StartVertex[t1Vertex];
+    arr1Tree[t1Index * 2 + 1] = t1Vertex;
+    t1Index++;
+    // 标记顶点为在最小生成树中
+    t1arr1MinWeight[t1Vertex] = 0;
+    // 加入从这个顶点出发的边，看看有没有路径更短的
+    for (int j = 1; j < p1Graph->vertexNum; j++) {
+      if (p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j] >= t1arr1MinWeight[j]) {
+        continue;
+      }
+      t1arr1MinWeight[j] = p1Graph->arr2Matrix[t1Vertex * p1Graph->vertexNum + j];
+      t1arr1StartVertex[j] = t1Vertex;
+    }
+  }
+
+  printf("minimum spanning tree:");
+  for (int i = 0; i < p1Graph->vertexNum - 1; i++) {
+    printf("[%d,%d],", arr1Tree[i * 2], arr1Tree[i * 2 + 1]);
+  }
+  printf("\r\n");
+
+  return arr1Tree;
 }
