@@ -284,17 +284,17 @@ int *PrimAlgorithm(UndirectedGraph *p1Graph) {
     int t1MinWeight = UNREACHABLE_WEIGHT;
     int t1Vertex = 0;
 
-    printf("t1arr1MinWeight:");
-    for (int i = 0; i < p1Graph->vertexNum; i++) {
-      printf("[%d],", t1arr1MinWeight[i]);
-    }
-    printf("\r\n");
-
-    printf("t1arr1StartVertex:");
-    for (int i = 0; i < p1Graph->vertexNum; i++) {
-      printf("[%d],", t1arr1StartVertex[i]);
-    }
-    printf("\r\n");
+    // printf("t1arr1MinWeight:");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d],", t1arr1MinWeight[i]);
+    // }
+    // printf("\r\n");
+    //
+    // printf("t1arr1StartVertex:");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d],", t1arr1StartVertex[i]);
+    // }
+    // printf("\r\n");
 
     // 找到本轮的最小权重的边
     for (int j = 1; j < p1Graph->vertexNum; j++) {
@@ -359,7 +359,7 @@ int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
   }
   arr1Tree = (int *)malloc(sizeof(int) * 2 * (p1Graph->vertexNum - 1));
 
-  // 对路径列表按照权重升序排序
+  // 把路径列表按照权重升序排序
   for (int i = 0; i < p1Graph->edgeNum; i++) {
     int t1MinWeightIndex = i;
     for (int j = i; j < p1Graph->edgeNum; j++) {
@@ -389,12 +389,20 @@ int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
     // 追溯路径的两个顶点，向上追溯来源顶点
     int t1Start1 = t1arr1Edges[i][0];
     int t1Start2 = t1arr1Edges[i][1];
+
+    // printf("t1arr1StartVertex:");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d],", t1arr1StartVertex[i]);
+    // }
+    // printf("\r\n");
+
     while (t1arr1StartVertex[t1Start1] != -1) {
       t1Start1 = t1arr1StartVertex[t1Start1];
     }
     while (t1arr1StartVertex[t1Start2] != -1) {
       t1Start2 = t1arr1StartVertex[t1Start2];
     }
+
     // 如果追溯不到同一个顶点，那么这条路径就需要记录下来
     if (t1Start1 != t1Start2) {
       // 无向图不需要处理边的方向，这里任选一个顶点当来源
@@ -403,6 +411,11 @@ int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
       arr1Tree[t1Index * 2] = t1arr1Edges[i][0];
       arr1Tree[t1Index * 2 + 1] = t1arr1Edges[i][1];
       t1Index++;
+    }
+
+    // 当找到的边数大于等于顶点数 -1 的时候，说明最小生成树已经找到了。
+    if (t1Index >= p1Graph->vertexNum - 1) {
+      break;
     }
   }
 
