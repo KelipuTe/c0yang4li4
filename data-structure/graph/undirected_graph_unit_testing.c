@@ -28,5 +28,7 @@ int main() {
 
   PrimAlgorithm(p1Graph);
   KruskalAlgorithm(p1Graph);
+  DijkstraAlgorithm(p1Graph, 0);
+  FloydAlgorithm(p1Graph);
   return 0;
 }

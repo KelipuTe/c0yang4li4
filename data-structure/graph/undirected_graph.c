@@ -34,8 +34,10 @@ extern void BuildMatrix(UndirectedGraph *);
 extern void PrintUndirectedGraph(UndirectedGraph *);
 extern void BreadthFirstSearch(UndirectedGraph *);
 extern void DepthFirstSearch(UndirectedGraph *);
-extern int *PrimAlgorithm(UndirectedGraph *);
-extern int *KruskalAlgorithm(UndirectedGraph *);
+extern void PrimAlgorithm(UndirectedGraph *);
+extern void KruskalAlgorithm(UndirectedGraph *);
+extern void DijkstraAlgorithm(UndirectedGraph *, int);
+extern void FloydAlgorithm(UndirectedGraph *);
 
 /**
  * 初始化
@@ -138,7 +140,6 @@ void PrintUndirectedGraph(UndirectedGraph *p1Graph) {
     }
     printf("\r\n");
   }
-  printf("\r\n");
 }
 
 /**
@@ -258,11 +259,12 @@ void DepthFirstSearch(UndirectedGraph *p1Graph) {
  * @param p1Graph
  * @return int[edgeNum][2]
  */
-int *PrimAlgorithm(UndirectedGraph *p1Graph) {
+void PrimAlgorithm(UndirectedGraph *p1Graph) {
   printf("prim algorithm\r\n");
   // 假设从顶点 0 开始，找最小生成树
 
   // 一维数组，记录最小生成树中的顶点到达不在最小生成树中的各个顶点的最短路径的权重。
+  // 数组的下标是顶点，数组的元素是到达该顶点的最短路径的权重。
   // 已经在最小生成树中的顶点，最短路径的权重标为 0。如果没有路径到达对应的顶点，就设置为不可达权重。
   int *t1arr1MinWeight;
   // 一维数组，数组下标为终点，数组元素为起点。记录到终点的最短路径是从哪个起点来的，可以标记一条边。
@@ -323,8 +325,6 @@ int *PrimAlgorithm(UndirectedGraph *p1Graph) {
     printf("[%d,%d],", arr1Tree[i * 2], arr1Tree[i * 2 + 1]);
   }
   printf("\r\n");
-
-  return arr1Tree;
 }
 
 /**
@@ -332,10 +332,9 @@ int *PrimAlgorithm(UndirectedGraph *p1Graph) {
  * @param p1Graph
  * @return
  */
-int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
-  // 克鲁斯卡尔算法不需要把邻接矩阵构造出来
-
+void KruskalAlgorithm(UndirectedGraph *p1Graph) {
   printf("kruskal algorithm\r\n");
+  // 克鲁斯卡尔算法不需要把邻接矩阵构造出来
   // 假设从顶点 0 开始，找最小生成树
 
   // 临时，二维数组，边集，int[edgeNum][3]
@@ -352,7 +351,7 @@ int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
     t1arr1Edges[i][2] = p1Graph->arr1Edges[i][2];
   }
 
-  // 初始化，到终点的最短路径初始化为从无效的起点来的
+  // 初始化，到终点的最短路径初始化为从无效的起点 -1 来的
   t1arr1StartVertex = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
   for (int i = 0; i < p1Graph->vertexNum; i++) {
     t1arr1StartVertex[i] = -1;
@@ -424,6 +423,178 @@ int *KruskalAlgorithm(UndirectedGraph *p1Graph) {
     printf("[%d,%d],", arr1Tree[i * 2], arr1Tree[i * 2 + 1]);
   }
   printf("\r\n");
+}
 
-  return arr1Tree;
+/**
+ * 迪杰斯特拉算法，求一个顶点到其余各顶点的最短路径，贪心思路
+ * @param p1Graph
+ * @param vertexIndex 指定算哪个顶点
+ */
+void DijkstraAlgorithm(UndirectedGraph *p1Graph, int vertexIndex) {
+  printf("dijkstra algorithm\r\n");
+
+  // 一维数组，顶点到其余各顶点的最短路径的权重。
+  // 如果没有路径到达对应的顶点，就设置为不可达权重。
+  int *t1arr1MinWeight;
+  // 一维数组，数组下标为终点，数组元素为起点。记录到终点的最短路径是从哪个起点来的，可以标记一条边。
+  int *t1arr1StartVertex;
+  // 一维数组，已完成的顶点
+  int8_t *t1arr1DoneVertex;
+
+  t1arr1MinWeight = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
+  t1arr1StartVertex = (int *)malloc(sizeof(int) * p1Graph->vertexNum);
+  t1arr1DoneVertex = (int8_t *)malloc(sizeof(int8_t) * p1Graph->vertexNum);
+  memset(t1arr1DoneVertex, 0, sizeof(int8_t) * p1Graph->vertexNum);
+
+  // 因为是假设从顶点 vertexIndex 开始的，所以所有的顶点，即使不可达，也都是从顶点 vertexIndex 出发的。
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    t1arr1MinWeight[i] = p1Graph->arr2Matrix[vertexIndex * p1Graph->vertexNum + i];
+    t1arr1StartVertex[i] = vertexIndex;
+  }
+  // 把顶点 vertexIndex 标记为已完成。
+  t1arr1DoneVertex[vertexIndex] = 1;
+
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    // 遍历顶点到其余各顶点的最短路径的权重，权重最小的那个顶点就是本轮能确定最短路径的顶点 k。
+    int k = 0;
+    int t1MinWeight = UNREACHABLE_WEIGHT;
+
+    // printf("t1arr1MinWeight");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d,%d],", i, t1arr1MinWeight[i]);
+    // }
+    // printf("\r\n");
+    //
+    // printf("t1arr1StartVertex");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d,%d],", i, t1arr1StartVertex[i]);
+    // }
+    // printf("\r\n");
+    //
+    // printf("t1arr1DoneVertex");
+    // for (int i = 0; i < p1Graph->vertexNum; i++) {
+    //   printf("[%d,%d],", i, t1arr1DoneVertex[i]);
+    // }
+    // printf("\r\n");
+
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      if (t1arr1DoneVertex[j] != 0) {
+        continue;
+      }
+      if (t1arr1MinWeight[j] < t1MinWeight) {
+        k = j;
+        t1MinWeight = t1arr1MinWeight[j];
+      }
+    }
+    // 标记顶点 k 为已完成顶点
+    t1arr1DoneVertex[k] = 1;
+    // 重新计算从顶点 vertexIndex 开始到各个顶点的最短路径权重。
+    // 计算的时候注意，需要带上从顶点 vertexIndex 到顶点 k 的路径权重。
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      if (t1arr1DoneVertex[j] != 0) {
+        continue;
+      }
+      // 如果发现从顶点 k 出发能找到到某些顶点的更短的路径，就更新最短路径。
+      if (t1MinWeight + p1Graph->arr2Matrix[k * p1Graph->vertexNum + j] < t1arr1MinWeight[j]) {
+        t1arr1MinWeight[j] = t1MinWeight + p1Graph->arr2Matrix[k * p1Graph->vertexNum + j];
+        t1arr1StartVertex[j] = k;
+      }
+    }
+  }
+
+  printf("t1arr1MinWeight");
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    printf("[%d,%d],", i, t1arr1MinWeight[i]);
+  }
+  printf("\r\n");
+
+  printf("t1arr1StartVertex");
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    printf("[%d,%d],", i, t1arr1StartVertex[i]);
+  }
+  printf("\r\n");
+
+  printf("path\r\n");
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    int t1Start1 = i;
+    printf("[%d]", t1Start1);
+    while (1) {
+      printf("<=[%d]", t1arr1StartVertex[t1Start1]);
+      t1Start1 = t1arr1StartVertex[t1Start1];
+      if (t1Start1 == vertexIndex) {
+        printf("\r\n");
+        break;
+      }
+    }
+  }
+}
+
+/**
+ * 弗洛伊德算法，求顶点到其余各顶点的最短路径，动态规划思路
+ * @param p1Graph
+ * @param vertexIndex
+ */
+void FloydAlgorithm(UndirectedGraph *p1Graph) {
+  printf("floyd algorithm\r\n");
+
+  // 二维数组，邻接矩阵
+  // 初始化的时候，是无向图的邻接矩阵。结束的时候，就是计算好的顶点到其余各顶点的最短路径。
+  // a[i][j]=k 表示顶点 i 到顶点 j 的最短路径的权重是 k
+  int *t1arr2Matrix;
+  // 二维数组，最短路径来源，a[i][j]=k 表示顶点 i 到顶点 j 需要经过顶点 k
+  int *t1arr2PassVertex;
+
+  t1arr2Matrix = (int *)malloc(sizeof(int) * p1Graph->vertexNum * p1Graph->vertexNum);
+  t1arr2PassVertex = (int *)malloc(sizeof(int) * p1Graph->vertexNum * p1Graph->vertexNum);
+  // 初始化邻接矩阵
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      t1arr2Matrix[i * p1Graph->vertexNum + j] = p1Graph->arr2Matrix[i * p1Graph->vertexNum + j];
+    }
+  }
+  // 初始化最短路径来源
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      t1arr2PassVertex[i * p1Graph->vertexNum + j] = i;
+    }
+  }
+
+  // 依次以顶点 k 为中转点
+  for (int k = 0; k < p1Graph->vertexNum; k++) {
+    // 依次选两个顶点，顶点 i 和顶点 j
+    for (int i = 0; i < p1Graph->vertexNum; i++) {
+      for (int j = 0; j < p1Graph->vertexNum; j++) {
+        // 状态转移方程 a{k}(i,j) = min(a{k-1}(i,j),a{k-1}(i,k)+a{k-1}(k,j)
+        // 比较边（i,j）的权重与边（i,k）的权重和边(k,j)的权重之和的大小
+        if (t1arr2Matrix[i * p1Graph->vertexNum + j] > t1arr2Matrix[i * p1Graph->vertexNum + k] + t1arr2Matrix[k * p1Graph->vertexNum + j]) {
+          t1arr2Matrix[i * p1Graph->vertexNum + j] = t1arr2Matrix[i * p1Graph->vertexNum + k] + t1arr2Matrix[k * p1Graph->vertexNum + j];
+          t1arr2PassVertex[i * p1Graph->vertexNum + j] = k;
+
+          // printf("t1arr2Matrix,k=%d,i=%d,j=%d\r\n", k, i, j);
+          // for (int i = 0; i < p1Graph->vertexNum; i++) {
+          //   for (int j = 0; j < p1Graph->vertexNum; j++) {
+          //     printf("[%3d],", t1arr2Matrix[i * p1Graph->vertexNum + j]);
+          //   }
+          //   printf("\r\n");
+          // }
+        }
+      }
+    }
+  }
+
+  printf("t1arr2Matrix\r\n");
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      printf("[%2d],", t1arr2Matrix[i * p1Graph->vertexNum + j]);
+    }
+    printf("\r\n");
+  }
+
+  printf("t1arr2PassVertex\r\n");
+  for (int i = 0; i < p1Graph->vertexNum; i++) {
+    for (int j = 0; j < p1Graph->vertexNum; j++) {
+      printf("[%d],", t1arr2PassVertex[i * p1Graph->vertexNum + j]);
+    }
+    printf("\r\n");
+  }
 }
