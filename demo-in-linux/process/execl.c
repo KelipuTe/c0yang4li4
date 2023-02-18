@@ -4,7 +4,7 @@
 #include <unistd.h>
 
 int main() {
-  printf("[debug]:parent, getpid()=%d\n", getpid());
+  printf("[debug]:getpid()=%d\n", getpid());
   const char *arg1 = "aaa";
   char *arg2 = "bbb";
   // 如果底层的 execve() 成功，后面的代码不会执行。

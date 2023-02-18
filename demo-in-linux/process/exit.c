@@ -4,8 +4,8 @@
 #include <unistd.h>
 
 int main() {
-  printf("[debug]:parent, getpid()=%d\n", getpid());
-  printf("[debug]:parent, getpid()=%d", getpid());
+  printf("[debug]:getpid()=%d\n", getpid());
+  printf("[debug]:getpid()=%d", getpid());
   return 0;
   // return 300;
   // exit(300);
