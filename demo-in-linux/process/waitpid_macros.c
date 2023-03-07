@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// waitpid 回收子进程、用宏函数判断进程退出状态码
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t forkResult = fork();

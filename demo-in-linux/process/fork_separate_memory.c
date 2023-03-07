@@ -6,6 +6,7 @@
 
 int ga = 300;
 
+// fock 父子进程内存隔离
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t forkResult = fork();

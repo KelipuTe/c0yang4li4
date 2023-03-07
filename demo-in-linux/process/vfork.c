@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// vfock 创建子进程
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t vforkResult = vfork();

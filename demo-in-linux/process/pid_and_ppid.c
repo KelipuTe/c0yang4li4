@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// pid 进程标识、ppid 父进程标识
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t forkResult = fork();

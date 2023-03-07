@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+// execl 在程序里加载并执行一个新的程序
 int main() {
   printf("[debug]:getpid()=%d\n", getpid());
   const char *arg1 = "aaa";

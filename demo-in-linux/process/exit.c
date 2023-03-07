@@ -3,6 +3,7 @@
 #include <sys/syscall.h>
 #include <unistd.h>
 
+// 不同方式退出、退出状态码
 int main() {
   printf("[debug]:getpid()=%d\n", getpid());
   printf("[debug]:getpid()=%d", getpid());

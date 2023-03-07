@@ -6,6 +6,7 @@
 #include <sys/wait.h>
 #include <unistd.h>
 
+// wait 回收子进程
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t forkResult = fork();

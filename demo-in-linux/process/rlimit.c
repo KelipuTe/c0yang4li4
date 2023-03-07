@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <sys/resource.h>
 
+// rlimit 进程资源限制
 int main() {
   // 查看
   struct rlimit t4rlimit;

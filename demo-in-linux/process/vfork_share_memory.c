@@ -6,6 +6,7 @@
 
 int ga = 300;
 
+// vfock 父子进程共享内存
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t vforkResult = vfork();

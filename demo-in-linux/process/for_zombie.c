@@ -4,6 +4,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
+// 用于构造僵尸进程
 int main() {
   printf("[debug]:parent, getpid()=%d\n", getpid());
   pid_t forkResult = fork();

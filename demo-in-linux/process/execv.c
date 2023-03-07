@@ -3,6 +3,7 @@
 #include <string.h>
 #include <unistd.h>
 
+// execv 在程序里加载并执行一个新的程序
 int main() {
   printf("[debug]:getpid()=%d\n", getpid());
   char *const argv[] = {"aaa", "bbb"};
