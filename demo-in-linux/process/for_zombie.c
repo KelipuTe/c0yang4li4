@@ -18,7 +18,7 @@ int main() {
   } else {
     while (1) {
       printf("[debug]:parent, getpid()=%d, forkResult=%d\n", getpid(), forkResult);
-      sleep(10);
+      sleep(2);
     }
   }
 

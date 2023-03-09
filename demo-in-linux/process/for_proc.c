@@ -5,7 +5,7 @@
 int main() {
   printf("[debug]:getpid()=%d\n", getpid());
   while (1) {
-    sleep(10);
+    sleep(2);
   }
   return 0;
 }
