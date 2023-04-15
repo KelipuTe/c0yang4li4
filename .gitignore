@@ -1,8 +1,13 @@
+# Jet Brains 全家桶的配置
 .idea/
 cmake-build-debug
 CMakeLists.txt
 
+# Visual Studio Code 的配置
 .vscode/
 
+# windows 的可执行文件
 *.exe
+
+# linux 的可执行文件
 *.elf

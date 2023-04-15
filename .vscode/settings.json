@@ -1,19 +1,8 @@
 {
     "editor.formatOnSave": true,
-    "files.autoSave": "afterDelay",
+    "editor.defaultFormatter": "xaver.clang-format",
+    "clang-format.executable": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
     "files.associations": {
-        "stdio.h": "c",
-        "stdlib.h": "c",
-        "string.h": "c",
-        "time.h": "c",
-        "math.h": "c",
-        "unistd.h": "c",
-        "msg.h": "c",
-        "sem.h": "c",
-        "ipc.h": "c",
-        "socket.h": "c",
-        "in.h": "c",
-        "cstdlib": "c"
-    },
-    "C_Cpp.errorSquiggles": "Enabled"
+        "signal.h": "c"
+    }
 }
