@@ -23,8 +23,8 @@ int main() {
   }
 
   char buffer[128] = {0};
-  int byte = read(0, buffer, sizeof(buffer));
-  printf("[debug]:byte=%d,errno=%d,error=%s\n", byte, errno, strerror(errno));
+  int readByteNum = read(0, buffer, sizeof(buffer));
+  printf("[debug]:readByteNum=%d, errno=%d, error=%s\n", readByteNum, errno, strerror(errno));
 
   return 0;
 }

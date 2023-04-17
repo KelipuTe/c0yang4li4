@@ -19,15 +19,16 @@ union semun {
 };
 
 void pv(int sv) {
-  struct sembuf sb;
-  sb.sem_num = 0;
-  sb.sem_op = sv;
-  sb.sem_flg = SEM_UNDO;
-  semop(semid, &sb, 1);
+  struct sembuf sbuf;
+  sbuf.sem_num = 0;
+  sbuf.sem_op = sv;
+  sbuf.sem_flg = SEM_UNDO;
+  semop(semid, &sbuf, 1);
 }
 
-// 信号量pv操作，p表示信号量-1，v表示信号量+1
+// 信号量 pv 操作，p 表示信号量 -1，v 表示信号量 +1
 int main() {
+  printf("[debug]:parent, getpid()=%d\n", getpid());
   semid = semget(0x1000, 1, 0);
 
   // 设置信号量为1
@@ -35,14 +36,14 @@ int main() {
   buf.val = 1;
   int ret = semctl(semid, 0, SETVAL, buf);
 
-  // 子进程和父进程都要去对信号量执行-1操作，但是信号量只有1
-  // 所以当父进程执行过-1操作之后，子进程想再-1时就会被阻塞
-  // 直到父进程执行+1操作之后，信号量大于0时，子进程才能继续执行-1操作
+  // 子进程和父进程都要去对信号量执行 -1 操作，但是信号量只有 1
+  // 所以当父进程执行过 -1 操作之后，子进程想再 -1 时就会被阻塞
+  // 直到父进程执行 +1 操作之后，信号量大于 0 时，子进程才能继续执行 -1 操作
 
   pid_t pid = fork();
   if (pid == 0) {
     pv(-1);
-    printf("child,pid=%d\r\n", getpid());
+    printf("[debug]:child, getpid()=%d\n", getpid());
     sleep(2);
     pv(1);
 
@@ -50,12 +51,12 @@ int main() {
   }
 
   pv(-1);
-  printf("parent,pid=%d\r\n", getpid());
+  printf("[debug]:parent, getpid()=%d\n", getpid());
   sleep(2);
   pv(1);
 
   wait(0);
-  printf("parent,finish\r\n");
+  printf("[debug]:parent, finish\n");
 
   return 0;
 }

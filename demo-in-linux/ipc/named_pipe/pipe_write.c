@@ -10,14 +10,15 @@
 
 // 命名管道，非父子进程，写入部分
 int main() {
+  printf("[debug]:getpid()=%d\n", getpid());
   if (access("/tmp/fifo", F_OK)) {
-    int rtvl1 = mkfifo("/tmp/fifo", 0666);
-    printf("pipe(),rtvl1=%d\r\n", rtvl1);
-    printf("errno=%d,%s\r\n", errno, strerror(errno));
+    int mkfifoResult = mkfifo("/tmp/fifo", 0666);
+    printf("[debug]:mkfifoResult=%d, errno=%d, error=%s\n", mkfifoResult, errno, strerror(errno));
   }
 
   int fdWrite = open("/tmp/fifo", O_WRONLY);
-  write(fdWrite, "hello", 5);
+  int writeByteNum = write(fdWrite, "hello", 5);
+  printf("[debug]:writeByteNum=%d\n", writeByteNum);
   close(fdWrite);
 
   return 0;
