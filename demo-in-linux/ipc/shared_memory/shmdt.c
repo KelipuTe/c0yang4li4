@@ -5,22 +5,24 @@
 #include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/types.h>
+#include <unistd.h>
 
-// 共享内存，共享内存连接和断开
+// 连接共享内存和断开共享内存
 int main() {
-  int shmid = shmget(0x1000, 0, 0);
-  printf("shmget(),shmid==%d\r\n", shmid);
-  printf("errno=%d,%s\r\n", errno, strerror(errno));
+  printf("[debug]:getpid()=%d\n", getpid());
 
-  // 共享内存连接
-  char *msg = (char *)shmat(shmid, NULL, 0);
+  int shmId = shmget(0x1000, 0, 0);
+  printf("[debug]:shmId=%d, errno=%d, error=%s\n", shmId, errno, strerror(errno));
+
+  // 连接共享内存
+  char *msg = (char *)shmat(shmId, NULL, 0);
   // 数据就在内存里，可以直接操作
-  printf("msg=%s\r\n", msg);
-  // shmdt(2)
-  // #include <sys/shm.h>
-  // 共享内存连接断开
-  int rtvl1 = shmdt((void *)msg);
-  printf("shmdt(),rtvl1=%d\r\n", rtvl1);
+  printf("[info]:msg=%s\n", msg);
+
+  // 断开共享内存
+  // int shmdt(const void *shmaddr);
+  int shmdtResult = shmdt((void *)msg);
+  printf("[debug]:shmdtResult=%d\n", shmdtResult);
 
   return 0;
 }
