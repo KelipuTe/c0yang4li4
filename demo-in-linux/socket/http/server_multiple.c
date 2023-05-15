@@ -11,7 +11,7 @@
 
 // 可重用的http服务端
 int main() {
-  printf("tcp server start,getpid()=%d\r\n", getpid());
+  printf("[debug]:tcp server start,getpid()=%d\n", getpid());
 
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
@@ -20,38 +20,36 @@ int main() {
   serverAddr.sin_port = htons(9501);
   serverAddr.sin_addr.s_addr = inet_addr("0.0.0.0");
 
-  // setsockopt(2)
-  // #include <sys/socket.h>
-  // 设置socket选项
+  // 设置 socket 选项
   int report = 1;
-  int rtvl5 = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &report, sizeof(report));
-  printf("setsockopt(),rtvl5=%d\r\n", rtvl5);
-  printf("errno=%d,%s\r\n", errno, strerror(errno));
+  int setsockoptResult = setsockopt(sockfd, SOL_SOCKET, SO_REUSEPORT, &report, sizeof(report));
+  printf("[debug]:setsockoptResult=%d\n", setsockoptResult);
+  printf("[debug]:errno=%d, error=%s\n", errno, strerror(errno));
 
-  int rtvl1 = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
-  printf("bind(),rtvl1=%d\r\n", rtvl1);
-  int rtvl2 = listen(sockfd, 2);
-  printf("listen(),rtvl2=%d\r\n", rtvl2);
+  int bindResult = bind(sockfd, (struct sockaddr *)&serverAddr, sizeof(serverAddr));
+  printf("[debug]:bindResult=%d\n", bindResult);
+
+  int listenResult = listen(sockfd, 2);
+  printf("[debug]:listenResult=%d\n", listenResult);
 
   struct sockaddr_in clientAddr;
   while (1) {
     socklen_t clientAddrLen = sizeof(clientAddr);
     int connfd = accept(sockfd, (struct sockaddr *)&clientAddr, &clientAddrLen);
-    printf("accept(),connfd=%d\r\n", connfd);
+    printf("[debug]:connfd=%d\n", sockfd);
 
     char msg[1024] = {0};
-    ssize_t rtvl3 = 0;
-    rtvl3 = recv(connfd, msg, sizeof(msg), 0);
-    printf("recv()=%d,msg=%s\r\n", rtvl3, msg);
-    if (rtvl3 <= 0) {
+    ssize_t recvByteNum = 0;
+    recvByteNum = recv(connfd, msg, sizeof(msg), 0);
+    printf("[debug]:recvByteNum=%ld, msg=%s\n", recvByteNum, msg);
+    if (recvByteNum <= 0) {
       close(connfd);
-      printf("close(),connfd=%d\r\n", connfd);
+      printf("[debug]:close(), connfd=%d\n", connfd);
     }
 
-    // 返回http格式的数据
     char arr1resp[] = "HTTP/1.1 200 OK\r\nContent-Type: text/html\r\nConnection: keep-alive\r\nContent-Length: 12\r\n\r\nhello, world";
-    ssize_t rtvl4 = send(connfd, arr1resp, sizeof(arr1resp), 0);
-    printf("send(),rtvl4=%d,arr1resp=%s\r\n", rtvl4, arr1resp);
+    ssize_t sendByteNum = send(connfd, arr1resp, sizeof(arr1resp), 0);
+    printf("[debug]:sendByteNum=%ld\n", sendByteNum);
 
     // 清空本次获取到的数据
     memset(msg, 0, sizeof(msg));

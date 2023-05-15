@@ -56,7 +56,7 @@ extern void DrawInConsole(RedBlackTreeNode *);
  * @param num
  */
 void AddNode(RedBlackTreeNode **p2Root, int num) {
-  printf("AddNode: %d\r\n", num);
+  printf("AddNode: %d\n", num);
 
   // 记录要插入的结点的父结点
   RedBlackTreeNode *p1Prev = NULL;
@@ -127,7 +127,7 @@ void AddNode(RedBlackTreeNode **p2Root, int num) {
  * @param p2Root 指向，指向根结点的指针，的指针
  */
 void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
-  printf("leftRotate: %d\r\n", p1Node->num);
+  printf("leftRotate: %d\n", p1Node->num);
 
   RedBlackTreeNode *p1Prev = p1Node->p1Prev;
   RedBlackTreeNode *p1Right = p1Node->p1Right;
@@ -163,7 +163,7 @@ void leftRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
  * @param p2Root 指向，指向根结点的指针，的指针
  */
 void rightRotate(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
-  printf("rightRotate: %d\r\n", p1Node->num);
+  printf("rightRotate: %d\n", p1Node->num);
 
   RedBlackTreeNode *p1Prev = p1Node->p1Prev;
   RedBlackTreeNode *p1Left = p1Node->p1Left;
@@ -215,7 +215,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevPrevOtherChild->color = BLACK;
         p1Node->p1Prev->p1Prev->color = RED;
 
-        printf("addNodeFixUp %d left type 1: \r\n", p1Node->num);
+        printf("addNodeFixUp %d left type 1: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         // 因为祖父结点改了红色，可能破坏红黑树，所以需要继续判断祖父结点是否需要调整
@@ -227,7 +227,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
           // 类似平衡二叉树的 LR 型，需要调色+左旋+右旋。这里的调色逻辑可以和情况 3 合并。
           // 父结点左旋，由于左旋后父结点变成了自己的左子树，两个红色结点相连一定破坏红黑树，所以继续判断父结点（父结点在更下层）
           // 情况 2 通过这个操作实际上演变成了情况 3
-          printf("addNodeFixUp %d left type 2: \r\n", p1Node->num);
+          printf("addNodeFixUp %d left type 2: \n", p1Node->num);
           leftRotate(p1Node->p1Prev, p2Root);
           // 把指针指向自己的左子结点（左旋后，父结点变成了自己的左子结点），让场景变成情况 3
           p1Node = p1Node->p1Left;
@@ -237,7 +237,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
           p1Node->p1Prev->color = BLACK;
           p1Node->p1Prev->p1Prev->color = RED;
 
-          printf("addNodeFixUp %d left type 3: \r\n", p1Node->num);
+          printf("addNodeFixUp %d left type 3: \n", p1Node->num);
           DrawInConsole(*p2Root);
 
           rightRotate(p1Node->p1Prev->p1Prev, p2Root);
@@ -255,7 +255,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevPrevOtherChild->color = BLACK;
         p1Node->p1Prev->p1Prev->color = RED;
 
-        printf("addNodeFixUp %d right type 1: \r\n", p1Node->num);
+        printf("addNodeFixUp %d right type 1: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         p1Node = p1Node->p1Prev->p1Prev;
@@ -264,7 +264,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         if (p1Node == p1Node->p1Prev->p1Left) {
           // 情况2：叔叔结点是黑色，自己是父结点的左子结点。
           // 类似平衡二叉树的 RL 型，需要调色+右旋+左旋。这里的调色逻辑可以和情况 3 合并。
-          printf("addNodeFixUp %d right type 2: \r\n", p1Node->num);
+          printf("addNodeFixUp %d right type 2: \n", p1Node->num);
           rightRotate(p1Node, p2Root);
           p1Node = p1Node->p1Right;
         } else {
@@ -272,7 +272,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
           p1Node->p1Prev->color = BLACK;
           p1Node->p1Prev->p1Prev->color = RED;
 
-          printf("addNodeFixUp %d right type 3: \r\n", p1Node->num);
+          printf("addNodeFixUp %d right type 3: \n", p1Node->num);
           DrawInConsole(*p2Root);
 
           leftRotate(p1Node->p1Prev->p1Prev, p2Root);
@@ -290,7 +290,7 @@ void addNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
  * @param num
  */
 void DeleteNode(RedBlackTreeNode **p2Root, int num) {
-  printf("DeleteNode: %d\r\n", num);
+  printf("DeleteNode: %d\n", num);
 
   // 要删除的结点
   RedBlackTreeNode *p1Delete = NULL;
@@ -419,7 +419,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
 
-        printf("deleteNodeFixUp %d left type 1: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d left type 1: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         leftRotate(p1Node->p1Prev, p2Root);
@@ -432,7 +432,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = RED;
         p1Node->p1Prev->color = BLACK;
 
-        printf("deleteNodeFixUp %d left type 2: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d left type 2: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         p1Node = p1Node->p1Prev;
@@ -447,7 +447,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = RED;
         p1PrevOtherChild->p1Left->color = BLACK;
 
-        printf("deleteNodeFixUp %d left type 3: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d left type 3: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         rightRotate(p1PrevOtherChild, p2Root);
@@ -461,7 +461,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Right->color = BLACK;
 
-        printf("deleteNodeFixUp %d left type 4: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d left type 4: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         leftRotate(p1Node->p1Prev, p2Root);
@@ -477,7 +477,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = BLACK;
         p1Node->p1Prev->color = RED;
 
-        printf("deleteNodeFixUp %d right type 1: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d right type 1: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         rightRotate(p1Node->p1Prev, p2Root);
@@ -490,7 +490,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = RED;
         p1Node->p1Prev->color = BLACK;
 
-        printf("deleteNodeFixUp %d right type 2: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d right type 2: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         p1Node = p1Node->p1Prev;
@@ -502,7 +502,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1PrevOtherChild->color = RED;
         p1PrevOtherChild->p1Right->color = BLACK;
 
-        printf("deleteNodeFixUp %d right type 3: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d right type 3: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         leftRotate(p1PrevOtherChild, p2Root);
@@ -516,7 +516,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
         p1Node->p1Prev->color = BLACK;
         p1PrevOtherChild->p1Left->color = BLACK;
 
-        printf("deleteNodeFixUp %d right type 4: \r\n", p1Node->num);
+        printf("deleteNodeFixUp %d right type 4: \n", p1Node->num);
         DrawInConsole(*p2Root);
 
         rightRotate(p1Node->p1Prev, p2Root);
@@ -535,7 +535,7 @@ void deleteNodeFixUp(RedBlackTreeNode *p1Node, RedBlackTreeNode **p2Root) {
 void InorderTraversal(RedBlackTreeNode *p1Root) {
   printf("InorderTraversal: ");
   doInorderTraversal(p1Root);
-  printf("\r\n");
+  printf("\n");
 }
 
 void doInorderTraversal(RedBlackTreeNode *p1Node) {
@@ -575,7 +575,7 @@ int GetDepth(RedBlackTreeNode *p1Node) {
  * @param p1Root 指向根结点
  */
 void DrawInConsole(RedBlackTreeNode *p1Root) {
-  printf("DrawInConsole: \r\n");
+  printf("DrawInConsole: \n");
 
   // 广度优先遍历的队列结构
   RedBlackTreeNode *arr1Queue[TREE_NODE_NUM_MAX];
@@ -695,6 +695,6 @@ void DrawInConsole(RedBlackTreeNode *p1Root) {
         }
       }
     }
-    printf("\r\n");
+    printf("\n");
   }
 }

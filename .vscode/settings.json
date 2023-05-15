@@ -4,5 +4,8 @@
     "clang-format.executable": "C:\\Program Files\\LLVM\\bin\\clang-format.exe",
     "files.associations": {
         "signal.h": "c"
+    },
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features"
     }
 }
