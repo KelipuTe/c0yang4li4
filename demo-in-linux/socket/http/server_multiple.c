@@ -11,7 +11,7 @@
 
 // 可重用的http服务端
 int main() {
-  printf("[debug]:tcp server start,getpid()=%d\n", getpid());
+  printf("[debug]:tcp server start, getpid()=%d\n", getpid());
 
   int sockfd = socket(AF_INET, SOCK_STREAM, 0);
 
