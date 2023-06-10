@@ -1,9 +1,9 @@
-# 0 "helloworld.c"
+# 0 "hello_world.c"
 # 0 "<built-in>"
 # 0 "<command-line>"
 # 1 "/usr/include/stdc-predef.h" 1 3 4
 # 0 "<command-line>" 2
-# 1 "helloworld.c"
+# 1 "hello_world.c"
 # 1 "/usr/include/stdio.h" 1 3 4
 # 27 "/usr/include/stdio.h" 3 4
 # 1 "/usr/include/x86_64-linux-gnu/bits/libc-header-start.h" 1 3 4
@@ -734,14 +734,11 @@ extern int __uflow (FILE *);
 extern int __overflow (FILE *, int);
 # 902 "/usr/include/stdio.h" 3 4
 
-# 2 "helloworld.c" 2
+# 2 "hello_world.c" 2
 
 
-# 3 "helloworld.c"
+# 3 "hello_world.c"
 int main() {
-
-
-
   printf("hello, world\n");
   return 0;
 }

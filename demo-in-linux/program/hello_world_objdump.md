@@ -1,11 +1,7 @@
-### helloworld.o
+```text
+> objdump -h hello_world.o
 
-#### objdump -h helloworld.o
-
-```
-> objdump -h helloworld.o
-
-helloworld.o:     file format elf64-x86-64
+hello_world.o:     file format elf64-x86-64
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
@@ -27,12 +23,10 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, ALLOC, LOAD, RELOC, READONLY, DATA
 ```
 
-#### objdump -s helloworld.o
+```text
+> objdump -s hello_world.o
 
-```
-> objdump -s helloworld.o
-
-helloworld.o:     file format elf64-x86-64
+hello_world.o:     file format elf64-x86-64
 
 Contents of section .text:
  0000 f30f1efa 554889e5 488d0500 00000048  ....UH..H......H
@@ -53,12 +47,10 @@ Contents of section .eh_frame:
  0030 06550c07 08000000                    .U......        
 ```
 
-#### objdump -d helloworld.o
+```text
+> objdump -d hello_world.o
 
-```
-> objdump -d helloworld.o
-
-helloworld.o:     file format elf64-x86-64
+hello_world.o:     file format elf64-x86-64
 
 
 Disassembly of section .text:
@@ -75,14 +67,10 @@ Disassembly of section .text:
   1d:	c3                   	ret    
 ```
 
-### helloworld
+```text
+> objdump -h hello_world.elf
 
-#### objdump -h helloworld
-
-```
-> objdump -h helloworld
-
-helloworld:     file format elf64-x86-64
+hello_world.elf:     file format elf64-x86-64
 
 Sections:
 Idx Name          Size      VMA               LMA               File off  Algn
@@ -142,12 +130,10 @@ Idx Name          Size      VMA               LMA               File off  Algn
                   CONTENTS, READONLY
 ```
 
-#### objdump -s helloworld
+```text
+> objdump -s hello_world.elf
 
-```
-> objdump -s helloworld
-
-helloworld:     file format elf64-x86-64
+hello_world.elf:     file format elf64-x86-64
 
 Contents of section .interp:
  0318 2f6c6962 36342f6c 642d6c69 6e75782d  /lib64/ld-linux-
@@ -158,8 +144,8 @@ Contents of section .note.gnu.property:
  0358 028000c0 04000000 01000000 00000000  ................
 Contents of section .note.gnu.build-id:
  0368 04000000 14000000 03000000 474e5500  ............GNU.
- 0378 88960579 bcc5d19e d07b96a6 f26e6df0  ...y.....{...nm.
- 0388 13e86623                             ..f#            
+ 0378 6d49e18a 785eb53d 246ca89c 5dbce544  mI..x^.=$l..]..D
+ 0388 72ed1584                             r...            
 Contents of section .note.ABI-tag:
  038c 04000000 10000000 01000000 474e5500  ............GNU.
  039c 00000000 03000000 02000000 00000000  ................
@@ -311,12 +297,10 @@ Contents of section .comment:
  0020 30342920 31312e33 2e3000             04) 11.3.0.
 ```
 
-#### objdump -d helloworld
+```text
+> objdump -d hello_world.elf
 
-```
-> objdump -d helloworld
-
-helloworld:     file format elf64-x86-64
+hello_world.elf:     file format elf64-x86-64
 
 
 Disassembly of section .init:

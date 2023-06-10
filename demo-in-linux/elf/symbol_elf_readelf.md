@@ -1,9 +1,5 @@
-### demo02
-
-#### readelf -h demo02
-
-```
-> readelf -h demo02
+```text
+> readelf -h symbol.elf
 ELF Header:
   Magic:   7f 45 4c 46 02 01 01 00 00 00 00 00 00 00 00 00 
   Class:                             ELF64
@@ -16,7 +12,7 @@ ELF Header:
   Version:                           0x1
   Entry point address:               0x1060
   Start of program headers:          64 (bytes into file)
-  Start of section headers:          14160 (bytes into file)
+  Start of section headers:          14232 (bytes into file)
   Flags:                             0x0
   Size of this header:               64 (bytes)
   Size of program headers:           56 (bytes)
@@ -26,10 +22,8 @@ ELF Header:
   Section header string table index: 30
 ```
 
-#### readelf -l demo02
-
-```
-> readelf -l demo02
+```text
+> readelf -l symbol.elf
 
 Elf file type is DYN (Position-Independent Executable file)
 Entry point 0x1060
@@ -46,9 +40,9 @@ Program Headers:
   LOAD           0x0000000000000000 0x0000000000000000 0x0000000000000000
                  0x0000000000000628 0x0000000000000628  R      0x1000
   LOAD           0x0000000000001000 0x0000000000001000 0x0000000000001000
-                 0x00000000000001f9 0x00000000000001f9  R E    0x1000
+                 0x0000000000000245 0x0000000000000245  R E    0x1000
   LOAD           0x0000000000002000 0x0000000000002000 0x0000000000002000
-                 0x0000000000000144 0x0000000000000144  R      0x1000
+                 0x00000000000001bc 0x00000000000001bc  R      0x1000
   LOAD           0x0000000000002db8 0x0000000000003db8 0x0000000000003db8
                  0x0000000000000260 0x0000000000000270  RW     0x1000
   DYNAMIC        0x0000000000002dc8 0x0000000000003dc8 0x0000000000003dc8
@@ -59,8 +53,8 @@ Program Headers:
                  0x0000000000000044 0x0000000000000044  R      0x4
   GNU_PROPERTY   0x0000000000000338 0x0000000000000338 0x0000000000000338
                  0x0000000000000030 0x0000000000000030  R      0x8
-  GNU_EH_FRAME   0x0000000000002014 0x0000000000002014 0x0000000000002014
-                 0x0000000000000044 0x0000000000000044  R      0x4
+  GNU_EH_FRAME   0x0000000000002064 0x0000000000002064 0x0000000000002064
+                 0x000000000000004c 0x000000000000004c  R      0x4
   GNU_STACK      0x0000000000000000 0x0000000000000000 0x0000000000000000
                  0x0000000000000000 0x0000000000000000  RW     0x10
   GNU_RELRO      0x0000000000002db8 0x0000000000003db8 0x0000000000003db8
@@ -83,11 +77,9 @@ Program Headers:
    12     .init_array .fini_array .dynamic .got
 ```
 
-#### readelf -S demo02
-
-```
-> readelf -S demo02
-There are 31 section headers, starting at offset 0x3750:
+```text
+> readelf -S symbol.elf
+There are 31 section headers, starting at offset 0x3798:
 
 Section Headers:
   [Nr] Name              Type             Address           Offset
@@ -125,15 +117,15 @@ Section Headers:
   [15] .plt.sec          PROGBITS         0000000000001050  00001050
        0000000000000010  0000000000000010  AX       0     0     16
   [16] .text             PROGBITS         0000000000001060  00001060
-       0000000000000189  0000000000000000  AX       0     0     16
-  [17] .fini             PROGBITS         00000000000011ec  000011ec
+       00000000000001d6  0000000000000000  AX       0     0     16
+  [17] .fini             PROGBITS         0000000000001238  00001238
        000000000000000d  0000000000000000  AX       0     0     4
   [18] .rodata           PROGBITS         0000000000002000  00002000
-       0000000000000012  0000000000000000   A       0     0     4
-  [19] .eh_frame_hdr     PROGBITS         0000000000002014  00002014
-       0000000000000044  0000000000000000   A       0     0     4
-  [20] .eh_frame         PROGBITS         0000000000002058  00002058
-       00000000000000ec  0000000000000000   A       0     0     8
+       0000000000000063  0000000000000000   A       0     0     8
+  [19] .eh_frame_hdr     PROGBITS         0000000000002064  00002064
+       000000000000004c  0000000000000000   A       0     0     4
+  [20] .eh_frame         PROGBITS         00000000000020b0  000020b0
+       000000000000010c  0000000000000000   A       0     0     8
   [21] .init_array       INIT_ARRAY       0000000000003db8  00002db8
        0000000000000008  0000000000000008  WA       0     0     8
   [22] .fini_array       FINI_ARRAY       0000000000003dc0  00002dc0
@@ -149,10 +141,10 @@ Section Headers:
   [27] .comment          PROGBITS         0000000000000000  00003018
        000000000000002b  0000000000000001  MS       0     0     1
   [28] .symtab           SYMTAB           0000000000000000  00003048
-       00000000000003f0  0000000000000018          29    20     8
-  [29] .strtab           STRTAB           0000000000000000  00003438
-       00000000000001fa  0000000000000000           0     0     1
-  [30] .shstrtab         STRTAB           0000000000000000  00003632
+       0000000000000408  0000000000000018          29    20     8
+  [29] .strtab           STRTAB           0000000000000000  00003450
+       000000000000022c  0000000000000000           0     0     1
+  [30] .shstrtab         STRTAB           0000000000000000  0000367c
        000000000000011a  0000000000000000           0     0     1
 Key to Flags:
   W (write), A (alloc), X (execute), M (merge), S (strings), I (info),
@@ -161,10 +153,8 @@ Key to Flags:
   D (mbind), l (large), p (processor specific)
 ```
 
-#### readelf -s demo02
-
-```
-> readelf -s demo02
+```text
+> readelf -s symbol.elf
 
 Symbol table '.dynsym' contains 7 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
@@ -176,7 +166,7 @@ Symbol table '.dynsym' contains 7 entries:
      5: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMC[...]
      6: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND [...]@GLIBC_2.2.5 (3)
 
-Symbol table '.symtab' contains 42 entries:
+Symbol table '.symtab' contains 43 entries:
    Num:    Value          Size Type    Bind   Vis      Ndx Name
      0: 0000000000000000     0 NOTYPE  LOCAL  DEFAULT  UND 
      1: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS Scrt1.o
@@ -189,35 +179,36 @@ Symbol table '.symtab' contains 42 entries:
      8: 0000000000003dc0     0 OBJECT  LOCAL  DEFAULT   22 __do_global_dtor[...]
      9: 0000000000001140     0 FUNC    LOCAL  DEFAULT   16 frame_dummy
     10: 0000000000003db8     0 OBJECT  LOCAL  DEFAULT   21 __frame_dummy_in[...]
-    11: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS demo02.c
-    12: 0000000000004014     4 OBJECT  LOCAL  DEFAULT   25 si.1
-    13: 0000000000004020     4 OBJECT  LOCAL  DEFAULT   26 sj.0
+    11: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS symbol.c
+    12: 0000000000004014     4 OBJECT  LOCAL  DEFAULT   25 staticIntB.1
+    13: 0000000000004020     4 OBJECT  LOCAL  DEFAULT   26 staticIntA.0
     14: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS crtstuff.c
-    15: 0000000000002140     0 OBJECT  LOCAL  DEFAULT   20 __FRAME_END__
+    15: 00000000000021b8     0 OBJECT  LOCAL  DEFAULT   20 __FRAME_END__
     16: 0000000000000000     0 FILE    LOCAL  DEFAULT  ABS 
     17: 0000000000003dc8     0 OBJECT  LOCAL  DEFAULT   23 _DYNAMIC
-    18: 0000000000002014     0 NOTYPE  LOCAL  DEFAULT   19 __GNU_EH_FRAME_HDR
+    18: 0000000000002064     0 NOTYPE  LOCAL  DEFAULT   19 __GNU_EH_FRAME_HDR
     19: 0000000000003fb8     0 OBJECT  LOCAL  DEFAULT   24 _GLOBAL_OFFSET_TABLE_
-    20: 0000000000001149    54 FUNC    GLOBAL DEFAULT   16 func1
-    21: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_mai[...]
-    22: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterT[...]
-    23: 0000000000004000     0 NOTYPE  WEAK   DEFAULT   25 data_start
-    24: 0000000000004018     0 NOTYPE  GLOBAL DEFAULT   25 _edata
-    25: 0000000000004010     4 OBJECT  GLOBAL DEFAULT   25 ga
-    26: 00000000000011ec     0 FUNC    GLOBAL HIDDEN    17 _fini
-    27: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND printf@GLIBC_2.2.5
-    28: 0000000000004000     0 NOTYPE  GLOBAL DEFAULT   25 __data_start
-    29: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
-    30: 0000000000004008     0 OBJECT  GLOBAL HIDDEN    25 __dso_handle
-    31: 0000000000002000     4 OBJECT  GLOBAL DEFAULT   18 _IO_stdin_used
-    32: 000000000000117f    51 FUNC    GLOBAL DEFAULT   16 func2
+    20: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND __libc_start_mai[...]
+    21: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_deregisterT[...]
+    22: 0000000000004000     0 NOTYPE  WEAK   DEFAULT   25 data_start
+    23: 0000000000004018     0 NOTYPE  GLOBAL DEFAULT   25 _edata
+    24: 0000000000001238     0 FUNC    GLOBAL HIDDEN    17 _fini
+    25: 0000000000000000     0 FUNC    GLOBAL DEFAULT  UND printf@GLIBC_2.2.5
+    26: 000000000000401c     4 OBJECT  GLOBAL DEFAULT   26 globalIntA
+    27: 0000000000001149    54 FUNC    GLOBAL DEFAULT   16 functionA
+    28: 00000000000011b5    54 FUNC    GLOBAL DEFAULT   16 functionC
+    29: 0000000000004000     0 NOTYPE  GLOBAL DEFAULT   25 __data_start
+    30: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND __gmon_start__
+    31: 0000000000004008     0 OBJECT  GLOBAL HIDDEN    25 __dso_handle
+    32: 0000000000002000     4 OBJECT  GLOBAL DEFAULT   18 _IO_stdin_used
     33: 0000000000004028     0 NOTYPE  GLOBAL DEFAULT   26 _end
     34: 0000000000001060    38 FUNC    GLOBAL DEFAULT   16 _start
     35: 0000000000004018     0 NOTYPE  GLOBAL DEFAULT   26 __bss_start
-    36: 00000000000011b2    55 FUNC    GLOBAL DEFAULT   16 main
-    37: 000000000000401c     4 OBJECT  GLOBAL DEFAULT   26 gb
-    38: 0000000000004018     0 OBJECT  GLOBAL HIDDEN    25 __TMC_END__
+    36: 00000000000011eb    75 FUNC    GLOBAL DEFAULT   16 main
+    37: 0000000000004018     0 OBJECT  GLOBAL HIDDEN    25 __TMC_END__
+    38: 0000000000004010     4 OBJECT  GLOBAL DEFAULT   25 globalIntB
     39: 0000000000000000     0 NOTYPE  WEAK   DEFAULT  UND _ITM_registerTMC[...]
-    40: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND __cxa_finalize@G[...]
-    41: 0000000000001000     0 FUNC    GLOBAL HIDDEN    12 _init
+    40: 000000000000117f    54 FUNC    GLOBAL DEFAULT   16 functionB
+    41: 0000000000000000     0 FUNC    WEAK   DEFAULT  UND __cxa_finalize@G[...]
+    42: 0000000000001000     0 FUNC    GLOBAL HIDDEN    12 _init
 ```
