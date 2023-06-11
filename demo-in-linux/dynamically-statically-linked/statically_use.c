@@ -1,7 +1,6 @@
 #include <stdio.h>
 
-// 动态链接
 int main() {
-  printf("hello, world\r\n");
+  returnVal(1);
   return 0;
 }

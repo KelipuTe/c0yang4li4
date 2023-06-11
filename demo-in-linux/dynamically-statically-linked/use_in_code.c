@@ -4,16 +4,16 @@
 #include <unistd.h>
 
 // 程序中显示调用动态库
-// gcc dynamically_call.c -ldl -o dynamically_call
+// gcc use_in_code.c -ldl -o use_in_code
 
 int main() {
   void *handle;
-  void (*print_hello)(void);
+  void (*print_hello_world)(void);
   char *error;
 
   // dlopen(3)
   // #include <dlfcn.h>
-  handle = dlopen("./library.so", RTLD_LAZY);
+  handle = dlopen("./dynamically_library.so", RTLD_LAZY);
   if (!handle) {
     fprintf(stderr, "%s\n", dlerror());
     exit(EXIT_FAILURE);
@@ -23,7 +23,7 @@ int main() {
 
   // dlsym(3)
   // #include <dlfcn.h>
-  print_hello = (void (*)())dlsym(handle, "print_hello");
+  print_hello_world = (void (*)())dlsym(handle, "print_hello_world");
 
   error = dlerror();
   if (error != NULL) {
@@ -31,7 +31,7 @@ int main() {
     exit(EXIT_FAILURE);
   }
 
-  print_hello();
+  print_hello_world();
 
   dlclose(handle);
   exit(EXIT_SUCCESS);

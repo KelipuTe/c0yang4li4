@@ -1,10 +1,10 @@
 #include <stdio.h>
 
 int main(int argc, char *argv[], char *envp[]) {
-  printf("argc=%d\r\n", argc);
+  printf("argc=%d\n", argc);
 
   while (*envp) {
-    printf("envp=%s\r\n", *envp);
+    printf("envp=%s\n", *envp);
     envp++;
   }
 
