@@ -1,6 +1,6 @@
 # Jet Brains 全家桶的配置
 .idea/
-cmake-build-debug
+cmake-build-debug/
 CMakeLists.txt
 
 # Visual Studio Code 的配置
